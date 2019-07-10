@@ -38,7 +38,7 @@ CloseAllInstances(exename)
     ;   see https://www.autohotkey.com/docs/commands/PostMessage.htm
     ;
     ; Msg = 0x112 (WM_SYSCOMMAND)   Message is sent as a system command.
-    ; wParam = 0xF060 (SC_CLOSE)    The message comprises a close command.
+    ; wParam = 0xF060 (SC_CLOSE)    The message comprises SC_CLOSE, sent as a parameter of WM_SYSCOMMAND.
     ; lParam = 0                    Default value of 0 is sent.
     ; Control = ""                  Message directly sent to target window.
     ; WinTitle = % "ahk_id" WindowsList%A_Index%
