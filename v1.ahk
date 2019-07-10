@@ -15,7 +15,7 @@ SendMode Input  ; Recommended for new scripts due to its superior speed and reli
 ;
 ; Machine-dependent parameters -- need to change when running on a different computer
 ;
-SetWorkingDir C:\Program Files\QuPath                 ; The directory is set based on where the QuPath executable is on my machine.
+SetWorkingDir C:\Program Files\QuPath                 ; The directory is set based on where the QuPath executable is located.
 
 
 ;
@@ -23,13 +23,8 @@ SetWorkingDir C:\Program Files\QuPath                 ; The directory is set bas
 ;
 ^k::                                                  ; Can be mapped to any hotkey.
 Run, QuPath.exe                                       ; The Run command will run the executable specified.
-return
-
-;
-; Samuel: the goal says "enter and exit QuPath automatically" without pressing the 2nd key; please modify to combine ^k and ESC
-;
-Esc::
-CloseAllInstances("QuPath.exe")                       ; The CloseAllInstances function (lines 25-33) is called.
+Sleep, 10000                                          ; Sleep for 10 seconds, enough for the application to fully launch.
+CloseAllInstances("QuPath.exe")                       ; The CloseAllInstances function (lines 30-51) is called.
 ExitApp                                               ; Exit script
 
 CloseAllInstances(exename)
@@ -38,19 +33,19 @@ CloseAllInstances(exename)
   Loop, %WindowsList%                                     ; Loops through all window names.
   {
     ;
-    ; Samuel: please elaborate this line
-    ;
     ; usage of PostMessage: 
     ; PostMessage, Msg , wParam, lParam, Control, WinTitle, WinText, ExcludeTitle, ExcludeText
     ;   see https://www.autohotkey.com/docs/commands/PostMessage.htm
     ;
-    ; Msg = 0x112 (WM_SYSCOMMAND), see https://www.autohotkey.com/docs/commands/PostMessage.htm
-    ; wParam = 0xF060 (what is this?)
-    ; lParam = ""
-    ; Control = ""
+    ; Msg = 0x112 (WM_SYSCOMMAND)   Message is sent as a system command.
+    ; wParam = 0xF060 (SC_CLOSE)    The message comprises a close command.
+    ; lParam = 0                    Default value of 0 is sent.
+    ; Control = ""                  Message directly sent to target window.
     ; WinTitle = % "ahk_id" WindowsList%A_Index%
     ;
     PostMessage, 0x112, 0xF060,,, % "ahk_id" WindowsList%A_Index%               ; Mimics a user closing each window.
-    ; WinClose, % "ahk_id" Windows%A_Index%         ; Optionally, a more "forceful" way of closing windows.
+    
+    ; WinClose, % "ahk_id" Windows%A_Index%         ; Optionally, a more "forceful" way of closing windows by sending WM_CLOSE instead of SC_CLOSE
+    ; The difference between WM_CLOSE and SC_CLOSE is explained here: https://stackoverflow.com/q/10101742
   }
 }
