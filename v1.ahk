@@ -22,8 +22,10 @@ SetWorkingDir C:\Program Files\QuPath                 ; The directory is set bas
 ; Main -- how to start the script; change the key assignment here 
 ;
 ^k::                                                  ; Can be mapped to any hotkey.
+; waitTime := 0                                       ; In milliseconds. Currently, the application will exit immediately upon opening a window.
 Run, QuPath.exe                                       ; The Run command will run the executable specified.
-Sleep, 10000                                          ; Sleep for 10 seconds, enough for the application to fully launch.
+WinWaitActive, ahk_exe QuPath.exe                     ; The script will wait for a window belonging to the QuPath.exe process to appear.
+; Sleep, %waitTime%                                   ; Sleep for a predefined amount of time if desired.
 CloseAllInstances("QuPath.exe")                       ; The CloseAllInstances function (lines 30-51) is called.
 ExitApp                                               ; Exit script
 
