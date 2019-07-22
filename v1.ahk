@@ -1,4 +1,4 @@
-﻿; Assignment #1, by WCC, 7/8/2019
+; Assignment #1, by WCC, 7/8/2019
 ; Goal: enter and exit QuPath automatically
 ; Condition: QuPath is already installed and can be invoked from Windows 
 ; Requirements: 100% clear comments
@@ -26,7 +26,7 @@ SetWorkingDir C:\Program Files\QuPath                 ; The directory is set bas
 Run, QuPath.exe                                       ; The Run command will run the executable specified.
 WinWaitActive, ahk_exe QuPath.exe                     ; The script will wait for a window belonging to the QuPath.exe process to appear.
 ; Sleep, %waitTime%                                   ; Sleep for a predefined amount of time if desired.
-CloseAllInstances("QuPath.exe")                       ; The CloseAllInstances function (lines 30-51) is called.
+CloseAllInstances("QuPath.exe")                       ; The CloseAllInstances function (lines 32-53) is called.
 ExitApp                                               ; Exit script
 
 CloseAllInstances(exename)
