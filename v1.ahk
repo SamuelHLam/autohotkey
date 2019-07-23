@@ -32,14 +32,16 @@ ExitApp                                               ; Exit script.
 Snip() {
   Run, "%a_windir%\System32\SnippingTool.exe"   ; Runs Snipping Tool
   WinWaitActive, Snipping Tool                  ; Waits for the Snipping Tool to start before running further commands.
-  Send, !n                                 ; Opens snipping tool menu.
-  Send, {Up}                               ; Selects full screen shot.
-  Send, {Enter}
-  Send, ^s
+  Send, !n                                      ; Opens snipping tool menu.
+  Send, {Up}                                    ; Selects full screen shot.
+  Send, {Enter}                                 ; Takes screen shot.
+  Send, ^s                                      ; Opens save window.
   ; Random, name                                ; Generates a random name for the screenshot.
   WinWaitActive, Save As                        ; Waits for the save window to appear.
-  ; Send, %name%                           ; Assigns name to file.
-  Send, {Enter}
+  ; Send, %name%                                ; Assigns name to file.
+  Send, {Enter}                                 ; Saves file.
+  WinWaitActive, Snipping Tool                  ; Waits for save window to close.
+  CloseAllInstances("SnippingTool.exe")         ; Closes Snipping Tool window.
 }
 
 CloseAllInstances(exename) {
