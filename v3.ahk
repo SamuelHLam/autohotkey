@@ -17,9 +17,10 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 ;
 ^k::                                                                  ; Can be mapped to any hotkey.
 waitTime := 2000                                                      ; In milliseconds. Used to wait for images to fully load.
-Run, %ProgramFiles%\QuPath\QuPath.exe "%A_ScriptDir%\CMU-1.svs",, Max ; Opens CMU-1.svs with QuPath.
+Run, %ProgramFiles%\QuPath\QuPath.exe "%A_ScriptDir%\CMU-1.ndpi",, Max ; Opens CMU-1.svs with QuPath.
 WinWaitActive, ahk_exe QuPath.exe                                     ; The script will wait for a window belonging to the QuPath.exe process to appear.
 Sleep, %waitTime%                                                     ; Sleep for a predefined amount of time if desired.
+Send, +a                                                              ; Closes a sidebar in QuPath to allow more space for the image.
 Snip("QuPath")                                                        ; Snip function is called.
 CloseAllInstances("QuPath.exe")                                       ; CloseAllInstances function is called.
 Run, %ProgramFiles%\Hamamatsu\NDP.view 2\NDPView2.exe "%A_ScriptDir%\CMU-1.ndpi",, Max ; Opens CMU-1.ndpi with NDPView2.
