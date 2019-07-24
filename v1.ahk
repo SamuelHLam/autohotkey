@@ -1,7 +1,9 @@
-﻿; Assignment #2 assigned by WCC, 7/23/2019
-; Goal: enter QuPath, take a screenshot with Snipping Tool, and then exit QuPath
+﻿; Assignment #1, by WCC, 7/8/2019
+; Goal: enter and exit QuPath automatically
 ; Condition: QuPath is already installed and can be invoked from Windows 
 ; Requirements: 100% clear comments
+; 7/9/2019 code added by Samuel
+; 7/10/2019 comments added by WCC
 
 ;
 ; Default parameters
@@ -21,15 +23,7 @@ SetWorkingDir C:\Program Files\QuPath                 ; The directory is set bas
 ;
 ^k::                                                  ; Can be mapped to any hotkey.
 Run, QuPath.exe                                       ; The Run command will run the executable specified.
-
-
-;
-; Screenshot -- take a screenshot of the whole screen and save it as a PNG file
-;
-
-
 return
-
 
 ;
 ; Samuel: the goal says "enter and exit QuPath automatically" without pressing the 2nd key; please modify to combine ^k and ESC
