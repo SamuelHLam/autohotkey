@@ -17,11 +17,17 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 ;
 ^k::                                                                  ; Can be mapped to any hotkey.
 waitTime := 2000                                                      ; In milliseconds. Used to wait for images to fully load.
-Run, %ProgramFiles%\QuPath\QuPath.exe "%A_ScriptDir%\CMU-1.ndpi",, Max ; Opens CMU-1.svs with QuPath.
+Run, %ProgramFiles%\QuPath\QuPath.exe "%A_ScriptDir%\CMU-1.ndpi",, Max ; Opens CMU-1.ndpi with QuPath.
 WinWaitActive, ahk_exe QuPath.exe                                     ; The script will wait for a window belonging to the QuPath.exe process to appear.
 Sleep, %waitTime%                                                     ; Sleep for a predefined amount of time if desired.
 Send, +a                                                              ; Closes a sidebar in QuPath to allow more space for the image.
-Snip("QuPath")                                                        ; Snip function is called.
+MouseClick, Left, A_ScreenWidth/2, A_ScreenHeight/2                   ; Selects the image.
+Send, {Up}                                                            ; Moves the image slightly.
+Sleep, 800                                                            ; Waits for image to stop moving.
+Send, {Tab 11}                                                        ; Selects Zoom to Fit.
+Send, {Space}                                                         ; Activates Zoom to Fit.
+
+QPVSnip("QuPath")                                                     ; QPVSnip function is called.
 CloseAllInstances("QuPath.exe")                                       ; CloseAllInstances function is called.
 Run, %ProgramFiles%\Hamamatsu\NDP.view 2\NDPView2.exe "%A_ScriptDir%\CMU-1.ndpi",, Max ; Opens CMU-1.ndpi with NDPView2.
 WinWaitActive, NDP.view 2                                             ; Waits for NDPView2 to load.
@@ -40,6 +46,36 @@ Snip(name) {
   Send, !n                                      ; Opens snipping tool menu.
   Send, {Up}                                    ; Selects full screen shot.
   Send, {Enter}                                 ; Takes screen shot.
+  Send, ^s                                      ; Opens save window.
+  WinWaitActive, Save As                        ; Waits for the save window to appear.
+  Send, %name%                                  ; Assigns name to file.
+  Send, {Enter}                                 ; Saves file.
+  WinWaitActive, Snipping Tool                  ; Waits for save window to close.
+  CloseAllInstances("SnippingTool.exe")         ; Closes Snipping Tool window.
+}
+
+; QuPath snip for portrait-orientation images
+QPVSnip(name) {
+  x := 4, y := 85, y2:= 1034
+  Loop {
+    PixelGetColor, curr, x, y
+    x ++
+  } Until curr != 0x000000
+  ;MsgBox, The image was found at x%x% y%y%.
+  ;MouseMove, x, y
+
+  x2 := x+A_ScreenHeight
+  Loop {
+    PixelGetColor, curr, x2, y
+    x2++
+  } Until curr == 0x000000
+  ;MsgBox, The left bound of the image is at x%x2% y%y%.
+  ;MouseMove, x2, y
+
+  Run, "%a_windir%\System32\SnippingTool.exe"   ; Runs Snipping Tool
+  WinWaitActive, Snipping Tool                  ; Waits for the Snipping Tool to start before running further commands.
+  MouseClickDrag, Left, x, y, x2-1, y2		      ; Executes a snip.
+  
   Send, ^s                                      ; Opens save window.
   WinWaitActive, Save As                        ; Waits for the save window to appear.
   Send, %name%                                  ; Assigns name to file.
