@@ -12,6 +12,9 @@
 SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 
+CoordMode, Pixel, Screen	; Absolute coordinates when using PixelGetColor
+CoordMode, Mouse, Screen	; Absolute coordinates when using MouseClickDrag
+
 ;
 ; Main -- how to start the script; change the key assignment here 
 ;
