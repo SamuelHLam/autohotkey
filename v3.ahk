@@ -5,6 +5,12 @@
 ; Requirements: 100% clear comments
 
 ;
+; Known Bugs:
+;   - NDP.view 2 will somtimes display black artifacts over the image when loaded.
+;     These artifacts seem to be random and may appear or disappear when reloaded.
+;
+
+;
 ; Default parameters
 ;
 #NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
