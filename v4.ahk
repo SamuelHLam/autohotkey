@@ -46,73 +46,68 @@ Esc::ExitApp                               ; Executes normally, but can be used 
 ;
 QPSnip()
 {
-  ; Makes sure this function has access to global variables
-  global
+  global                              ; Makes sure this function has access to global variables
   
-  Send, +a                                ; Removes side bar.
-  MouseMove, 430, 60                      ; Adjusts magnification.
+  Send, +a                            ; Removes side bar.
+  MouseMove, 430, 60                  ; Adjusts magnification.
   Click, 2
   WinWaitActive, Set magnification
   Send, +{Tab}
   Send, %magnification%
   Send, {Enter}
-  QPMoveFOV(xcoord, ycoord)               ; Moves field of view.
-  Send, +{Tab 4}                          ; Removes unnecessary menu items (slide map, etc.).
+  QPMoveFOV(xcoord, ycoord)           ; Moves field of view.
+  Send, +{Tab 4}                      ; Removes unnecessary menu items (slide map, etc.).
   Send, {Space}
   Send, +{Tab}
   Send, {Space}
   Send, +{Tab}
   Send, {Space}
-
-  Run, "%a_windir%\System32\SnippingTool.exe"     ; Runs Snipping Tool
-  WinWaitActive, Snipping Tool                    ; Waits for the Snipping Tool to start before running further commands.
-  upper := 85, lower := 1034, left := 4, right := A_ScreenWidth-4 ; Present window boundaries in QuPath.
-  MouseClickDrag, Left, left, upper, right, lower ; Executes a snip.
-  Send, ^s                                        ; Opens save window.
-  WinWaitActive, Save As                          ; Waits for the save window to appear.
-  Send, QuPath                                    ; Assigns name to file.
-  Send, {Enter}                                   ; Saves file.
-  WinWaitActive, Snipping Tool                    ; Waits for save window to close.
-  Sleep, 500
-  CloseAllInstances("SnippingTool.exe")           ; Closes Snipping Tool window.
+  
+  Snip(4, 85, A_ScreenWidth-4, 1034, "QuPath")
 }
 
 NDPSnip()
 {
+  global                      ; Makes sure this function has access to global variables
+  
   Click                       ; Selects image.
   Send, 5                     ; Selects zoom of 20x.
   Sleep, 800                  ; Waits for image to stop zooming in.
   Send, m                     ; Opens slide map.
+  Sleep, 500
   NDPMoveFOV(xcoord,ycoord)   ; Moves field of view.
   Send, m                     ; Closes slide map.
   Sleep, 500
-  Run, "%a_windir%\System32\SnippingTool.exe"   ; Runs Snipping Tool.
-  WinWaitActive, Snipping Tool                  ; Waits for the Snipping Tool to start before running further commands.
-  Send, !n                                      ; Opens snipping tool menu.
-  Send, {Up}                                    ; Selects full screen shot.
-  Send, {Enter}                                 ; Takes screen shot.
-  Send, ^s                                      ; Opens save window.
-  WinWaitActive, Save As                        ; Waits for the save window to appear.
-  Send, NDPView2                                ; Assigns name to file.
-  Send, {Enter}                                 ; Saves file.
-  WinWaitActive, Snipping Tool                  ; Waits for save window to close.
-  CloseAllInstances("SnippingTool.exe")         ; Closes Snipping Tool window.
+  
+  Snip(0, 0, A_ScreenWidth, A_ScreenHeight, "NDPView2")
 }
 
-QPMoveFOV(x,y)
+QPMoveFOV(x, y)
 {
   xcf := 150/51200, ycf := 111/38144
   smallx := Round(x*xcf), smally := Round(y*ycf)
   MouseClick, left, 1760+smallx, 92+smally
 }
 
-NDPMoveFOV(x,y)
+NDPMoveFOV(x, y)
 {
   xcf := 480/51200, ycf := 357/38144
   smallx := Round(x*xcf), smally := Round(y*ycf)
-  MouseMove, 1422+smallx, 705+smally
+  MouseClick, left, 1422+smallx, 705+smally
+}
+
+Snip(x1, y1, x2, y2, name)
+{
+  Run, "%a_windir%\System32\SnippingTool.exe"     ; Runs Snipping Tool
+  WinWaitActive, Snipping Tool                    ; Waits for the Snipping Tool to start before running further commands.
+  MouseClickDrag, left, %x1%, %y1%, %x2%, %y2%    ; Executes a snip.
+  Send, ^s                                        ; Opens save window.
+  WinWaitActive, Save As                          ; Waits for the save window to appear.
+  Send, %name%                                    ; Assigns name to file.
+  Send, {Enter}                                   ; Saves file.
+  WinWaitActive, Snipping Tool                    ; Waits for save window to close.
   Sleep, 500
-  Click
+  CloseAllInstances("SnippingTool.exe")           ; Closes Snipping Tool window.
 }
 
 CloseAllInstances(exename)
