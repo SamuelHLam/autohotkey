@@ -67,7 +67,7 @@ QPSnip()
   Send, +{Tab}
   Send, {Space}
   
-  Snip(4, 85, A_ScreenWidth-4, 1034, "QuPath")
+  Snip(4, 85, A_ScreenWidth-4, A_ScreenHeight-46, "QuPath")
 }
 
 NDPSnip()
