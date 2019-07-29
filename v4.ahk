@@ -16,15 +16,19 @@ CoordMode, Pixel, Screen	; Absolute coordinates when using pixel search function
 CoordMode, Mouse, Screen	; Absolute coordinates when using mouse functions
 
 ; Global variables
-waitTime := 2000                  ; In milliseconds. Used to wait for images to fully load.
-magnification := 20
-xcoord := 30000, ycoord := 10000  ; Area of interest on slide.
+waitTime      := 2000                           ; In milliseconds. Used to wait for images to fully load.
+magnification := 20                             ; Desired magnification.
+imgwidth      := 51200, imgheight     := 38144  ; Dimensions of slide image.
+imgx          := 30000, imgy          := 10000  ; Area of interest on slide.
+qpmapwidth    := 150,   qpmapheight   := 111    ; Dimensions of QuPath slide map.
+qpmapx        := 1760,  qpmapy        := 92     ; Position of QuPath slide map (top left corner).
+ndpmapwidth   := 480,   ndpmapheight  := 357    ; Dimensions of NDP.view 2 slide map.
+ndpmapx       := 1422,  ndpmapy       := 705    ; Position of NDP.view 2 slide map (top left corner).
 
 ;
 ; Main -- how to start the script; change the key assignment here 
 ;
 ^k::                                                                  ; Can be mapped to any hotkey.
-
 
 Run, %ProgramFiles%\QuPath\QuPath.exe "%A_ScriptDir%\CMU-1.ndpi",, Max ; Opens CMU-1.ndpi with QuPath.
 WinWaitActive, ahk_exe QuPath.exe                                     ; The script will wait for a window belonging to the QuPath.exe process to appear.
@@ -55,8 +59,8 @@ QPSnip()
   Send, +{Tab}
   Send, %magnification%
   Send, {Enter}
-  QPMoveFOV(xcoord, ycoord)           ; Moves field of view.
-  Send, +{Tab 4}                      ; Removes unnecessary menu items (slide map, etc.).
+  MoveFOV(qpmapwidth, qpmapheight, qpmapx, qpmapy)  ; Moves field of view.
+  Send, +{Tab 4}                                    ; Removes unnecessary menu items (slide map, etc.).
   Send, {Space}
   Send, +{Tab}
   Send, {Space}
@@ -75,25 +79,20 @@ NDPSnip()
   Sleep, 800                  ; Waits for image to stop zooming in.
   Send, m                     ; Opens slide map.
   Sleep, 500
-  NDPMoveFOV(xcoord,ycoord)   ; Moves field of view.
-  Send, m                     ; Closes slide map.
+  MoveFOV(ndpmapwidth, ndpmapheight, ndpmapx, ndpmapy)  ; Moves field of view.
+  Send, m                                               ; Closes slide map.
   Sleep, 500
   
   Snip(0, 0, A_ScreenWidth, A_ScreenHeight, "NDPView2")
 }
 
-QPMoveFOV(x, y)
+MoveFOV(mapwidth, mapheight, mapx, mapy)
 {
-  xcf := 150/51200, ycf := 111/38144
-  smallx := Round(x*xcf), smally := Round(y*ycf)
-  MouseClick, left, 1760+smallx, 92+smally
-}
+  global
 
-NDPMoveFOV(x, y)
-{
-  xcf := 480/51200, ycf := 357/38144
-  smallx := Round(x*xcf), smally := Round(y*ycf)
-  MouseClick, left, 1422+smallx, 705+smally
+  xcf := mapwidth/imgwidth, ycf := mapheight/imgheight  ; Conversion factors.
+  smallx := Round(imgx*xcf), smally := Round(imgy*ycf)  ; Coordinates to click, relative to the slide map.
+  MouseClick, left, mapx+smallx, mapy+smally            ; Clicks absolute coordinates to move FOV.
 }
 
 Snip(x1, y1, x2, y2, name)
