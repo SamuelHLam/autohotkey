@@ -22,7 +22,7 @@ imgwidth      := 51200, imgheight     := 38144  ; Dimensions of slide image.
 imgx          := 39250, imgy          := 6000   ; Area of interest on slide.
 qpmapwidth    := 150,   qpmapheight   := 111    ; Dimensions of QuPath slide map.
 qpmapx        := 1759,  qpmapy        := 92     ; Position of QuPath slide map (top left corner).
-ndpmapwidth   := 480,   ndpmapheight  := 357    ; Dimensions of NDP.view 2 slide map.
+ndpmapwidth   := 481,   ndpmapheight  := 358    ; Dimensions of NDP.view 2 slide map.
 ndpmapx       := 1422,  ndpmapy       := 705    ; Position of NDP.view 2 slide map (top left corner).
 sdnmapwidth   := 315,   sdnmapheight  := 236    ; Dimensions of Sedeen slide map.
 sdnmapx       := 1604,  sdnmapy       := 74     ; Position of Sedeen slide map.
