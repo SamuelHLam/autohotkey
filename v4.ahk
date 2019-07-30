@@ -19,31 +19,39 @@ CoordMode, Mouse, Screen	; Absolute coordinates when using mouse functions
 waitTime      := 2000                           ; In milliseconds. Used to wait for images to fully load.
 magnification := 20                             ; Desired magnification.
 imgwidth      := 51200, imgheight     := 38144  ; Dimensions of slide image.
-imgx          := 30000, imgy          := 10000  ; Area of interest on slide.
+imgx          := 39250, imgy          := 6000   ; Area of interest on slide.
 qpmapwidth    := 150,   qpmapheight   := 111    ; Dimensions of QuPath slide map.
-qpmapx        := 1760,  qpmapy        := 92     ; Position of QuPath slide map (top left corner).
+qpmapx        := 1759,  qpmapy        := 92     ; Position of QuPath slide map (top left corner).
 ndpmapwidth   := 480,   ndpmapheight  := 357    ; Dimensions of NDP.view 2 slide map.
 ndpmapx       := 1422,  ndpmapy       := 705    ; Position of NDP.view 2 slide map (top left corner).
+sdnmapwidth   := 315,   sdnmapheight  := 236    ; Dimensions of Sedeen slide map.
+sdnmapx       := 1604,  sdnmapy       := 74     ; Position of Sedeen slide map.
 
 ;
 ; Main -- how to start the script; change the key assignment here 
 ;
-^k::                                                                  ; Can be mapped to any hotkey.
+^k::  ; Can be mapped to any hotkey.
 
 Run, %ProgramFiles%\QuPath\QuPath.exe "%A_ScriptDir%\CMU-1.ndpi",, Max ; Opens CMU-1.ndpi with QuPath.
-WinWaitActive, ahk_exe QuPath.exe                                     ; The script will wait for a window belonging to the QuPath.exe process to appear.
-Sleep, %waitTime%                                                     ; Waits for the progam to load fully.
-QPSnip()                                                              ; Moves FOV to location of interest and snips.
-CloseAllInstances("QuPath.exe")                                       ; Exits QuPath.
+WinWaitActive, ahk_exe QuPath.exe   ; The script will wait for a window belonging to the QuPath.exe process to appear.
+Sleep, %waitTime%                   ; Waits for the progam to load fully.
+QPSnip()                            ; Moves FOV to location of interest and snips.
+CloseAllInstances("QuPath.exe")     ; Exits QuPath.
 
-Run, %ProgramFiles%\Hamamatsu\NDP.view 2\NDPView2.exe "%A_ScriptDir%\CMU-1.ndpi",, Max ; Opens CMU-1.ndpi with NDPView2.
-WinWaitActive, NDP.view 2                                             ; Waits for NDPView2 to load.
+Run, %ProgramFiles%\Sedeen Viewer\sedeen.exe "%A_ScriptDir%\CMU-1.ndpi",, Max ; Opens CMU-1.ndpi with Sedeen.
+WinWaitActive, ahk_exe sedeen.exe
 Sleep, %waitTime%
-NDPSnip()                                                             ; Moves FOV to location of interest and snips.
-CloseAllInstances("NDPView2.exe")                                     ; Exits NDP.view 2.
+SedeenSnip()
+CloseAllInstances("sedeen.exe")
 
-CloseAllInstances("SnippingTool.exe")      ; I was having some problems with Snipping Tool not closing, so this is just to make sure.
-Esc::ExitApp                               ; Executes normally, but can be used as an emergency escape.
+;Run, %ProgramFiles%\Hamamatsu\NDP.view 2\NDPView2.exe "%A_ScriptDir%\CMU-1.ndpi",, Max ; Opens CMU-1.ndpi with NDPView2.
+;WinWaitActive, NDP.view 2            ; Waits for NDPView2 to load.
+;Sleep, %waitTime%
+;NDPSnip()                            ; Moves FOV to location of interest and snips.
+;CloseAllInstances("NDPView2.exe")    ; Exits NDP.view 2.
+
+CloseAllInstances("SnippingTool.exe") ; I was having some problems with Snipping Tool not closing, so this is just to make sure.
+Esc::ExitApp                          ; Executes normally, but can be used as an emergency escape.
 
 ;
 ; Functions
@@ -70,14 +78,31 @@ QPSnip()
   Snip(4, 85, A_ScreenWidth-4, A_ScreenHeight-46, "QuPath")
 }
 
+SedeenSnip()
+{
+  global
+
+  Send, {Alt}vl{Down}{Enter}  ; Removes tabs taking up space.
+  Send, {Alt}vt{Down}{Enter}  ; Opens zoom bar.
+  Sleep, 100
+  Click, 30, 280              ; Zooms to 20x.
+  Sleep, 100
+  Send, {Alt}vt{Down}{Enter}  ; Closes zoom bar.
+  Send, {Alt}vt{Enter}        ; Opens slide map.
+  MoveFOV(sdnmapwidth, sdnmapheight, sdnmapx, sdnmapy)  ; Moves field of view.
+  Send, {Alt}vt{Enter}                                  ; Closes slide map.
+
+  Snip(0, 73, A_ScreenWidth, A_ScreenHeight-61, "Sedeen")
+}
+
 NDPSnip()
 {
-  global                      ; Makes sure this function has access to global variables
+  global
   
-  Click                       ; Selects image.
-  Send, 5                     ; Selects zoom of 20x.
-  Sleep, 800                  ; Waits for image to stop zooming in.
-  Send, m                     ; Opens slide map.
+  Click       ; Selects image.
+  Send, 5     ; Selects zoom of 20x.
+  Sleep, 800  ; Waits for image to stop zooming in.
+  Send, m     ; Opens slide map.
   Sleep, 500
   MoveFOV(ndpmapwidth, ndpmapheight, ndpmapx, ndpmapy)  ; Moves field of view.
   Send, m                                               ; Closes slide map.
@@ -88,10 +113,12 @@ NDPSnip()
 
 MoveFOV(mapwidth, mapheight, mapx, mapy)
 {
-  global
+  global 
 
   xcf := mapwidth/imgwidth, ycf := mapheight/imgheight  ; Conversion factors.
   smallx := Round(imgx*xcf), smally := Round(imgy*ycf)  ; Coordinates to click, relative to the slide map.
+  ;MsgBox, Clicking on %smallx% %smally%
+  Sleep, 100
   MouseClick, left, mapx+smallx, mapy+smally            ; Clicks absolute coordinates to move FOV.
 }
 
