@@ -5,7 +5,7 @@
 
 %% output
 % difMatix: Euclidean distance in the CIELAB space 
-function [ difMatix ] = compareColorFunction_LAB( image1Name, image2Name)
+function [ diffMatrix ] = compareColorFunction_LAB( image1Name, image2Name)
 
     image1 = imread(image1Name);
     image2 = imread(image2Name);   
@@ -23,11 +23,12 @@ function [ difMatix ] = compareColorFunction_LAB( image1Name, image2Name)
     CIELAB1vector = reshape(CIELAB1,row*col,[]);
     CIELAB2vector = reshape(CIELAB2,row*col,[]);
     
-    dif2D = (CIELAB1vector - CIELAB2vector).^2;
-    dif1D = sqrt(sum(dif2D,2));
-    difMatix = reshape(dif1D,row,col);
-    save('dE.mat','difMatix');
-    imagesc(difMatix);
+    diff2D = (CIELAB1vector - CIELAB2vector).^2;
+    diff1D = sqrt(sum(diff2D,2));
+    diffMatrix = reshape(diff1D,row,col);
+    save('dE.mat','diffMatrix');
+    
+    imagesc(diffMatrix);
     colorbar;
 end
 
