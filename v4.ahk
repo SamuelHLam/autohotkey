@@ -50,23 +50,23 @@ Sleep, %waitTime%
 ISSnip()
 CloseAllInstances("ImageScope.exe")
 
-;Run, %ProgramFiles%\Hamamatsu\NDP.view 2\NDPView2.exe "%A_ScriptDir%\CMU-1.ndpi",, Max ; Opens CMU-1.ndpi with NDPView2.
-;WinWaitActive, NDP.view 2            ; Waits for NDPView2 to load.
-;Sleep, %waitTime%
-;NDPSnip()                            ; Moves FOV to location of interest and snips.
-;CloseAllInstances("NDPView2.exe")    ; Exits NDP.view 2.
+Run, %ProgramFiles%\Hamamatsu\NDP.view 2\NDPView2.exe "%A_ScriptDir%\CMU-1.ndpi",, Max ; Opens CMU-1.ndpi with NDPView2.
+WinWaitActive, NDP.view 2            ; Waits for NDPView2 to load.
+Sleep, %waitTime%
+NDPSnip()                            ; Moves FOV to location of interest and snips.
+CloseAllInstances("NDPView2.exe")    ; Exits NDP.view 2.
 
-;Run, %ProgramFiles%\QuPath\QuPath.exe "%A_ScriptDir%\CMU-1.ndpi",, Max ; Opens CMU-1.ndpi with QuPath.
-;WinWaitActive, ahk_exe QuPath.exe    ; The script will wait for a window belonging to the QuPath.exe process to appear.
-;Sleep, %waitTime%                    ; Waits for the progam to load fully.
-;QPSnip()                             ; Moves FOV to location of interest and snips.
-;CloseAllInstances("QuPath.exe")      ; Exits QuPath.
+Run, %ProgramFiles%\QuPath\QuPath.exe "%A_ScriptDir%\CMU-1.ndpi",, Max ; Opens CMU-1.ndpi with QuPath.
+WinWaitActive, ahk_exe QuPath.exe    ; The script will wait for a window belonging to the QuPath.exe process to appear.
+Sleep, %waitTime%                    ; Waits for the progam to load fully.
+QPSnip()                             ; Moves FOV to location of interest and snips.
+CloseAllInstances("QuPath.exe")      ; Exits QuPath.
 
-;Run, %ProgramFiles%\Sedeen Viewer\sedeen.exe "%A_ScriptDir%\CMU-1.ndpi",, Max ; Opens CMU-1.ndpi with Sedeen.
-;WinWaitActive, ahk_exe sedeen.exe
-;Sleep, %waitTime%
-;SedeenSnip()
-;CloseAllInstances("sedeen.exe")
+Run, %ProgramFiles%\Sedeen Viewer\sedeen.exe "%A_ScriptDir%\CMU-1.ndpi",, Max ; Opens CMU-1.ndpi with Sedeen.
+WinWaitActive, ahk_exe sedeen.exe
+Sleep, %waitTime%
+SedeenSnip()
+CloseAllInstances("sedeen.exe")
 
 CloseAllInstances("SnippingTool.exe") ; I was having some problems with Snipping Tool not closing, so this is just to make sure.
 Esc::ExitApp                          ; Executes normally, but can be used as an emergency escape.
@@ -97,7 +97,7 @@ ISSnip()
   MoveFOV(ismapwidth, ismapheight, ismapx, ismapy)
   Send, ^t        ; Closes slide map.
 
-  Snip(4, 72, A_ScreenWidth-2, A_ScreenHeight-44, "ImageScope")
+  Snip(5, 27, A_ScreenWidth-3, A_ScreenHeight-3, "ImageScope")
 }
 
 NDPSnip()
