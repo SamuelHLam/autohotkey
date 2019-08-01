@@ -16,7 +16,7 @@ CoordMode, Pixel, Screen	; Absolute coordinates when using pixel search function
 CoordMode, Mouse, Screen	; Absolute coordinates when using mouse functions
 
 ; Global variables
-waitTime      := 2000                           ; In milliseconds. Used to wait for images to fully load.
+waitTime      := 2000                           ; In milliseconds. Used to wait for images to fully load.m
 magnification := 20                             ; Desired magnification.
 
 imgwidth      := 51200, imgheight     := 38144  ; Dimensions of slide image.
