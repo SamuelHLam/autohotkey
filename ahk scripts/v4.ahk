@@ -16,11 +16,11 @@ CoordMode, Pixel, Screen	; Absolute coordinates when using pixel search function
 CoordMode, Mouse, Screen	; Absolute coordinates when using mouse functions
 
 ; Global variables
-waitTime      := 2000                           ; In milliseconds. Used to wait for images to fully load.m
+waitTime      := 2000                           ; In milliseconds. Used to wait for images to fully load.
 magnification := 20                             ; Desired magnification.
 
 imgwidth      := 51200, imgheight     := 38144  ; Dimensions of slide image.
-imgx          := 39250, imgy          := 6000   ; Area of interest on slide.
+imgx          := 4900, imgy          := 30000   ; Region of interest on slide.
 
 ismapwidth    := 421,   ismapheight   := 313    ; Dimensions of ImageScope slide map.
 ismapx        := 1492,  ismapy        := 32     ; Position of ImageScope slide map (top left corner).
@@ -39,35 +39,11 @@ sdnmapx       := 1604,  sdnmapy       := 74     ; Position of Sedeen slide map.
 ;
 ^k::  ; Can be mapped to any hotkey.
 
-;Run, %ProgramFiles%\ASAP 1.9\bin\ASAP.exe "%A_ScriptDir%\CMU-1.ndpi",, Max ; Opens CMU-1.ndpi with ASAP.
-;WinWaitActive, ahk_exe ASAP.exe
-;Sleep, %waitTime%
 ;ASAPSnip()
-
-Run, C:\Program Files (x86)\Aperio\ImageScope\ImageScope.exe "%A_ScriptDir%\CMU-1.ndpi",, Max; Opens CMU-1.ndpi with ImageScope.
-WinWaitActive, ahk_exe ImageScope.exe
-Sleep, %waitTime%
-ISSnip()
-CloseAllInstances("ImageScope.exe")
-
-Run, %ProgramFiles%\Hamamatsu\NDP.view 2\NDPView2.exe "%A_ScriptDir%\CMU-1.ndpi",, Max ; Opens CMU-1.ndpi with NDPView2.
-WinWaitActive, NDP.view 2            ; Waits for NDPView2 to load.
-Sleep, %waitTime%
-NDPSnip()                            ; Moves FOV to location of interest and snips.
-CloseAllInstances("NDPView2.exe")    ; Exits NDP.view 2.
-
-Run, %ProgramFiles%\QuPath\QuPath.exe "%A_ScriptDir%\CMU-1.ndpi",, Max ; Opens CMU-1.ndpi with QuPath.
-WinWaitActive, ahk_exe QuPath.exe    ; The script will wait for a window belonging to the QuPath.exe process to appear.
-Sleep, %waitTime%                    ; Waits for the progam to load fully.
-QPSnip()                             ; Moves FOV to location of interest and snips.
-CloseAllInstances("QuPath.exe")      ; Exits QuPath.
-
-Run, %ProgramFiles%\Sedeen Viewer\sedeen.exe "%A_ScriptDir%\CMU-1.ndpi",, Max ; Opens CMU-1.ndpi with Sedeen.
-WinWaitActive, ahk_exe sedeen.exe
-Sleep, %waitTime%
-SedeenSnip()
-CloseAllInstances("sedeen.exe")
-
+;ISSnip()
+;NDPSnip()
+;QPSnip()
+;SedeenSnip()
 CloseAllInstances("SnippingTool.exe") ; I was having some problems with Snipping Tool not closing, so this is just to make sure.
 Esc::ExitApp                          ; Executes normally, but can be used as an emergency escape.
 
@@ -78,48 +54,62 @@ ASAPSnip()
 {
   global  ; Makes sure this function has access to all global variables.
   
-  Send, {Alt}{Right}{Up 2}{Right}{Enter}         ; Remove all sidebars.
+  Run, %ProgramFiles%\ASAP 1.9\bin\ASAP.exe "%A_ScriptDir%\CMU-1.ndpi",, Max ; Opens CMU-1.ndpi with ASAP with the window maximized.
+  WinWaitActive, ahk_exe ASAP.exe               ; The script will wait for a window belonging to the ASAP.exe process to appear.
+  Sleep, %waitTime%                             ; Waits for the application to fullly load.
+  Send, {Alt}{Right}{Up 2}{Right}{Enter}        ; Remove all sidebars.
   Send, {Alt}{Right}{Up 2}{Right}{Down}{Enter}
   Send, {Alt}{Right}{Up 2}{Right}{Down 2}{Enter}
-  Click, right, 120, 30                          ; Remove toolbar.
+  Click, right, 120, 30                         ; Remove toolbar.
   Send, {Up}{Enter}
 }
 
 ISSnip()
 {
   global
-
-  Send, {Alt}vz   ; Opens zoom bar.
-  Click, 25, 210  ; Zooms to 20x.
-  Send, {Alt}vz   ; Closes zoom bar.
-  Send, {F11}     ; Enters fullscreen mode.
-  Send, ^t        ; Opens slide map.
+  
+  Run, C:\Program Files (x86)\Aperio\ImageScope\ImageScope.exe "%A_ScriptDir%\CMU-1.ndpi",, Max
+  WinWaitActive, ahk_exe ImageScope.exe
+  Sleep, %waitTime%
+  Send, {Alt}vz     ; Opens zoom bar.
+  Click, 25, 210    ; Zooms to 20x.
+  Send, {Alt}vz     ; Closes zoom bar.
+  Send, {F11}       ; Enters fullscreen mode.
+  Send, ^t          ; Opens slide map.
   MoveFOV(ismapwidth, ismapheight, ismapx, ismapy)
-  Send, ^t        ; Closes slide map.
-
-  Snip(5, 27, A_ScreenWidth-3, A_ScreenHeight-3, "ImageScope")
+  Send, ^t          ; Closes slide map.
+  
+  Snip(5, 27, A_ScreenWidth-3, A_ScreenHeight-3, "ImageScope")  ; Takes screenshot of only the image in the viewer.
+  CloseAllInstances("ImageScope.exe")                           ; Exits ImageScope.
 }
 
 NDPSnip()
 {
   global
   
-  Click       ; Selects image.
-  Send, 5     ; Zooms to 20x.
-  Sleep, 800  ; Waits for image to stop zooming in.
-  Send, m     ; Opens slide map.
+  Run, %ProgramFiles%\Hamamatsu\NDP.view 2\NDPView2.exe "%A_ScriptDir%\CMU-1.ndpi",, Max
+  WinWaitActive, NDP.view 2
+  Sleep, %waitTime%
+  Click             ; Selects image.
+  Send, 5           ; Zooms to 20x.
+  Sleep, 800        ; Waits for image to stop zooming in.
+  Send, m           ; Opens slide map.
   Sleep, 500
-  MoveFOV(ndpmapwidth, ndpmapheight, ndpmapx, ndpmapy)
-  Send, m     ; Closes slide map.
+  MoveFOV(ndpmapwidth, ndpmapheight, ndpmapx, ndpmapy) ; Moves field of view.
+  Send, m           ; Closes slide map.
   Sleep, 500
   
   Snip(0, 0, A_ScreenWidth, A_ScreenHeight, "NDPView2")
+  CloseAllInstances("NDPView2.exe")
 }
 
 QPSnip()
 {
   global
   
+  Run, %ProgramFiles%\QuPath\QuPath.exe "%A_ScriptDir%\CMU-1.ndpi",, Max
+  WinWaitActive, ahk_exe QuPath.exe
+  Sleep, %waitTime% 
   Send, +a              ; Removes side bar.
   MouseMove, 430, 60    ; Adjusts magnification.
   Click, 2
@@ -132,13 +122,17 @@ QPSnip()
   Send, +{Tab}{Space}
   Send, +{Tab}{Space}
   
-  Snip(4, 85, A_ScreenWidth-4, A_ScreenHeight-46, "QuPath")
+  Snip(4, 85, A_ScreenWidth-5, A_ScreenHeight-46, "QuPath")
+  CloseAllInstances("QuPath.exe")
 }
 
 SedeenSnip()
 {
   global
-
+  
+  Run, %ProgramFiles%\Sedeen Viewer\sedeen.exe "%A_ScriptDir%\CMU-1.ndpi",, Max
+  WinWaitActive, ahk_exe sedeen.exe
+  Sleep, %waitTime%
   Send, {Alt}vl{Down}{Enter}  ; Removes tabs taking up space.
   Send, {Alt}vt{Down}{Enter}  ; Opens zoom bar.
   Sleep, 100
@@ -146,16 +140,17 @@ SedeenSnip()
   Sleep, 100
   Send, {Alt}vt{Down}{Enter}  ; Closes zoom bar.
   Send, {Alt}vt{Enter}        ; Opens slide map.
-  MoveFOV(sdnmapwidth, sdnmapheight, sdnmapx, sdnmapy)  ; Moves field of view.
-  Send, {Alt}vt{Enter}                                  ; Closes slide map.
+  MoveFOV(sdnmapwidth, sdnmapheight, sdnmapx, sdnmapy)
+  Send, {Alt}vt{Enter}        ; Closes slide map.
 
   Snip(0, 73, A_ScreenWidth, A_ScreenHeight-61, "Sedeen")
+  CloseAllInstances("sedeen.exe")
 }
 
 MoveFOV(mapwidth, mapheight, mapx, mapy)
 {
   global 
-
+  
   xcf := mapwidth/imgwidth, ycf := mapheight/imgheight  ; Conversion factors.
   smallx := Round(imgx*xcf), smally := Round(imgy*ycf)  ; Coordinates to click, relative to the slide map.
   ;MouseMove, mapx+smallx, mapy+smally
@@ -166,6 +161,7 @@ MoveFOV(mapwidth, mapheight, mapx, mapy)
 
 Snip(x1, y1, x2, y2, name)
 {
+  Sleep, 500
   Run, "%a_windir%\System32\SnippingTool.exe"     ; Runs Snipping Tool
   WinWaitActive, Snipping Tool                    ; Waits for the Snipping Tool to start before running further commands.
   MouseClickDrag, left, %x1%, %y1%, %x2%, %y2%    ; Executes a snip.
