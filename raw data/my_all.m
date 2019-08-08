@@ -1,7 +1,7 @@
 f0 = 'r_ndpview2.png';
-f1 = 'r_r_sedeen.png';
+f1 = 'r_sedeen.png';
 f2 = 'r_qupath.png';
-f3 = 'r_r_asap.png';
+f3 = 'r_asap.png';
 
 fn1 = f0;
 fn2 = f1;
