@@ -4,7 +4,6 @@ fn1 = sprintf('%s.png',mov)
 fn2 = sprintf('%s.png',fix)
 fn1_reg = sprintf('r_%s', fn1);
 fn2_reg = sprintf('r_%s', fn2);
-reg_transform = 'mtreg.mat';
 com_out = sprintf('%s-%s', mov, fix);
 max_color = 30;
 
@@ -14,9 +13,8 @@ fix = imread(fn2);
 movingReg = registerImages(mov, fix);
 
 t_matrix = movingReg.Transformation.T
-save(reg_transform,'movingReg');
 
-[r_mov, r_fix] = ImageRegistration(fn1,fn2,reg_transform);
+[r_mov, r_fix] = ImageRegistration(fn1,fn2,t_matrix);
 quality = registrationQualityEvaluationVariable(r_mov, r_fix)
 
 imwrite(r_mov, fn1_reg);

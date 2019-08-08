@@ -5,7 +5,7 @@
 % example input files
 % movingImageFile: 'input\registration_images\imageScope.PNG'
 % fixedImageFile: 'input\registration_images\Qupath.PNG'
-% movingImageTransforFunctionFile: 'input\registration_images\movingReg.mat'
+% movingImageTransforFunctionFile: 'input\registration_images\movingImageTransformFunction.mat'
 
 
 %% output
@@ -18,16 +18,16 @@
 %     a. load correct moving and fix images
 %     b. do registration
 %     c. click export to workspace and save the movingImageTransforFunction
-%     in "movingReg"
+%     in "movingImageTransformFunction"
 %     d. save movingImageTransforFunction to
 %     movingImageTransforFunctionFile
 % 2. Run ImageRegistration
-function [movingOutput,fixedOutput] = ImageRegistration(movingImageFile,fixedImageFile,movingImageTransforFunctionFile)
+function [movingOutput,fixedOutput] = ImageRegistration(movingImageFile,fixedImageFile,movingReg)
 
     movingImage = imread(movingImageFile);
     fixedImage = imread(fixedImageFile);
-    movingReg = load(movingImageTransforFunctionFile);
-    transformation = movingReg.movingReg.Transformation;
+    movingReg
+    transformation = movingReg.Transformation;
     transformationMatrix = transformation.T;
 
     temp = [1,1,1]*transformationMatrix;
