@@ -42,7 +42,7 @@ subplot(2,4,2)
 image(im2)
 axis image
 axis off
-title(fn2,'Interpreter','none')
+title(sprintf('%s, R=%.4f',fn2,the_corr_is(1,2)),'Interpreter','none')
 
 subplot(2,4,3)
 histogram(de_lin)
