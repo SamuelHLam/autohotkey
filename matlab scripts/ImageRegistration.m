@@ -26,7 +26,7 @@ function [movingOutput,fixedOutput] = ImageRegistration(movingImageFile,fixedIma
 
     movingImage = imread(movingImageFile);
     fixedImage = imread(fixedImageFile);
-    movingReg
+    
     transformation = movingReg.Transformation;
     transformationMatrix = transformation.T;
 

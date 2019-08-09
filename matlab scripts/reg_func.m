@@ -14,8 +14,8 @@ movingReg = registerImages(mov, fix);
 
 t_matrix = movingReg.Transformation.T
 
-[r_mov, r_fix] = ImageRegistration(fn1,fn2,t_matrix);
-quality = registrationQualityEvaluationVariable(r_mov, r_fix)
+[r_mov, r_fix] = ImageRegistration(fn1,fn2,movingReg);
+checkregistration(r_mov, r_fix)
 
 imwrite(r_mov, fn1_reg);
 imwrite(r_fix, fn2_reg);
