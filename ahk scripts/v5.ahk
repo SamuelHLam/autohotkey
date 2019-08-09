@@ -1,4 +1,4 @@
-;
+﻿;
 ; Known Bugs:
 ;   - NDP.view 2 will somtimes display black artifacts over the image when loaded.
 ;     These artifacts seem to be random and may appear or disappear when reloaded.
@@ -23,16 +23,16 @@ imgwidth      := 51200, imgheight     := 38144  ; Dimensions of slide image.
 imgx          := 4900, imgy          := 30000   ; Region of interest on slide.
 
 ismapwidth    := 420,   ismapheight   := 312    ; Dimensions of ImageScope slide map.
-ismapx        := 1492,  ismapy        := 32     ; Position of ImageScope slide map (top left corner).
+ismapx        := A_ScreenWidth-8,  ismapy        := 32     ; Position of ImageScope slide map (top right corner).
 
 ndpmapwidth   := 480,   ndpmapheight  := 357    ; Dimensions of NDP.view 2 slide map.
-ndpmapx       := 1422,  ndpmapy       := 705    ; Position of NDP.view 2 slide map.
+ndpmapx       := A_ScreenWidth-18,  ndpmapy       := A_ScreenHeight-18    ; Position of NDP.view 2 slide map (bottom right corner).
 
 qpmapwidth    := 149,   qpmapheight   := 110    ; Dimensions of QuPath slide map.
-qpmapx        := 1759,  qpmapy        := 92     ; Position of QuPath slide map.
+qpmapx        := A_ScreenWidth-12,  qpmapy        := 92     ; Position of QuPath slide map (top right corner).
 
 sdnmapwidth   := 323,   sdnmapheight  := 242    ; Dimensions of Sedeen slide map.
-sdnmapx       := 1595,  sdnmapy       := 44     ; Position of Sedeen slide map.
+sdnmapx       := A_ScreenWidth-2,  sdnmapy       := 44     ; Position of Sedeen slide map (top right corner).
 
 ;
 ; Main -- how to start the script; change the key assignment here 
@@ -95,7 +95,7 @@ NDPSnip()
   Sleep, 800        ; Waits for image to stop zooming in.
   Send, m           ; Opens slide map.
   Sleep, 500
-  MoveFOV(ndpmapwidth, ndpmapheight, ndpmapx, ndpmapy) ; Moves field of view.
+  NDPMoveFOV(ndpmapwidth, ndpmapheight, ndpmapx, ndpmapy) ; Moves field of view.
   Send, m           ; Closes slide map.
   Sleep, 500
   
@@ -153,10 +153,22 @@ MoveFOV(mapwidth, mapheight, mapx, mapy)
   
   xcf := mapwidth/imgwidth, ycf := mapheight/imgheight  ; Conversion factors.
   smallx := Round(imgx*xcf), smally := Round(imgy*ycf)  ; Coordinates to click, relative to the slide map.
-  ;MouseMove, mapx+smallx, mapy+smally
+  ;MouseMove, mapx-mapwidth+smallx, mapy+smally
   ;MsgBox, Clicking on %smallx% %smally%
   Sleep, 100
-  MouseClick, left, mapx+smallx, mapy+smally            ; Clicks absolute coordinates to move FOV.
+  MouseClick, left, mapx-mapwidth+smallx, mapy+smally            ; Clicks absolute coordinates to move FOV.
+}
+
+NDPMoveFOV(mapwidth, mapheight, mapx, mapy)
+{
+  global 
+  
+  xcf := mapwidth/imgwidth, ycf := mapheight/imgheight  ; Conversion factors.
+  smallx := Round(imgx*xcf), smally := Round(imgy*ycf)  ; Coordinates to click, relative to the slide map.
+  ;MouseMove, mapx-mapwidth+smallx, mapy-mapheight+smally
+  ;MsgBox, Clicking on %smallx% %smally%
+  Sleep, 100
+  MouseClick, left, mapx-mapwidth+smallx, mapy-mapheight+smally            ; Clicks absolute coordinates to move FOV.
 }
 
 Snip(x1, y1, x2, y2, name)
@@ -170,7 +182,7 @@ Snip(x1, y1, x2, y2, name)
   Send, %name%                                    ; Assigns name to file.
   Send, {Enter}                                   ; Saves file.
   WinWaitActive, Snipping Tool                    ; Waits for save window to close.
-  Sleep, 500
+  Sleep, 100
   CloseAllInstances("SnippingTool.exe")           ; Closes Snipping Tool window.
 }
 
