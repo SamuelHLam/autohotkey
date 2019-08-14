@@ -13,10 +13,13 @@ f3 = 'ndpview2';
 diary log.txt
 
 % Crop the NDP.view 2 screenshot to show a smaller area (makes registering
-% all 6 images easier)
+% all 6 images easier), renaming the original screenshot to a temp name,
+% restored at the end
 ndp = imread('ndpview2.png');
 movefile('ndpview2.png', 'raw_ndpview2.png');
-ndp_crop = imcrop(ndp, [750, 330, 400, 400]);
+[height, width, channels] = size(ndp);
+ndp_crop = imcrop(ndp, [floor(width/2)-200, floor(height/2)-200, 399, 399]);
+[cropwidth, cropheight,cropchannels] = size(ndp_crop);
 imwrite(ndp_crop, 'ndpview2.png');
 
 % Registers every other image to NDP
@@ -25,7 +28,8 @@ reg_func(f1, f3)
 reg_func(f2, f3)
 
 % This allows us to use the registered Sedeen screenshot as the fixed image
-% for the next two registrations
+% for the next two registrations; original screenshot renamed to a temp
+% name, restored at the end
 movefile('sedeen.png', 'raw_sedeen.png');
 movefile('reg_imgs\r_sedeen.png', 'sedeen.png');
 
@@ -33,7 +37,8 @@ reg_func(f0, f2)
 reg_func(f1, f2)
 
 % Finally, we want to use the registered ASAP screenshot as the fixed image
-% in the last registration
+% in the last registration; original screenshot renamed to a temp
+% name, restored at the end
 movefile('asap.png', 'raw_asap.png');
 movefile('reg_imgs\r_asap.png', 'asap.png');
 
@@ -76,7 +81,7 @@ mov = imread(fn1);
 fix = imread(fn2);
 
 % Generates transformation matrix
-movingReg = registerImages(mov, fix);
+movingReg = registerImagesAffine(mov, fix);
 
 % Displays transformation matrix
 t_matrix = movingReg.Transformation.T
@@ -101,7 +106,7 @@ save(sprintf('%sdE_%s.mat', dE_path, com_out),'dE');
 caxis([0 max_color]);
 set(gca,'visible','off');
 set(gca,'xtick',[]);
-set(gcf,'Position',[0 0 flip(size(dE))]);
+set(gcf,'Position',[0 0 479 400]);
 saveas(gcf, sprintf('%sheatmap-%s.png', heatmap_path, com_out));
 
 return
