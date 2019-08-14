@@ -18,6 +18,7 @@ CoordMode, Mouse, Screen	; Absolute coordinates when using mouse functions
 ; Global variables
 wait_time     := 2000                           ; In milliseconds. Used to wait for images to fully load.
 magnification := 20                             ; Desired magnification.
+out_loc       := "C:\Users\Qi Gong\Documents\GitHub\autohotkey\matlab scripts\"
 
 img_width      := 51200,  img_height     := 38144   ; Dimensions of slide image.
 img_x          := 4900,   img_y          := 30000   ; Region of interest on slide.
@@ -42,14 +43,13 @@ sdn_map_x       := A_ScreenWidth-2,  sdn_map_y        := 44                   ; 
 ;
 ^k::  ; Can be mapped to any hotkey.
 
-FileDelete, asap.png
-FileDelete, ndpview2.png
-FileDelete, qupath.png
-FileDelete, sedeen.png
+FileDelete, % out_loc . "asap.png"
+FileDelete, % out_loc . "ndpview2.png"
+FileDelete, % out_loc . "qupath.png"
+FileDelete, % out_loc . "sedeen.png"
 
 ASAPSnip()
 CloseAllInstances("SnippingTool.exe") ; I was having some problems with Snipping Tool not closing, so this is just to make sure.
-;ISSnip()
 NDPSnip()
 CloseAllInstances("SnippingTool.exe")
 QPSnip()
@@ -87,7 +87,7 @@ ASAPSnip()
   LowerMoveFOV(asap_map_width, asap_map_height, asap_map_x, asap_map_y) ; Moves field of view.
   Send, {Alt}{Right}{Up 3}{R}{Enter}  ; Closes slide map.
   
-  Snip(2, 44, A_ScreenWidth-3, A_ScreenHeight-63, "asap") ; Takes screenshot of only the image in the viewer.
+  Snip(2, 44, A_ScreenWidth-3, A_ScreenHeight-63, out_loc . "asap.png") ; Takes screenshot of only the image in the viewer.
   CloseAllInstances("ASAP.exe")                           ; Exits ASAP.
 }
 
@@ -106,7 +106,7 @@ ISSnip()
   MoveFOV(is_map_width, is_map_height, is_map_x, is_map_y)
   Send, ^t          ; Closes slide map.
   
-  Snip(5, 27, A_ScreenWidth-3, A_ScreenHeight-3, "imagescope")  ; Takes screenshot of only the image in the viewer.
+  Snip(5, 27, A_ScreenWidth-3, A_ScreenHeight-3, out_loc . "imagescope.png")  ; Takes screenshot of only the image in the viewer.
   CloseAllInstances("ImageScope.exe")                           ; Exits ImageScope.
 }
 
@@ -126,7 +126,7 @@ NDPSnip()
   Send, m           ; Closes slide map.
   Sleep, 500
   
-  Snip(0, 0, A_ScreenWidth, A_ScreenHeight, "ndpview2")
+  Snip(0, 0, A_ScreenWidth, A_ScreenHeight, out_loc . "ndpview2.png")
   CloseAllInstances("NDPView2.exe")
 }
 
@@ -149,7 +149,7 @@ QPSnip()
   Send, +{Tab}{Space}
   Send, +{Tab}{Space}
   
-  Snip(4, 85, A_ScreenWidth-5, A_ScreenHeight-46, "qupath")
+  Snip(4, 85, A_ScreenWidth-5, A_ScreenHeight-46, out_loc . "qupath.png")
   CloseAllInstances("QuPath.exe")
 }
 
@@ -170,7 +170,7 @@ SedeenSnip()
   MoveFOV(sdn_map_width, sdn_map_height, sdn_map_x, sdn_map_y)
   Send, {Alt}vt{Enter}        ; Closes slide map.
 
-  Snip(0, 43, A_ScreenWidth, A_ScreenHeight-61, "sedeen")
+  Snip(0, 43, A_ScreenWidth, A_ScreenHeight-61, out_loc . "sedeen.png")
   CloseAllInstances("sedeen.exe")
 }
 
