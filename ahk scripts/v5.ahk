@@ -16,31 +16,36 @@ CoordMode, Pixel, Screen	; Absolute coordinates when using pixel search function
 CoordMode, Mouse, Screen	; Absolute coordinates when using mouse functions
 
 ; Global variables
-wait_time      := 2000  ; In milliseconds. Used to wait for images to fully load.
-magnification := 20     ; Desired magnification.
+wait_time     := 2000                           ; In milliseconds. Used to wait for images to fully load.
+magnification := 20                             ; Desired magnification.
 
-img_width       := 51200,             img_height        := 38144            ; Dimensions of slide image.
-img_x           := 4900,              img_y             := 30000            ; Region of interest on slide.
+img_width      := 51200,  img_height     := 38144   ; Dimensions of slide image.
+img_x          := 4900,   img_y          := 30000   ; Region of interest on slide.
 
-asap_map_width  := 249,               asap_map_height  := 185               ; Dimensions of ASAP slide map.
-asap_map_x      := A_ScreenWidth-33,  asap_map_y       := A_ScreenHeight-93 ; Position of ASAP slide map (bottom right corner).
+asap_map_width   := 249,              asap_map_height := 185                  ; Dimensions of ASAP slide map.
+asap_map_x       := A_ScreenWidth-33, asap_map_y      := A_ScreenHeight-93    ; Position of ASAP slide map (bottom right corner).
 
-is_map_width    := 420,               is_map_height   := 312                ; Dimensions of ImageScope slide map.
-is_map_x        := A_ScreenWidth-8,   is_map_y        := 32                 ; Position of ImageScope slide map (top right corner).
+is_map_width    := 420,               is_map_height   := 312                  ; Dimensions of ImageScope slide map.
+is_map_x        := A_ScreenWidth-8,   is_map_y        := 32                   ; Position of ImageScope slide map (top right corner).
 
-ndp_map_width   := 480,               ndp_map_height  := 357                ; Dimensions of NDP.view 2 slide map.
-ndp_map_x       := A_ScreenWidth-18,  ndp_map_y       := A_ScreenHeight-18  ; Position of NDP.view 2 slide map (bottom right corner).
+ndp_map_width   := 480,               ndp_map_height  := 357                  ; Dimensions of NDP.view 2 slide map.
+ndp_map_x       := A_ScreenWidth-18,  ndp_map_y       := A_ScreenHeight-18    ; Position of NDP.view 2 slide map (bottom right corner).
 
-qp_map_width    := 149,               qp_map_height   := 110                ; Dimensions of QuPath slide map.
-qp_map_x        := A_ScreenWidth-12,  qp_map_y        := 92                 ; Position of QuPath slide map (top right corner).
+qp_map_width    := 149,               qp_map_height   := 110                  ; Dimensions of QuPath slide map.
+qp_map_x        := A_ScreenWidth-12,  qp_map_y        := 92                   ; Position of QuPath slide map (top right corner).
 
-sdn_map_width   := 323,               sdn_map_height  := 242                ; Dimensions of Sedeen slide map.
-sdn_map_x       := A_ScreenWidth-2,   sdn_map_y       := 44                 ; Position of Sedeen slide map (top right corner).
+sdn_map_width   := 323,              sdn_map_height   := 242                  ; Dimensions of Sedeen slide map.
+sdn_map_x       := A_ScreenWidth-2,  sdn_map_y        := 44                   ; Position of Sedeen slide map (top right corner).
 
 ;
 ; Main -- how to start the script; change the key assignment here 
 ;
 ^k::  ; Can be mapped to any hotkey.
+
+FileDelete, asap.png
+FileDelete, ndpview2.png
+FileDelete, qupath.png
+FileDelete, sedeen.png
 
 ASAPSnip()
 CloseAllInstances("SnippingTool.exe") ; I was having some problems with Snipping Tool not closing, so this is just to make sure.
@@ -70,16 +75,17 @@ ASAPSnip()
   Click, right, 120, 30                           ; Remove toolbar.
   Send, {Up}{Enter}
   
-  MouseMove, 3, 50                                ; Zoom in.
+  MouseMove, 3, 50
+  
   Loop 72
   {
     Send, {WheelUp}
     Sleep, 500
   }
-  Send, {Alt}{Right}{Up 3}{R}{Enter}              ; Opens slide map.
+  Send, {Alt}{Right}{Up 3}{R}{Enter}  ; Opens slide map.
   Sleep, 100
   LowerMoveFOV(asap_map_width, asap_map_height, asap_map_x, asap_map_y) ; Moves field of view.
-  Send, {Alt}{Right}{Up 3}{R}{Enter}              ; Closes slide map.
+  Send, {Alt}{Right}{Up 3}{R}{Enter}  ; Closes slide map.
   
   Snip(2, 44, A_ScreenWidth-3, A_ScreenHeight-63, "asap") ; Takes screenshot of only the image in the viewer.
   CloseAllInstances("ASAP.exe")                           ; Exits ASAP.
@@ -177,7 +183,7 @@ MoveFOV(mapwidth, mapheight, mapx, mapy)
   ;MouseMove, mapx-mapwidth+smallx, mapy+smally
   ;MsgBox, Clicking on %smallx% %smally%
   Sleep, 100
-  MouseClick, left, mapx-mapwidth+smallx, mapy+smally     ; Clicks absolute coordinates to move FOV.
+  MouseClick, left, mapx-mapwidth+smallx, mapy+smally            ; Clicks absolute coordinates to move FOV.
 }
 
 LowerMoveFOV(mapwidth, mapheight, mapx, mapy)
@@ -189,7 +195,7 @@ LowerMoveFOV(mapwidth, mapheight, mapx, mapy)
   ;MouseMove, mapx-mapwidth+smallx, mapy-mapheight+smally
   ;MsgBox, Clicking on %smallx% %smally%
   Sleep, 100
-  MouseClick, left, mapx-mapwidth+smallx, mapy-mapheight+smally ; Clicks absolute coordinates to move FOV.
+  MouseClick, left, mapx-mapwidth+smallx, mapy-mapheight+smally            ; Clicks absolute coordinates to move FOV.
 }
 
 Snip(x1, y1, x2, y2, name)
