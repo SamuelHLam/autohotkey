@@ -86,62 +86,23 @@ sdn_map_y       := 44
 ^k::  ; Can be mapped to any hotkey.
 
 ; Cleans out previous screenshots
-FileDelete, % out_loc . "asap.png"
-FileDelete, % out_loc . "ndpview2.png"
-FileDelete, % out_loc . "qupath.png"
-FileDelete, % out_loc . "sedeen.png"
+;FileDelete, % out_loc . "asap.png"
+;FileDelete, % out_loc . "ndpview2.png"
+;FileDelete, % out_loc . "qupath.png"
+;FileDelete, % out_loc . "sedeen.png"
 
-ASAPSnip()
+;ASAPSnip()
 ; Safety measure; during testing, Snipping Tool did not close properly
-CloseAllInstances("SnippingTool.exe")
-NDPSnip()
-CloseAllInstances("SnippingTool.exe")
-QPSnip()
-CloseAllInstances("SnippingTool.exe")
-SedeenSnip()
-CloseAllInstances("SnippingTool.exe")
-
-return
+;CloseAllInstances("SnippingTool.exe")
+;NDPSnip()
+;CloseAllInstances("SnippingTool.exe")
+;QPSnip()
+;CloseAllInstances("SnippingTool.exe")
+;SedeenSnip()
+;CloseAllInstances("SnippingTool.exe")
 
 ; Executes normally, but can be used as an emergency escape.
 Esc::ExitApp
-
-; Click location for panning
-c := 150
-
-; Drag left
-!+1::
-MouseClickDrag, c, c, c+1, c
-return
-
-; Drag right
-!+2::
-MouseClickDrag, c, c, c-1, c
-return
-
-; Drag up
-!+3::
-MouseClickDrag, c, c, c, c-1
-return
-
-; Drag down
-!+4::
-MouseClickDrag, c, c, c, c+1
-return
-
-; Wheel up
-!+5::
-Send, {WheelUp}
-Sleep, {500}
-return
-
-; Wheel down
-!+6::
-Send, {WheelDown}
-Sleep, {500}
-return
-
-
 
 ;
 ; Functions
