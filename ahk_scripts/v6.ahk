@@ -101,8 +101,47 @@ CloseAllInstances("SnippingTool.exe")
 SedeenSnip()
 CloseAllInstances("SnippingTool.exe")
 
+return
+
 ; Executes normally, but can be used as an emergency escape.
 Esc::ExitApp
+
+; Click location for panning
+c := 150
+
+; Drag left
+!+1::
+MouseClickDrag, c, c, c+1, c
+return
+
+; Drag right
+!+2::
+MouseClickDrag, c, c, c-1, c
+return
+
+; Drag up
+!+3::
+MouseClickDrag, c, c, c, c-1
+return
+
+; Drag down
+!+4::
+MouseClickDrag, c, c, c, c+1
+return
+
+; Wheel up
+!+5::
+Send, {WheelUp}
+Sleep, {500}
+return
+
+; Wheel down
+!+6::
+Send, {WheelDown}
+Sleep, {500}
+return
+
+
 
 ;
 ; Functions
