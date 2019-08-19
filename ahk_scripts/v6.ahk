@@ -2,6 +2,8 @@
 ; Known Bugs:
 ;   - NDP.view 2 will somtimes display black artifacts over the image when loaded.
 ;     These artifacts seem to be random and may appear or disappear when reloaded.
+;   - Portions of the borders of the slide map in NDP.view 2 will sometimes disappear,
+;     preventing the script from determining the size of the slide map.
 ;
 
 ;
@@ -40,8 +42,7 @@ wait_time := 2000
 magnification := 20
 
 ; This determines where the screenshots are saved
-out_loc := "C:\Users\Qi Gong\Documents\GitHub\autohotkey\matlab scripts\"
-
+out_path = %A_WorkingDir%\..\matlab_scripts\
 
 ; Center of region of interest
 ;roi_x           := round((x1+x2)/2)
@@ -49,37 +50,22 @@ out_loc := "C:\Users\Qi Gong\Documents\GitHub\autohotkey\matlab scripts\"
 roi_x := 46100
 roi_y := 13000
 
-; Dimensions of ASAP slide map
-;asap_map_width  := 249
-;asap_map_height := 185
 ; Position of ASAP slide map (bottom right corner)
 asap_map_x      := A_ScreenWidth-33
 asap_map_y      := A_ScreenHeight-93
 
-; Dimensions of ImageScope slide map
-;is_map_width    := 420
-;is_map_height   := 312
 ; Position of ImageScope slide map (top right corner)
 is_map_x        := A_ScreenWidth-8
 is_map_y        := 32
 
-; Dimensions of NDP.view 2 slide map
-;ndp_map_width   := 481
-;ndp_map_height  := 358
 ; Position of NDP.view 2 slide map (bottom right corner)
 ndp_map_x       := A_ScreenWidth-17
 ndp_map_y       := A_ScreenHeight-17
 
-; Dimensions of QuPath slide map
-;qp_map_width    := 149
-;qp_map_height   := 110
 ; Position of QuPath slide map (top right corner)
 qp_map_x        := A_ScreenWidth-12
 qp_map_y        := 92
 
-; Dimensions of Sedeen slide map
-;sdn_map_width   := 323
-;sdn_map_height  := 242
 ; Position of Sedeen slide map (top right corner)
 sdn_map_x       := A_ScreenWidth-2
 sdn_map_y       := 44
@@ -90,10 +76,10 @@ sdn_map_y       := 44
 ^k::  ; Can be mapped to any hotkey.
 
 ; Cleans out previous screenshots
-FileDelete, % out_loc . "asap.png"
-FileDelete, % out_loc . "ndpview2.png"
-FileDelete, % out_loc . "qupath.png"
-FileDelete, % out_loc . "sedeen.png"
+FileDelete, % out_path . "asap.png"
+FileDelete, % out_path . "ndpview2.png"
+FileDelete, % out_path . "qupath.png"
+FileDelete, % out_path . "sedeen.png"
 
 ASAPSnip()
 ; Safety measure; during testing, Snipping Tool did not close properly
@@ -148,7 +134,7 @@ ASAPSnip()
     Send, {Alt}{Right}{Up 3}{R}{Enter}
     
     ; Take screen shot
-    Snip(out_loc . "asap.png")
+    Snip(out_path . "asap.png")
     
     ; Exit ASAP
     CloseAllInstances("ASAP.exe")
@@ -173,7 +159,7 @@ ISSnip()
     
     Send, ^t        ; Closes slide map
     
-    Snip(out_loc . "imagescope.png")
+    Snip(out_path . "imagescope.png")
     CloseAllInstances("ImageScope.exe")
 }
 
@@ -196,7 +182,7 @@ NDPSnip()
     Send, m     ; Closes slide map
     Sleep, 500
     
-    Snip(out_loc . "ndpview2.png")
+    Snip(out_path . "ndpview2.png")
     CloseAllInstances("NDPView2.exe")
 }
 
@@ -225,7 +211,7 @@ QPSnip()
     Send, +{Tab}{Space}
     Send, +{Tab}{Space}
     
-    Snip(out_loc . "qupath.png")
+    Snip(out_path . "qupath.png")
     CloseAllInstances("QuPath.exe")
 }
 
@@ -250,7 +236,7 @@ SedeenSnip()
     
     Send, {Alt}vt{Enter}        ; Closes slide map
 
-    Snip(out_loc . "sedeen.png")
+    Snip(out_path . "sedeen.png")
     CloseAllInstances("sedeen.exe")
 }
 
@@ -266,10 +252,10 @@ MoveFOV(map_x, map_y, border_color, offset)
     {
         map_width++
         PixelGetColor, curr, map_x - map_width, map_y + 5
-        MouseMove, map_x - map_width, map_y + 5
+        ;MouseMove, map_x - map_width, map_y + 5
     } Until curr == border_color
     map_width += offset
-    MsgBox, The width is %map_width%.
+    ;MsgBox, The width is %map_width%.
 
     ; Find lower border by scanning along y-axis searching for border color
     map_height := 5
@@ -277,10 +263,10 @@ MoveFOV(map_x, map_y, border_color, offset)
     {
         map_height++
         PixelGetColor, curr, map_x - 5, map_y + map_height
-        MouseMove, map_x - 5, map_y + map_height
+        ;MouseMove, map_x - 5, map_y + map_height
     } Until curr == border_color
     map_height += offset
-    MsgBox, The height is %map_height%.
+    ;MsgBox, The height is %map_height%.
     
     ; Conversion factors
     xcf := map_width/img_width, ycf := map_height/img_height
@@ -305,9 +291,10 @@ LowerMoveFOV(map_x, map_y, border_color, offset)
     {
         map_width++
         PixelGetColor, curr, map_x - map_width, map_y - 5
-        MouseMove, map_x - map_width, map_y - 5
+        ;MouseMove, map_x - map_width, map_y - 5
     } Until ((border_color == 0) ? (curr == border_color) : (curr & border_color == border_color))
     map_width += offset
+    ;MsgBox, The width is %map_width%.
 
     ; Find upper border
     map_height := 5
@@ -315,9 +302,10 @@ LowerMoveFOV(map_x, map_y, border_color, offset)
     {
         map_height++
         PixelGetColor, curr, map_x - 5, map_y - map_height
-        MouseMove, map_x - 5, map_y - map_height
+        ;MouseMove, map_x - 5, map_y - map_height
     } Until ((border_color == 0) ? (curr == border_color) : (curr & border_color == border_color))
     map_height += offset
+    ;MsgBox, The height is %map_height%.
     
     xcf := map_width/img_width, ycf := map_height/img_height
     small_x := Round(roi_x*xcf), small_y := Round(roi_y*ycf)
@@ -348,8 +336,6 @@ Snip(name)
     ; Exits Snipping Tool
     CloseAllInstances("SnippingTool.exe")
 }
-
-
 
 CloseAllInstances(exename)
 {
