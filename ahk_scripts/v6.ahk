@@ -19,6 +19,10 @@ CoordMode, Mouse, Screen    ; Absolute coordinates when using mouse functions
 ; Input parameters
 ;
 
+; Dimensions of slide image
+img_width       := 51200
+img_height      := 38144
+
 ; Boundaries of region of interest on slide
 x1              := 4700
 y1              := 29800
@@ -36,46 +40,46 @@ wait_time := 2000
 magnification := 20
 
 ; This determines where the screenshots are saved
-out_loc := "C:\Users\Qi Gong\Documents\GitHub\autohotkey\matlab scripts\" 
+out_loc := "C:\Users\Qi Gong\Documents\GitHub\autohotkey\matlab scripts\"
 
-; Dimensions of slide image
-img_width       := 51200
-img_height      := 38144
+
 ; Center of region of interest
-roi_x           := round((x1+x2)/2)
-roi_y           := round((y1+y2)/2)
+;roi_x           := round((x1+x2)/2)
+;roi_y           := round((y1+y2)/2)
+roi_x := 46100
+roi_y := 13000
 
 ; Dimensions of ASAP slide map
-asap_map_width  := 249
-asap_map_height := 185
+;asap_map_width  := 249
+;asap_map_height := 185
 ; Position of ASAP slide map (bottom right corner)
 asap_map_x      := A_ScreenWidth-33
 asap_map_y      := A_ScreenHeight-93
 
 ; Dimensions of ImageScope slide map
-is_map_width    := 420
-is_map_height   := 312
+;is_map_width    := 420
+;is_map_height   := 312
 ; Position of ImageScope slide map (top right corner)
 is_map_x        := A_ScreenWidth-8
 is_map_y        := 32
 
 ; Dimensions of NDP.view 2 slide map
-ndp_map_width   := 480
-ndp_map_height  := 357
+;ndp_map_width   := 481
+;ndp_map_height  := 358
 ; Position of NDP.view 2 slide map (bottom right corner)
-ndp_map_x       := A_ScreenWidth-18
-ndp_map_y       := A_ScreenHeight-18
+ndp_map_x       := A_ScreenWidth-17
+ndp_map_y       := A_ScreenHeight-17
 
 ; Dimensions of QuPath slide map
-qp_map_width    := 149
-qp_map_height   := 110
+;qp_map_width    := 149
+;qp_map_height   := 110
 ; Position of QuPath slide map (top right corner)
 qp_map_x        := A_ScreenWidth-12
 qp_map_y        := 92
 
 ; Dimensions of Sedeen slide map
-sdn_map_width   := 323
-sdn_map_height  := 242
+;sdn_map_width   := 323
+;sdn_map_height  := 242
 ; Position of Sedeen slide map (top right corner)
 sdn_map_x       := A_ScreenWidth-2
 sdn_map_y       := 44
@@ -86,19 +90,19 @@ sdn_map_y       := 44
 ^k::  ; Can be mapped to any hotkey.
 
 ; Cleans out previous screenshots
-;FileDelete, % out_loc . "asap.png"
-;FileDelete, % out_loc . "ndpview2.png"
-;FileDelete, % out_loc . "qupath.png"
-;FileDelete, % out_loc . "sedeen.png"
+FileDelete, % out_loc . "asap.png"
+FileDelete, % out_loc . "ndpview2.png"
+FileDelete, % out_loc . "qupath.png"
+FileDelete, % out_loc . "sedeen.png"
 
-;ASAPSnip()
+ASAPSnip()
 ; Safety measure; during testing, Snipping Tool did not close properly
 ;CloseAllInstances("SnippingTool.exe")
-;NDPSnip()
+NDPSnip()
 ;CloseAllInstances("SnippingTool.exe")
-;QPSnip()
+QPSnip()
 ;CloseAllInstances("SnippingTool.exe")
-;SedeenSnip()
+SedeenSnip()
 ;CloseAllInstances("SnippingTool.exe")
 
 ; Executes normally, but can be used as an emergency escape.
@@ -135,10 +139,10 @@ ASAPSnip()
     
     ; Open slide map
     Send, {Alt}{Right}{Up 3}{R}{Enter}
-    Sleep, 100
+    Sleep, %wait_time%
     
     ; Move field of view
-    LowerMoveFOV(asap_map_width, asap_map_height, asap_map_x, asap_map_y)
+    LowerMoveFOV(asap_map_x, asap_map_y, 0x000000, 0)
     
     ; Close slide map
     Send, {Alt}{Right}{Up 3}{R}{Enter}
@@ -163,8 +167,9 @@ ISSnip()
     Send, {Alt}vz   ; Closes zoom bar
     Send, {F11}     ; Enters fullscreen mode
     Send, ^t        ; Opens slide map
+    Sleep, %wait_time%
     
-    MoveFOV(is_map_width, is_map_height, is_map_x, is_map_y)
+    MoveFOV(is_map_x, is_map_y, 0x646464, -1)
     
     Send, ^t        ; Closes slide map
     
@@ -184,9 +189,9 @@ NDPSnip()
     Send, 5     ; Zooms to 20x
     Sleep, 800  ; Waits for image to stop zooming in
     Send, m     ; Opens slide map
-    Sleep, 500
+    Sleep, %wait_time%
     
-    LowerMoveFOV(ndp_map_width, ndp_map_height, ndp_map_x, ndp_map_y)
+    LowerMoveFOV(ndp_map_x, ndp_map_y, 0x707000, -2)
     
     Send, m     ; Closes slide map
     Sleep, 500
@@ -204,14 +209,16 @@ QPSnip()
     Sleep, %wait_time%
     
     Send, +a                            ; Removes side bar
+    Sleep, %wait_time%
     MouseMove, 430, 60                  ; Moves mouse over magnification button
     Click, 2                            ; Double clicks to open up magnification menu
     WinWaitActive, Set magnification    ; Waits for magnification menu to open
     Send, +{Tab}                        ; Navigates to the navigation input box
     Send, %magnification%               ; Sets desired magnification
     Send, {Enter}
+    Sleep, %wait_time%
     
-    MoveFOV(qp_map_width, qp_map_height, qp_map_x, qp_map_y)
+    MoveFOV(qp_map_x, qp_map_y, 0x404040, 0)
     
     ; Removes unnecessary menu items (slide map, etc.)
     Send, +{Tab 4}{Space} 
@@ -237,8 +244,9 @@ SedeenSnip()
     Sleep, 100
     Send, {Alt}vt{Down}{Enter}  ; Closes zoom bar
     Send, {Alt}vt{Enter}        ; Opens slide map
+    Sleep, %wait_time%
     
-    MoveFOV(sdn_map_width, sdn_map_height, sdn_map_x, sdn_map_y)
+    MoveFOV(sdn_map_x, sdn_map_y, 0x000000, 1)
     
     Send, {Alt}vt{Enter}        ; Closes slide map
 
@@ -248,9 +256,31 @@ SedeenSnip()
 
 ; For viewers that have slide maps in the upper right (ImageScope, QuPath, Sedeen)
 ; map_x and map_y are the coordinates for the upper right corner of the map
-MoveFOV(map_width, map_height, map_x, map_y)
+MoveFOV(map_x, map_y, border_color, offset)
 {
     global 
+    
+    ; Find left border by scanning along x-axis searching for border color
+    map_width := 5
+    Loop
+    {
+        map_width++
+        PixelGetColor, curr, map_x - map_width, map_y + 5
+        MouseMove, map_x - map_width, map_y + 5
+    } Until curr == border_color
+    map_width += offset
+    MsgBox, The width is %map_width%.
+
+    ; Find lower border by scanning along y-axis searching for border color
+    map_height := 5
+    Loop
+    {
+        map_height++
+        PixelGetColor, curr, map_x - 5, map_y + map_height
+        MouseMove, map_x - 5, map_y + map_height
+    } Until curr == border_color
+    map_height += offset
+    MsgBox, The height is %map_height%.
     
     ; Conversion factors
     xcf := map_width/img_width, ycf := map_height/img_height
@@ -265,9 +295,29 @@ MoveFOV(map_width, map_height, map_x, map_y)
 
 ; For viewers that have slide maps in the lower right corner (ASAP, NDP)
 ; map_x and map_y are the coordinates for the lower right corner of the map
-LowerMoveFOV(map_width, map_height, map_x, map_y)
+LowerMoveFOV(map_x, map_y, border_color, offset)
 {
     global 
+    
+    ; Find left border
+    map_width := 5
+    Loop
+    {
+        map_width++
+        PixelGetColor, curr, map_x - map_width, map_y - 5
+        MouseMove, map_x - map_width, map_y - 5
+    } Until ((border_color == 0) ? (curr == border_color) : (curr & border_color == border_color))
+    map_width += offset
+
+    ; Find upper border
+    map_height := 5
+    Loop
+    {
+        map_height++
+        PixelGetColor, curr, map_x - 5, map_y - map_height
+        MouseMove, map_x - 5, map_y - map_height
+    } Until ((border_color == 0) ? (curr == border_color) : (curr & border_color == border_color))
+    map_height += offset
     
     xcf := map_width/img_width, ycf := map_height/img_height
     small_x := Round(roi_x*xcf), small_y := Round(roi_y*ycf)
