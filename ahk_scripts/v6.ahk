@@ -12,7 +12,7 @@
 #NoEnv ; Recommended for performance and compatibility with future AutoHotkey releases.
 ; #Warn ; Enable warnings to assist with detecting common errors.
 SendMode Input ; Recommended for new scripts due to its superior speed and reliability.
-SetWorkingDir %A_ScriptDir% ; Ensures a consistent starting directory.
+SetWorkingDir %A_ScriptDir%\.. ; Ensures a consistent starting directory.
 
 CoordMode, Pixel, Screen    ; Absolute coordinates when using pixel search functions
 CoordMode, Mouse, Screen    ; Absolute coordinates when using mouse functions
@@ -22,14 +22,14 @@ CoordMode, Mouse, Screen    ; Absolute coordinates when using mouse functions
 ;
 
 ; Dimensions of slide image
-img_width       := 51200
-img_height      := 38144
+img_width   := 51200
+img_height  := 38144
 
 ; Boundaries of region of interest on slide
-x1              := 4700
-y1              := 29800
-x2              := 5100
-y2              := 30200
+x1          := 4700
+y1          := 29800
+x2          := 5100
+y2          := 30200
 
 ;
 ; Global variables
@@ -42,7 +42,7 @@ wait_time := 2000
 magnification := 20
 
 ; This determines where the screenshots are saved
-out_path = %A_WorkingDir%\..\matlab_scripts\
+out_path = %A_WorkingDir%\matlab_scripts\
 
 ; Center of region of interest
 ;roi_x           := round((x1+x2)/2)
@@ -51,24 +51,24 @@ roi_x := 46100
 roi_y := 13000
 
 ; Position of ASAP slide map (bottom right corner)
-asap_map_x      := A_ScreenWidth-33
-asap_map_y      := A_ScreenHeight-93
+asap_map_x  := A_ScreenWidth-33
+asap_map_y  := A_ScreenHeight-93
 
 ; Position of ImageScope slide map (top right corner)
-is_map_x        := A_ScreenWidth-8
-is_map_y        := 32
+is_map_x    := A_ScreenWidth-8
+is_map_y    := 32
 
 ; Position of NDP.view 2 slide map (bottom right corner)
-ndp_map_x       := A_ScreenWidth-17
-ndp_map_y       := A_ScreenHeight-17
+ndp_map_x   := A_ScreenWidth-17
+ndp_map_y   := A_ScreenHeight-17
 
 ; Position of QuPath slide map (top right corner)
-qp_map_x        := A_ScreenWidth-12
-qp_map_y        := 92
+qp_map_x    := A_ScreenWidth-12
+qp_map_y    := 92
 
 ; Position of Sedeen slide map (top right corner)
-sdn_map_x       := A_ScreenWidth-2
-sdn_map_y       := 44
+sdn_map_x   := A_ScreenWidth-2
+sdn_map_y   := 44
 
 ;
 ; Main -- how to start the script; change the key assignment here 
@@ -281,6 +281,8 @@ MoveFOV(map_x, map_y, border_color, offset)
 
 ; For viewers that have slide maps in the lower right corner (ASAP, NDP)
 ; map_x and map_y are the coordinates for the lower right corner of the map
+; Checking for the border involves bit masking because the border color of the map
+; in NDP is inconsistent, always some variation of 0x7_7___
 LowerMoveFOV(map_x, map_y, border_color, offset)
 {
     global 
