@@ -21,6 +21,9 @@ CoordMode, Mouse, Screen    ; Absolute coordinates when using mouse functions
 ; Input parameters
 ;
 
+; Location of image file
+img_path = "%A_WorkingDir%\CMU-1.ndpi"
+
 ; Dimensions of slide image
 img_width   := 51200
 img_height  := 38144
@@ -103,7 +106,7 @@ ASAPSnip()
     global
     
     ; Opens CMU-1.ndpi with ASAP with the window maximized; waits for ASAP to load fully
-    Run, %ProgramFiles%\ASAP 1.9\bin\ASAP.exe "%A_ScriptDir%\CMU-1.ndpi",, Max
+    Run, %ProgramFiles%\ASAP 1.9\bin\ASAP.exe %img_path%,, Max
     WinWaitActive, ahk_exe ASAP.exe
     Sleep, %wait_time%
     
@@ -144,7 +147,7 @@ ISSnip()
 {
     global
     
-    Run, C:\Program Files (x86)\Aperio\ImageScope\ImageScope.exe "%A_ScriptDir%\CMU-1.ndpi",, Max
+    Run, C:\Program Files (x86)\Aperio\ImageScope\ImageScope.exe %img_path%,, Max
     WinWaitActive, ahk_exe ImageScope.exe
     Sleep, %wait_time%
     
@@ -167,7 +170,7 @@ NDPSnip()
 {
     global
     
-    Run, %ProgramFiles%\Hamamatsu\NDP.view 2\NDPView2.exe "%A_ScriptDir%\CMU-1.ndpi",, Max
+    Run, %ProgramFiles%\Hamamatsu\NDP.view 2\NDPView2.exe %img_path%,, Max
     WinWaitActive, NDP.view 2
     Sleep, %wait_time%
     
@@ -190,7 +193,7 @@ QPSnip()
 {
     global
     
-    Run, %ProgramFiles%\QuPath\QuPath.exe "%A_ScriptDir%\CMU-1.ndpi",, Max
+    Run, %ProgramFiles%\QuPath\QuPath.exe %img_path%,, Max
     WinWaitActive, ahk_exe QuPath.exe
     Sleep, %wait_time%
     
@@ -219,7 +222,7 @@ SedeenSnip()
 {
     global
     
-    Run, %ProgramFiles%\Sedeen Viewer\sedeen.exe "%A_ScriptDir%\CMU-1.ndpi",, Max
+    Run, %ProgramFiles%\Sedeen Viewer\sedeen.exe %img_path%,, Max
     WinWaitActive, ahk_exe sedeen.exe
     Sleep, %wait_time%
     
