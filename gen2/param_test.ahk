@@ -3,4 +3,6 @@
 SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 
-MsgBox, %1%
+CoordMode, Mouse, Screen    ; Absolute coordinates when using mouse functions
+
+Click, %1%, %2%
