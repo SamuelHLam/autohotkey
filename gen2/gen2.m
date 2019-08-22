@@ -10,7 +10,7 @@ server = actxserver('WScript.Shell');
 server.Run("autohotkey.exe viewer_interface.ahk");
 
 sedeen;
-%qupath;
+qupath;
 server.SendKeys('{ESC}');
 
 function sedeen
@@ -58,7 +58,7 @@ pause(27)
 % closes slide map
 server.SendKeys('%vt~');
 
-snip(server, strcat(root, "\sedeen.png"));
+snip("\sedeen.png");
 
 command = 'exit.exe sedeen.exe';
 system(command);
@@ -90,7 +90,7 @@ server.SendKeys(strcat(root, '\CMU-1.ndpi'));
 pause(1)
 
 server.SendKeys('%+o');
-pause(5)
+pause(3)
 
 % remove side bar
 server.SendKeys('+a');
@@ -110,14 +110,20 @@ pause(2)
 server.SendKeys('%+q');
 pause(15)
 
-snip(server, strcat(root, "\qupath.png"));
+% close menu items
+server.SendKeys('+{TAB}+{TAB}+{TAB}+{TAB} +{TAB} +{TAB} ');
+
+snip("\qupath.png");
 
 command = 'exit.exe QuPath.exe';
 system(command);
 server.SendKeys('{ESC}');
 end
 
-function snip(server, save_path)
+function snip(name)
+global root
+global server
+
 % start snipping tool
 server.Run('SnippingTool');
 
@@ -128,7 +134,8 @@ pause(1)
 % full screen snip
 server.SendKeys('%n{UP}~^s');
 pause(2)
-server.SendKeys(save_path);
+server.SendKeys(root);
+server.SendKeys(name);
 server.SendKeys('~');
 pause(1)
 
