@@ -6,3 +6,4 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 CoordMode, Mouse, Screen    ; Absolute coordinates when using mouse functions
 
 Click, %1%, %2%
+ExitApp
