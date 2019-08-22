@@ -11,9 +11,11 @@ server.Run("autohotkey.exe viewer_interface.ahk");
 qupath(server);
 end
 
+
 function qupath(server)
 root = cd;
 cd('C:\Program Files\QuPath');
+20
 
 % open QuPath
 server.Run('QuPath.exe');
@@ -32,7 +34,7 @@ cd(root);
 server.SendKeys('^o');
 pause(1)
 
-server.SendKeys('C:\Users\Qi Gong\Desktop\Sam\CMU-1.ndpi');
+server.SendKeys('C:\Users\wcc\Documents\GitHub\autohotkey\gen2\CMU-1.ndpi');
 pause(1)
 
 server.SendKeys('%+o');
@@ -57,8 +59,7 @@ server.SendKeys('%+q');
 pause(15)
 
 snip(server, strcat(root, "\qupath.png"));
-command = 'exit.exe SnippingTool.exe';
-system(command);
+
 command = 'exit.exe QuPath.exe';
 system(command);
 server.SendKeys('{ESC}');
@@ -77,4 +78,6 @@ pause(2)
 server.SendKeys(save_path);
 pause(1)
 server.SendKeys('~');
+pause(1)
+server.SendKeys('%fx');
 end

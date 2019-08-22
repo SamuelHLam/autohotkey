@@ -150,8 +150,6 @@ MoveFOV(map_x, map_y, border_color, offset)
     small_x := Round(roi_x*xcf), small_y := Round(roi_y*ycf)
     Sleep, 100
     
-    MsgBox, % "clicking " small_x " " small_y
-    
     click_x := map_x - map_width + small_x
     click_y := map_y + small_y
     
