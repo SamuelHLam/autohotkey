@@ -1,5 +1,6 @@
 global root
 root = cd;
+delete(strcat(root, "\asap.png"))
 %delete(strcat(root, "\ndpview2.png"))
 delete(strcat(root, "\sedeen.png"))
 delete(strcat(root, "\qupath.png"))
@@ -10,11 +11,71 @@ server = actxserver('WScript.Shell');
 
 server.Run("autohotkey.exe viewer_interface.ahk");
 
+asap;
 %ndp;
 sedeen;
 qupath;
 server.SendKeys('{ESC}');
 
+function asap
+global root
+global server
+
+% open QuPath
+cd('C:\Program Files\ASAP 1.9\bin');
+server.Run('ASAP.exe');
+pause(2)
+
+% focus on the window
+server.AppActivate('ASAP');
+
+% return to root directory
+cd(root);
+
+% open file
+server.SendKeys('^o');
+pause(1)
+
+server.SendKeys(strcat(root, '\CMU-1.ndpi'));
+pause(1)
+
+server.SendKeys('%+o');
+pause(2)
+
+% remove all sidebars
+server.SendKeys('%');
+server.SendKeys('{RIGHT}{UP 2}{RIGHT}~');
+server.SendKeys('%');
+server.SendKeys('{RIGHT}{UP 2}{RIGHT}{DOWN}~');
+server.SendKeys('%');
+server.SendKeys('{RIGHT}{UP 2}{RIGHT}{DOWN 2}~');
+pause(1)
+
+% remove toolbar
+!click r 120 30
+server.SendKeys('{UP}~');
+pause(1)
+
+%%%
+% zoom in somehow
+%%%
+
+% open slide map
+server.SendKeys('%');
+server.SendKeys('{RIGHT}{UP 3}~');
+
+% call AHK to move FOV
+server.SendKeys('%+a');
+pause(20)
+
+% close slide map
+server.SendKeys('%');
+server.SendKeys('{RIGHT}{UP 3}~');
+
+snip("\asap.png");
+
+!quit ASAP.exe
+end
 
 function ndp
 global root
@@ -22,6 +83,7 @@ global server
 
 % NDP is opened by default
 !CMU-1.ndpi
+pause(2)
 
 % focus on the window
 server.AppActivate('NDP.view 2');
@@ -52,7 +114,7 @@ global server
 % open QuPath
 cd('C:\Program Files\QuPath');
 server.Run('QuPath.exe');
-pause(5)
+pause(2)
 
 % focus on the window
 server.AppActivate('QuPath (0.1.2)');
@@ -91,7 +153,7 @@ server.SendKeys('%+q');
 pause(12)
 
 % close menu items
-server.SendKeys('+{TAB}+{TAB}+{TAB}+{TAB} +{TAB} +{TAB} ');
+server.SendKeys('+{TAB 4} +{TAB} +{TAB} ');
 
 snip("\qupath.png");
 
@@ -105,7 +167,7 @@ global server
 % open QuPath
 cd('C:\Program Files\Sedeen Viewer');
 server.Run('sedeen.exe');
-pause(5)
+pause(2)
 
 % focus on the window
 server.AppActivate('Sedeen Viewer');

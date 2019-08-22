@@ -171,7 +171,7 @@ LowerMoveFOV(map_x, map_y, border_color, offset)
     {
         map_width++
         PixelGetColor, curr, map_x - map_width, map_y - 5
-        ;MouseMove, map_x - map_width, map_y - 5
+        MouseMove, map_x - map_width, map_y - 5
     } Until ((border_color == 0) ? (curr == border_color) : (curr & border_color == border_color))
     map_width += offset
     ;MsgBox, The width is %map_width%.
@@ -182,7 +182,7 @@ LowerMoveFOV(map_x, map_y, border_color, offset)
     {
         map_height++
         PixelGetColor, curr, map_x - 5, map_y - map_height
-        ;MouseMove, map_x - 5, map_y - map_height
+        MouseMove, map_x - 5, map_y - map_height
     } Until ((border_color == 0) ? (curr == border_color) : (curr & border_color == border_color))
     map_height += offset
     ;MsgBox, The height is %map_height%.
