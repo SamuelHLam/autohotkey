@@ -25,20 +25,20 @@ img_width   := 51200
 img_height  := 38144
 
 ; Boundaries of region of interest on slide
-x1          := 4700
-y1          := 29800
-x2          := 5100
-y2          := 30200
+x1          := 5850
+y1          := 30000
+x2          := 6850
+y2          := 30800
 
 ;
 ; Global variables
 ;
 
 ; Center of region of interest
-;roi_x           := round((x1+x2)/2)
-;roi_y           := round((y1+y2)/2)
-roi_x := 46100
-roi_y := 13000
+roi_x           := round((x1+x2)/2)
+roi_y           := round((y1+y2)/2)
+;roi_x := 6200
+;roi_y := 30200
 
 ; Position of ASAP slide map (bottom right corner)
 asap_map_x  := A_ScreenWidth-33

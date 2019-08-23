@@ -1,8 +1,5 @@
 global root
 root = cd;
-delete(strcat(root, "\asap.png"))
-%delete(strcat(root, "\ndpview2.png"))
-delete(strcat(root, "\sedeen.png"))
 delete(strcat(root, "\qupath.png"))
 
 % use ActiveX
@@ -11,10 +8,12 @@ server = actxserver('WScript.Shell');
 
 server.Run("autohotkey.exe viewer_interface.ahk");
 
-asap;
-%ndp;
-sedeen;
 qupath;
+
+cd('..\matlab_scripts');
+gen2_reg
+cd(root);
+
 server.SendKeys('{ESC}');
 
 function asap

@@ -53,7 +53,11 @@ function [movingOutput,fixedOutput] = ImageRegistration(movingImageFile,fixedIma
     usedCol2 = min(round(imageBottomRight(1)),n_fix);
     usedRow2 = min(round(imageBottomRight(2)),m_fix);
 
-    fixedOutput = fixedImage(usedRow1:usedRow2,usedCol1:usedCol2,:);
+    %fixedOutput = fixedImage(usedRow1:usedRow2,usedCol1:usedCol2,:);
+    fixedOutput = fixedImage;
+    dim = size(fixedOutput)
     movingOutput = movedImage(usedRow1:usedRow2,usedCol1:usedCol2,:);
+    movingOutput(dim(1), dim(2)) = 0;
+    size(movingOutput)
 end
 
