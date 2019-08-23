@@ -1,6 +1,6 @@
 % WCC 8/8/2019
 % for Dorsa's registration problrm
-function checkregistration (im1,im2)
+function reg_accuracy = checkregistration (im1,im2)
 
 
 imgray1 = rgb2gray(im1);
@@ -24,8 +24,10 @@ image(im3)
 axis image
 axis off
 
-reg_accuracy = corr2(imgray1,imgray2)
+reg_accuracy = corr2(imgray1,imgray2);
 
 title(sprintf('%s (red) vs %s (green), R=%.4f',im1,im2,reg_accuracy),'interpreter','none')
+
+return
 
 end

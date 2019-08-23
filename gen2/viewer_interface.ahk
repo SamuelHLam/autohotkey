@@ -66,33 +66,35 @@ sdn_map_y   := 44
 ; https://www.autohotkey.com/docs/commands/MouseClickDrag.htm
 ;
 
-; pan left
-!+1::                                                  
-MouseClickDrag, Left, 1, 1, -50, 0, 100, Relative
+; Drag left
+!+1::
+MouseClickDrag, L, 150, 150, 200, 150
 return
 
-; pan right
-!+2::                                                  
-MouseClickDrag, Left, 1, 1, +50, 0, 100, Relative
+; Drag right
+!+2::
+MouseClickDrag, L, 150, 150, 100, 150
 return
 
-; pan up
-!+3::                                                  
-MouseClickDrag, Left, 1, 1, 0, -50, 100, Relative
+; Drag up
+!+3::
+MouseClickDrag, L, 150, 150, 150, 100
 return
 
-; pan down
-!+4::                                                  
-MouseClickDrag, Left, 1, 1, 0, +50, 100, Relative
+; Drag down
+!+4::
+MouseClickDrag, L, 150, 150, 150, 200
 return
 
-; zoom in
+; Wheel up
 !+5::
+MouseMove, 150, 150
 Send, {WheelUp}
 return
 
-; zoom out
+; Wheel down
 !+6::
+MouseMove, 150, 150
 Send, {WheelDown}
 return
 

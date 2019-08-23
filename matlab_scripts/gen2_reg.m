@@ -1,4 +1,4 @@
-function gen2_reg (mov,fix)
+function [t_matrix, reg_accuracy] = gen2_reg(mov,fix)
 % The three folders we want to put the outputs into
 % r_path = 'reg_imgs\';
 % dE_path = 'dE\';
@@ -30,13 +30,13 @@ fix = imread(fn2);
 movingReg = registerImagesAffine(mov, fix);
 
 % Displays transformation matrix
-t_matrix = movingReg.Transformation.T
+t_matrix = movingReg.Transformation.T;
 
 % Registers images according to transformation matrix
 [r_mov, r_fix] = ImageRegistration(fn1,fn2,movingReg);
 
 % Calculates correlation between registered images
-checkregistration(r_mov, r_fix)
+reg_accuracy = checkregistration(r_mov, r_fix);
 
 % Saves images
 imwrite(r_mov, fn1_reg);
@@ -56,6 +56,6 @@ set(gcf,'Position',[0 0 flip(size(dE))]);
 colorbar('hide');
 saveas(gcf, sprintf('%sheatmap-%s.png', heatmap_path, com_out));
 
-return
+return 
 
 end
