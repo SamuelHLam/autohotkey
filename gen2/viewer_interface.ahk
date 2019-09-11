@@ -11,7 +11,9 @@
 #NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
 ; #Warn ; Enable warnings to assist with detecting common errors.
 SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
-SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
+SetWorkingDir %A_ScriptDir% ; Ensures a consistent starting directory.
+
+#SingleInstance Force       ; In case previous script did not quit
 
 CoordMode, Pixel, Screen    ; Absolute coordinates when using pixel search functions
 CoordMode, Mouse, Screen    ; Absolute coordinates when using mouse functions
@@ -33,6 +35,9 @@ y2          := 30800
 ;
 ; Global variables
 ;
+
+; Target image path
+target_path = "%A_WorkingDir%\target.png"
 
 ; Center of region of interest
 roi_x           := round((x1+x2)/2)
@@ -114,6 +119,21 @@ return
 !+s::
 MoveFOV(sdn_map_x, sdn_map_y, 0x000000, 1)
 return
+
+; Set up target window
+!+t::
+Gui, New
+Gui, +AlwaysOnTop
+;Gui, -caption -Border
+Gui, Add, Picture, , %A_WorkingDir%\target.png
+Gui, Margin, 0, 0
+Gui, Show, AutoSize Center
+WinSet, Transparent, 150, viewer_interface.ahk
+return
+
+; Close target window after panning
+!+c::
+PostMessage, 0x112, 0xF060,,, viewer_interface.ahk
 
 Esc::
 ExitApp

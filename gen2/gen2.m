@@ -10,8 +10,8 @@ server.Run("autohotkey.exe viewer_interface.ahk");
 
 qupath;
 
-cd('..\matlab_scripts');
-gen2_reg
+% cd('..\matlab_scripts');
+% [t_matrix, reg_accuracy] = gen2_reg(qupath, target);
 cd(root);
 
 server.SendKeys('{ESC}');
@@ -219,7 +219,7 @@ server.Run('SnippingTool');
 
 % focus on the window
 server.AppActivate('Snipping Tool');
-pause(1)
+pause(2)
 
 % full screen snip
 server.SendKeys('%n{UP}~^s');

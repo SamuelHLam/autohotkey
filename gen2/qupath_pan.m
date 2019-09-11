@@ -9,48 +9,16 @@ server = actxserver('WScript.Shell');
 server.Run("autohotkey.exe viewer_interface.ahk");
 
 qupathsetup;
+server.SendKeys('%+t');
+pause(10);
+server.SendKeys('%+c');
 snip("\qupath.png");
 
 cd('..\matlab_scripts');
 [t_matrix, reg_accuracy] = gen2_reg('qupath','target')
 
-
-if reg_accuracy < 0.98
-    % determine panning amounts from t_matrix
-    pan_x = round(t_matrix(3,1)/100)
-    pan_y = round(t_matrix(3,2)/100)
-    
-    % pan left
-    if pan_x > 0
-        for i = 1:pan_x
-            server.SendKeys('%+1');
-            pause(1)
-        end
-    % pan right    
-    else
-       for i = 1:abs(pan_x)
-            server.SendKeys('%+2');
-            pause(1)
-        end 
-    end
-    
-    % pan up
-    if pan_y < 0
-        for i = 1:abs(pan_y)
-            server.SendKeys('%+3');
-            pause(1)
-        end
-    % pan right    
-    else
-       for i = 1:pan_y
-            server.SendKeys('%+4');
-            pause(1)
-        end 
-    end
-end
-
-%cd(root);
-%!quit QuPath.exe
+cd(root);
+!quit QuPath.exe
 server.SendKeys('{ESC}');
 
 function qupathsetup
