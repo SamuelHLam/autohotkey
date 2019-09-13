@@ -1,6 +1,13 @@
 global root
 root = cd;
-delete(strcat(root, "\qupath.png"))
+if isfile(strcat(root, "\ndp.png"))
+    delete(strcat(root, "\ndp.png"))
+end
+
+% inverts target image
+target = imread(strcat(root, "\target.png"));
+invert = imcomplement(target);
+imwrite(invert, strcat(root, "\..\gen2\target.png"));
 
 % use ActiveX
 global server
@@ -8,7 +15,7 @@ server = actxserver('WScript.Shell');
 
 server.Run("autohotkey.exe viewer_interface.ahk");
 
-qupath;
+ndp;
 
 % cd('..\matlab_scripts');
 % [t_matrix, reg_accuracy] = gen2_reg(qupath, target);

@@ -124,7 +124,7 @@ return
 !+t::
 Gui, New
 Gui, +AlwaysOnTop
-;Gui, -caption -Border
+Gui, -Caption -Border
 Gui, Add, Picture, , %A_WorkingDir%\target.png
 Gui, Margin, 0, 0
 Gui, Show, AutoSize Center
@@ -134,6 +134,10 @@ return
 ; Close target window after panning
 !+c::
 PostMessage, 0x112, 0xF060,,, viewer_interface.ahk
+WinActivate, ahk_exe matlab.exe
+Send, {Enter}
+WinMinimize, ahk_exe matlab.exe
+return
 
 Esc::
 ExitApp
