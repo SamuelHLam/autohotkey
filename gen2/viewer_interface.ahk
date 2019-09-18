@@ -88,7 +88,7 @@ return
 
 ; Drag down
 !+4::
-MouseClickDrag, L, 150, 150, 150, 200
+MouseClickDrag, L, 150, 150, 150, 350
 return
 
 ; Wheel up
@@ -131,7 +131,7 @@ Gui, Show, AutoSize Center
 WinSet, Transparent, 150, viewer_interface.ahk
 return
 
-; Close target window after panning
+; Close target window after panning, resume matlab script
 !+c::
 PostMessage, 0x112, 0xF060,,, viewer_interface.ahk
 WinActivate, ahk_exe matlab.exe

@@ -1,13 +1,28 @@
 global root
 root = cd;
-if isfile(strcat(root, "\ndp.png"))
-    delete(strcat(root, "\ndp.png"))
+global wsi_path
+wsi_path = 'C:\Users\Qi Gong\Documents\GitHub\autohotkey\gen2\CMU-1.ndpi';
+
+% if isfile(strcat(root, "\..\matlab_scripts\asap.png"))
+%     delete(strcat(root, "\..\matlab_scripts\asap.png"))
+% end
+% 
+% if isfile(strcat(root, "\..\matlab_scripts\ndp.png"))
+%     delete(strcat(root, "\..\matlab_scripts\ndp.png"))
+% end
+% 
+% if isfile(strcat(root, "\..\matlab_scripts\qupath.png"))
+%     delete(strcat(root, "\..\matlab_scripts\qupath.png"))
+% end
+
+if isfile(strcat(root, "\..\matlab_scripts\sedeen.png"))
+    delete(strcat(root, "\..\matlab_scripts\sedeen.png"))
 end
 
 % inverts target image
-target = imread(strcat(root, "\target.png"));
+target = imread(strcat(root, "\..\matlab_scripts\target.png"));
 invert = imcomplement(target);
-imwrite(invert, strcat(root, "\..\gen2\target.png"));
+imwrite(invert, strcat(root, "\target.png"));
 
 % use ActiveX
 global server
@@ -15,22 +30,35 @@ server = actxserver('WScript.Shell');
 
 server.Run("autohotkey.exe viewer_interface.ahk");
 
-ndp;
+% asapsetup;
+% snip_reg('asap');
+% !quit ASAP.exe
+% 
+% ndpsetup;
+% snip_reg('ndp');
+% !quit NDPView2.exe
+% 
+% qupathsetup;
+% snip_reg('qupath');
+% !quit QuPath.exe
 
-% cd('..\matlab_scripts');
-% [t_matrix, reg_accuracy] = gen2_reg(qupath, target);
-cd(root);
+sedeensetup;
+snip_reg('sedeen');
+!quit sedeen.exe
+
+
 
 server.SendKeys('{ESC}');
 
-function asap
+function asapsetup
 global root
+global wsi_path
 global server
 
-% open QuPath
+% open ASAP
 cd('C:\Program Files\ASAP 1.9\bin');
 server.Run('ASAP.exe');
-pause(2)
+pause(5)
 
 % focus on the window
 server.AppActivate('ASAP');
@@ -42,7 +70,7 @@ cd(root);
 server.SendKeys('^o');
 pause(1)
 
-server.SendKeys(strcat(root, '\CMU-1.ndpi'));
+server.SendKeys(wsi_path);
 pause(1)
 
 server.SendKeys('%+o');
@@ -57,14 +85,16 @@ server.SendKeys('%');
 server.SendKeys('{RIGHT}{UP 2}{RIGHT}{DOWN 2}~');
 pause(1)
 
+% zoom in
+!click 125 60
+server.SendKeys('%+4');
+server.SendKeys('%+4');
+!click 95 60
+
 % remove toolbar
 !click r 120 30
 server.SendKeys('{UP}~');
 pause(1)
-
-%%%
-% zoom in somehow
-%%%
 
 % open slide map
 server.SendKeys('%');
@@ -77,19 +107,17 @@ pause(20)
 % close slide map
 server.SendKeys('%');
 server.SendKeys('{RIGHT}{UP 3}~');
-
-snip("\asap.png");
-
-!quit ASAP.exe
 end
 
-function ndp
-global root
+function ndpsetup
+global wsi_path
 global server
 
 % NDP is opened by default
-!CMU-1.ndpi
-pause(2)
+% !CMU-1.ndpi
+cmd = strcat('open_ndp "', wsi_path,'"')
+system(cmd);
+pause(5)
 
 % focus on the window
 server.AppActivate('NDP.view 2');
@@ -107,20 +135,17 @@ pause(35)
 
 % closes slide map
 server.SendKeys('m');
-
-snip("\ndp.png");
-
-!quit NDPView2.exe
 end
 
-function qupath
+function qupathsetup
 global root
+global wsi_path
 global server
 
 % open QuPath
 cd('C:\Program Files\QuPath');
 server.Run('QuPath.exe');
-pause(2)
+pause(5)
 
 % focus on the window
 server.AppActivate('QuPath (0.1.2)');
@@ -135,7 +160,7 @@ cd(root);
 server.SendKeys('^o');
 pause(1)
 
-server.SendKeys(strcat(root, '\CMU-1.ndpi'));
+server.SendKeys(wsi_path);
 pause(1)
 
 server.SendKeys('%+o');
@@ -160,23 +185,20 @@ pause(12)
 
 % close menu items
 server.SendKeys('+{TAB 4} +{TAB} +{TAB} ');
-
-snip("\qupath.png");
-
-!quit QuPath.exe
 end
 
-function sedeen
+function sedeensetup
 global root
+global wsi_path
 global server
 
-% open QuPath
+% open Sedeen
 cd('C:\Program Files\Sedeen Viewer');
 server.Run('sedeen.exe');
-pause(2)
+pause(5)
 
 % focus on the window
-server.AppActivate('Sedeen Viewer');
+server.AppActivate('Sedeen Viewer - CMU-1.ndpi');
 
 % return to root directory
 cd(root);
@@ -185,14 +207,16 @@ cd(root);
 server.SendKeys('^o');
 pause(1)
 
-server.SendKeys(strcat(root, '\CMU-1.ndpi'));
+server.SendKeys(wsi_path);
 pause(1)
 
 server.SendKeys('%+o');
 pause(5)
 
 % removes tabs and opens zoom bar
-server.SendKeys('%vl{DOWN}~%vt{DOWN}~');
+server.SendKeys('%vl{DOWN}~');
+pause(1)
+server.SendKeys('%vt{DOWN}~');
 pause(1)
 
 % call AHK to click button to zoom to 20x
@@ -211,10 +235,20 @@ pause(27)
 
 % closes slide map
 server.SendKeys('%vt~');
+end
 
-snip("\sedeen.png");
+function snip_reg(name)
+global root
+global server
 
-!quit sedeen.exe
+server.SendKeys('%+t');
+pause;
+snip(strcat('\', name, '.png'));
+
+cd('..\matlab_scripts');
+[t_matrix, reg_accuracy] = gen2_reg(name,'target')
+
+cd(root);
 end
 
 function snip(name)
@@ -231,7 +265,7 @@ pause(2)
 % full screen snip
 server.SendKeys('%n{UP}~^s');
 pause(2)
-server.SendKeys(root);
+server.SendKeys(strcat(root, '\..\matlab_scripts'));
 server.SendKeys(name);
 server.SendKeys('~');
 pause(1)
