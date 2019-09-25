@@ -1,27 +1,10 @@
-global root
-root = cd;
 global wsi_path
 wsi_path = 'C:\Users\Qi Gong\Documents\GitHub\autohotkey\gen2\CMU-1.ndpi';
+global root
+root = cd;
 
-if isfile(strcat(root, "\..\matlab_scripts\asap.png"))
-    delete(strcat(root, "\..\matlab_scripts\asap.png"));
-end
-
-if isfile(strcat(root, "\..\matlab_scripts\ndp.png"))
-    delete(strcat(root, "\..\matlab_scripts\ndp.png"));
-end
-
-if isfile(strcat(root, "\..\matlab_scripts\qupath.png"))
-    delete(strcat(root, "\..\matlab_scripts\qupath.png"));
-end
-
-if isfile(strcat(root, "\..\matlab_scripts\sedeen.png"))
-    delete(strcat(root, "\..\matlab_scripts\sedeen.png"));
-end
-
-if isfile(strcat(root, "\log.txt"))
-    delete(strcat(root, "\log.txt"));
-end
+% clean up old images and log
+clear;
 
 % inverts target image
 target = imread(strcat(root, "\..\matlab_scripts\target.png"));
@@ -34,7 +17,7 @@ server = actxserver('WScript.Shell');
 
 server.Run("autohotkey.exe viewer_interface.ahk");
 
-% Keep a log containing the transformation matrices and registration
+% keep a log containing the transformation matrices and registration
 % correlations
 diary log.txt
 
@@ -57,6 +40,28 @@ snip_reg('sedeen');
 server.SendKeys('{ESC}');
 
 diary off
+
+function clear
+if isfile(strcat(root, "\..\matlab_scripts\asap.png"))
+    delete(strcat(root, "\..\matlab_scripts\asap.png"));
+end
+
+if isfile(strcat(root, "\..\matlab_scripts\ndp.png"))
+    delete(strcat(root, "\..\matlab_scripts\ndp.png"));
+end
+
+if isfile(strcat(root, "\..\matlab_scripts\qupath.png"))
+    delete(strcat(root, "\..\matlab_scripts\qupath.png"));
+end
+
+if isfile(strcat(root, "\..\matlab_scripts\sedeen.png"))
+    delete(strcat(root, "\..\matlab_scripts\sedeen.png"));
+end
+
+if isfile(strcat(root, "\log.txt"))
+    delete(strcat(root, "\log.txt"));
+end
+end
 
 function asapsetup
 global root
