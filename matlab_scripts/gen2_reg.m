@@ -1,11 +1,8 @@
 function [t_matrix, reg_accuracy] = gen2_reg(mov,fix)
 % The three folders we want to put the outputs into
-% r_path = 'reg_imgs\';
-% dE_path = 'dE\';
-% heatmap_path = 'heatmaps\';
-r_path = '';
-dE_path = '';
-heatmap_path = '';
+r_path = 'reg_imgs\';
+dE_path = 'dE\';
+heatmap_path = 'heatmaps\';
 
 % File names of the unregistered images
 fn1 = sprintf('%s.png', mov)

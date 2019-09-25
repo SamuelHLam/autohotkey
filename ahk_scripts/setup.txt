@@ -26,3 +26,5 @@ Sedeen:
         In the box that displays "{number} x digital zoom", change to "1 x digital zoom"
         Uncheck "Show Thumbnail", "Show Zoombar", and "Show Cursor View" boxes
         Click "Apply" button at bottom
+
+It is always advisable to open every viewer once before running the script just to check that all of the setup is done properly. Interrupting the execution of the scripts can affect future runs.

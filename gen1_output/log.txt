@@ -1,0 +1,150 @@
+
+fn1 =
+
+    'qupath.png'
+
+
+fn2 =
+
+    'ndpview2.png'
+
+
+t_matrix =
+
+  3×3 <a href="matlab:helpPopup single" style="font-weight:bold">single</a> matrix
+
+    0.9991   -0.0005   -0.0000
+   -0.0001    0.9992   -0.0000
+ -947.1909 -251.4069    1.0000
+
+
+reg_accuracy =
+
+    0.9949
+
+
+fn1 =
+
+    'asap.png'
+
+
+fn2 =
+
+    'ndpview2.png'
+
+
+t_matrix =
+
+  3×3 <a href="matlab:helpPopup single" style="font-weight:bold">single</a> matrix
+
+   1.0e+03 *
+
+    0.0016    0.0000    0.0000
+    0.0000    0.0016    0.0000
+   -1.3133   -0.4438    0.0010
+
+
+reg_accuracy =
+
+    0.9673
+
+
+fn1 =
+
+    'sedeen.png'
+
+
+fn2 =
+
+    'ndpview2.png'
+
+
+t_matrix =
+
+  3×3 <a href="matlab:helpPopup single" style="font-weight:bold">single</a> matrix
+
+   1.0e+03 *
+
+    0.0010    0.0000    0.0000
+   -0.0000    0.0010   -0.0000
+   -1.0920   -0.1592    0.0010
+
+
+reg_accuracy =
+
+    0.9949
+
+
+fn1 =
+
+    'qupath.png'
+
+
+fn2 =
+
+    'sedeen.png'
+
+
+t_matrix =
+
+  3×3 <a href="matlab:helpPopup single" style="font-weight:bold">single</a> matrix
+
+    1.0004    0.0000    0.0000
+   -0.0005    1.0000   -0.0000
+ -948.3718 -252.0991    1.0000
+
+
+reg_accuracy =
+
+    0.9906
+
+
+fn1 =
+
+    'asap.png'
+
+
+fn2 =
+
+    'sedeen.png'
+
+
+t_matrix =
+
+  3×3 <a href="matlab:helpPopup single" style="font-weight:bold">single</a> matrix
+
+   1.0e+03 *
+
+    0.0015   -0.0000   -0.0000
+   -0.0000    0.0015   -0.0000
+   -1.2458   -0.4132    0.0010
+
+
+reg_accuracy =
+
+    0.9641
+
+
+fn1 =
+
+    'qupath.png'
+
+
+fn2 =
+
+    'asap.png'
+
+
+t_matrix =
+
+  3×3 <a href="matlab:helpPopup single" style="font-weight:bold">single</a> matrix
+
+    0.9814   -0.0016   -0.0000
+   -0.0024    0.9833   -0.0000
+ -929.2558 -246.2379    1.0000
+
+
+reg_accuracy =
+
+    0.9789
+

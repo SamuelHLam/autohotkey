@@ -3,20 +3,20 @@ root = cd;
 global wsi_path
 wsi_path = 'C:\Users\Qi Gong\Documents\GitHub\autohotkey\gen2\CMU-1.ndpi';
 
-% if isfile(strcat(root, "\..\matlab_scripts\asap.png"))
-%     delete(strcat(root, "\..\matlab_scripts\asap.png"))
-% end
-% 
-% if isfile(strcat(root, "\..\matlab_scripts\ndp.png"))
-%     delete(strcat(root, "\..\matlab_scripts\ndp.png"))
-% end
-% 
-% if isfile(strcat(root, "\..\matlab_scripts\qupath.png"))
-%     delete(strcat(root, "\..\matlab_scripts\qupath.png"))
-% end
+if isfile(strcat(root, "\..\matlab_scripts\asap.png"))
+    delete(strcat(root, "\..\matlab_scripts\asap.png"));
+end
+
+if isfile(strcat(root, "\..\matlab_scripts\ndp.png"))
+    delete(strcat(root, "\..\matlab_scripts\ndp.png"));
+end
+
+if isfile(strcat(root, "\..\matlab_scripts\qupath.png"))
+    delete(strcat(root, "\..\matlab_scripts\qupath.png"));
+end
 
 if isfile(strcat(root, "\..\matlab_scripts\sedeen.png"))
-    delete(strcat(root, "\..\matlab_scripts\sedeen.png"))
+    delete(strcat(root, "\..\matlab_scripts\sedeen.png"));
 end
 
 % inverts target image
@@ -30,25 +30,29 @@ server = actxserver('WScript.Shell');
 
 server.Run("autohotkey.exe viewer_interface.ahk");
 
-% asapsetup;
-% snip_reg('asap');
-% !quit ASAP.exe
-% 
-% ndpsetup;
-% snip_reg('ndp');
-% !quit NDPView2.exe
-% 
-% qupathsetup;
-% snip_reg('qupath');
-% !quit QuPath.exe
+% Keep a log containing the transformation matrices and registration
+% correlations
+diary log.txt
+
+asapsetup;
+snip_reg('asap');
+!quit ASAP.exe
+
+ndpsetup;
+snip_reg('ndp');
+!quit NDPView2.exe
+
+qupathsetup;
+snip_reg('qupath');
+!quit QuPath.exe
 
 sedeensetup;
 snip_reg('sedeen');
 !quit sedeen.exe
 
-
-
 server.SendKeys('{ESC}');
+
+diary off
 
 function asapsetup
 global root
@@ -102,7 +106,7 @@ server.SendKeys('{RIGHT}{UP 3}~');
 
 % call AHK to move FOV
 server.SendKeys('%+a');
-pause(20)
+pause(15)
 
 % close slide map
 server.SendKeys('%');
