@@ -19,6 +19,10 @@ if isfile(strcat(root, "\..\matlab_scripts\sedeen.png"))
     delete(strcat(root, "\..\matlab_scripts\sedeen.png"));
 end
 
+if isfile(strcat(root, "\log.txt"))
+    delete(strcat(root, "\log.txt"));
+end
+
 % inverts target image
 target = imread(strcat(root, "\..\matlab_scripts\target.png"));
 invert = imcomplement(target);

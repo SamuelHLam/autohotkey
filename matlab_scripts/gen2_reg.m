@@ -53,6 +53,9 @@ set(gcf,'Position',[0 0 flip(size(dE))]);
 colorbar('hide');
 saveas(gcf, sprintf('%sheatmap-%s.png', heatmap_path, com_out));
 
+% Close heatmap
+close(gcf);
+
 return 
 
 end
