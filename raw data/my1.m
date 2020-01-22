@@ -107,6 +107,7 @@ xlabel('CIE a*')
 ylabel('CIE b*')
 zlabel('CIE L*')
 view(-77,10)
+axis([0 100 0 100 0 100])
 
 saveas(gcf,sprintf('%s.tif',name))
 end
