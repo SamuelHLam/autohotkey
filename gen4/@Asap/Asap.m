@@ -69,7 +69,7 @@ classdef Asap < Viewer
             im2 = obj.printscr(printscr2_fn);
             obj.ahk_do('toggle_minimap.ahk');
             
-            [x1 y1 x2 y2] = obj.mycomp (im1, im2);
+            [x1 y1 x2 y2] = obj.mycomp (im1, im2)
             obj.minimap_pos = [x1 y1 x2 y2];
         end
 
@@ -125,10 +125,10 @@ classdef Asap < Viewer
             [row,col] = find(dE2);
             
             % result
-            y1 = min(row);
-            y2 = max(row);
-            x1 = min(col);
-            x2 = max(col);
+            y1 = min(row)
+            y2 = max(row)
+            x1 = min(col)
+            x2 = max(col)
             
             return
             

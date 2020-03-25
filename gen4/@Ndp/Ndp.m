@@ -25,21 +25,52 @@ classdef Ndp < Viewer
             obj.start
 
             % NDP memorizes
-           % obj.ahk_do('hide_subwindows.ahk');
-            
-            %             obj.find_viewarea
-            %
-            %
-            %
-
-            obj.find_minimap
+            % start from with minimap
+            % obj.ahk_do('hide_subwindows.ahk');
             
             obj.click_at(round(obj.screen_size(1)/2), round(obj.screen_size(2)/2))
-            for i = 1:4
-                obj.zoom_in;
+
+            obj.find_minimap
+
+            % zoom
+            switch obj.wsi_magnification
+                case 20
+                    obj.ahk_do('zoom_20x.ahk');
+                case 40
+                    obj.ahk_do('zoom_40x.ahk');
+                otherwise
+                    ['Zoom does not support']
+                    return
             end
+        
+
+%             for i = 1:4
+%                 obj.zoom_in;
+%             end
             %
+
+            % goto ROI
             obj.goto_roi
+
+            % hide minimap
+            obj.ahk_do('toggle_minimap.ahk');
+
+            % screenshot
+            fn_out = [obj.current_dir '\ndp.png'];
+            im0 = obj.printscr(fn_out);
+
+            % show minimap
+            obj.ahk_do('toggle_minimap.ahk');
+            
+            % padding if needed
+            % because NDP screenshot is smaller than the display
+            im3 = uint8(zeros(obj.screen_size(2),obj.screen_size(1),3));
+            im3(1:size(im0,1),1:size(im0,2),:) = im0; 
+            imwrite(im3,fn_out);
+            
+            % exit viewer
+            obj.close
+            
             return
         end
         
@@ -70,42 +101,6 @@ classdef Ndp < Viewer
             
             [x1 y1 x2 y2] = obj.mycomp (im1, im2);
             obj.minimap_pos = [x1 y1 x2 y2];
-        end
-        
-        function find_viewarea (obj)
-            printscr1_fn = sprintf('%s\\%s',obj.class_dir,'myprintscr1.png');
-            
-            im1 = obj.printscr(printscr1_fn);
-            
-            im1lin = reshape(im1,size(im1,1)*size(im1,2),3);
-            
-            % thresholding
-            im2lin = zeros(size(im1,1)*size(im1,2),1);
-            mask = (im1lin(:,1)==90) & (im1lin(:,2)==0) & (im1lin(:,3)==0);
-            im2lin(mask) = 255;
-            im2lin(~mask) = 0;
-            
-            % 2D
-            im2 = reshape(im2lin,size(im1,1),size(im1,2));
-            
-            % find non-zero
-            [row,col] = find(im2);
-            
-            % result
-            y1 = min(row)
-            y2 = max(row)
-            x1 = min(col)
-            x2 = max(col)
-            
-            % visualize
-            %            imagesc(imgray2)
-            %            colorbar
-            
-            obj.viewarea_pos = [x1 y1 x2 y2];
-            obj.screen_size = [size(im1,2) size(im1,1)];
-            
-            return
-            
         end
         
         function [x1 y1 x2 y2] = mycomp (obj,imm1,imm2)

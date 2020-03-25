@@ -28,16 +28,48 @@ classdef Sedeen < Viewer
             obj.open
             
             % Sedeen memorizes states
+            % start from with minimap            
             % obj.ahk_do('hide_subwindows.ahk');
-             
+
+            % zoom to normal view
+            obj.ahk_do('zoom_normal.ahk');
+            
             obj.find_minimap
              
             obj.click_at(round(obj.screen_size(1)/2), round(obj.screen_size(2)/2))
-            for i = 1:4
-                obj.zoom_in;
-            end
             
+            % goto ROI
             obj.goto_roi
+
+            
+            %% registration
+            fn_target = [obj.current_dir '\ndp.png'];
+            fn_trial = [obj.current_dir '\sedeen.png'];
+            
+            % hide minimap
+            obj.ahk_do('toggle_minimap.ahk');
+            
+            % screenshot
+            obj.printscr(fn_trial);
+
+            % try registration
+            regT = register_images (fn_target, fn_trial);
+            x_pan = round(regT(3,1))
+            y_pan = round(regT(3,2))
+            
+            % panning
+            obj.drag_right(x_pan);
+            obj.drag_down(y_pan);
+
+            % screenshot
+            obj.printscr(fn_trial);
+            
+            % show minimap
+            obj.ahk_do('toggle_minimap.ahk');
+            
+            % exit viewer
+            obj.close
+            
         end
         
         function start (obj)
@@ -56,17 +88,23 @@ classdef Sedeen < Viewer
         end
         
         function find_minimap (obj)
-            printscr1_fn = sprintf('%s\\%s',obj.class_dir,'myprintscr1.png');
-            printscr2_fn = sprintf('%s\\%s',obj.class_dir,'myprintscr2.png');
             
-            im1 = obj.printscr(printscr1_fn);
-            obj.ahk_do('toggle_minimap.ahk');
+            if 1
+                printscr1_fn = sprintf('%s\\%s',obj.class_dir,'myprintscr1.png');
+                printscr2_fn = sprintf('%s\\%s',obj.class_dir,'myprintscr2.png');
+                
+                im1 = obj.printscr(printscr1_fn);
+                obj.ahk_do('toggle_minimap.ahk');
+                
+                im2 = obj.printscr(printscr2_fn);
+                obj.ahk_do('toggle_minimap.ahk');
+                
+                [x1 y1 x2 y2] = obj.mycomp (im1, im2);
+                obj.minimap_pos = [x1 y1 x2 y2];
+            else
+                obj.minimap_pos = [1630 71 1915 336];
+            end
             
-            im2 = obj.printscr(printscr2_fn);
-            obj.ahk_do('toggle_minimap.ahk');
-            
-            [x1 y1 x2 y2] = obj.mycomp (im1, im2);
-            obj.minimap_pos = [x1 y1 x2 y2];
         end
 
         function find_viewarea (obj)

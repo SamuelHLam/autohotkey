@@ -1,18 +1,17 @@
 ; passing parameters - https://www.autohotkey.com/docs/Scripts.htm#cmd
 
-	MsgBox %1%
 
 ; find the window
-if WinExist, ASAP
-{
-    WinActivate  ; Uses the last found window.
-	WinWait, %1%
-}
-else
-{
-	MsgBox % "Cannot find window"
-	return
-}
+;if WinExist, %1%
+;{
+;    WinActivate  ; Uses the last found window.
+;	WinWait, %1%
+;}
+;else
+;{
+;	MsgBox % "Cannot find window"
+;	return
+;}
 
 ; close the application
 Send, !{F4}
