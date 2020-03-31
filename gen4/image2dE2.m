@@ -1,7 +1,7 @@
 % 3-25-2020
 % computer the dE between two image files
 % return the two-dimensional dE and save the result as an image
-function dE2 = image2dE2 (fn1,fn2)
+function [dE2 dE] = image2dE2 (fn1,fn2,de2out)
 
 % color images
 im1 = imread(fn1);
@@ -28,7 +28,7 @@ axis off
 
 colormap parula
 colorbar
-saveas(gcf,'dE2.png')
+saveas(gcf,de2out)
 
 return
 

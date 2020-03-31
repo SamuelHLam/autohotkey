@@ -37,35 +37,44 @@ classdef Sedeen < Viewer
             obj.find_minimap
              
             obj.click_at(round(obj.screen_size(1)/2), round(obj.screen_size(2)/2))
+           
             
-            % goto ROI
-            obj.goto_roi
+            % go through the ROIs
+            n_roi = size(obj.wsi_roi,1);
+            
+            for i = 1:n_roi
+                
+                % define filenames
+                fn_target = sprintf('%s\\%03d\\%s',obj.current_dir,i,'ndp.png');
+                fn_trial = sprintf('%s\\%03d\\%s',obj.current_dir,i,'sedeen.png');
+                fn_reg = sprintf('%s\\%03d\\%s',obj.current_dir,i,'reg.mat');
 
-            
-            %% registration
-            fn_target = [obj.current_dir '\ndp.png'];
-            fn_trial = [obj.current_dir '\sedeen.png'];
-            
-            % hide minimap
-            obj.ahk_do('toggle_minimap.ahk');
-            
-            % screenshot
-            obj.printscr(fn_trial);
-
-            % try registration
-            regT = register_images (fn_target, fn_trial);
-            x_pan = round(regT(3,1))
-            y_pan = round(regT(3,2))
-            
-            % panning
-            obj.drag_right(x_pan);
-            obj.drag_down(y_pan);
-
-            % screenshot
-            obj.printscr(fn_trial);
-            
-            % show minimap
-            obj.ahk_do('toggle_minimap.ahk');
+                % goto ROI
+                obj.goto_roi(obj.wsi_roi(i,1),obj.wsi_roi(i,2));
+                
+                % hide minimap
+                obj.ahk_do('toggle_minimap.ahk');
+                
+                % screenshot
+                obj.printscr(fn_trial);
+                
+                % try registration
+                regT = register_images (fn_target, fn_trial);
+                x_pan = round(regT(3,1))
+                y_pan = round(regT(3,2))
+                save(fn_reg,'regT')
+                
+                % panning
+                obj.drag_right(x_pan);
+                obj.drag_down(y_pan);
+                
+                % screenshot
+                obj.printscr(fn_trial);
+                
+                % show minimap
+                obj.ahk_do('toggle_minimap.ahk');
+                
+            end
             
             % exit viewer
             obj.close

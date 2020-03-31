@@ -43,30 +43,33 @@ classdef Ndp < Viewer
                     return
             end
         
-
-%             for i = 1:4
-%                 obj.zoom_in;
-%             end
-            %
-
-            % goto ROI
-            obj.goto_roi
-
-            % hide minimap
-            obj.ahk_do('toggle_minimap.ahk');
-
-            % screenshot
-            fn_out = [obj.current_dir '\ndp.png'];
-            im0 = obj.printscr(fn_out);
-
-            % show minimap
-            obj.ahk_do('toggle_minimap.ahk');
+            % go through the ROIs
+            n_roi = size(obj.wsi_roi,1);
             
-            % padding if needed
-            % because NDP screenshot is smaller than the display
-            im3 = uint8(zeros(obj.screen_size(2),obj.screen_size(1),3));
-            im3(1:size(im0,1),1:size(im0,2),:) = im0; 
-            imwrite(im3,fn_out);
+%            for i = 1:n_roi
+            for i = 5
+               
+                % goto ROI
+                obj.goto_roi(obj.wsi_roi(i,1),obj.wsi_roi(i,2));
+                
+                % hide minimap
+                obj.ahk_do('toggle_minimap.ahk');
+                
+                % screenshot
+                mkdir(sprintf('%s\\%03d',obj.current_dir,i));
+                fn_out = sprintf('%s\\%03d\\%s',obj.current_dir,i,'ndp.png');
+                im0 = obj.printscr(fn_out);
+                
+                % show minimap
+                obj.ahk_do('toggle_minimap.ahk');
+                
+                % padding if needed
+                % because NDP screenshot is smaller than the display
+                im3 = uint8(zeros(obj.screen_size(2),obj.screen_size(1),3));
+                im3(1:size(im0,1),1:size(im0,2),:) = im0;
+                imwrite(im3,fn_out);
+                
+            end
             
             % exit viewer
             obj.close

@@ -1,5 +1,6 @@
 % 3-23-2020
 % WCC
+% QuPath does not memorize
 
 classdef QuPath < Viewer
     
@@ -10,31 +11,100 @@ classdef QuPath < Viewer
         
         function obj = QuPath
             
+            fastforward = 0
+            
             % get the class directory for the AHK scripts
             thispath = mfilename('fullpath');
             [mpath mname mext] = fileparts(thispath);
             obj.class_dir = mpath;
             
             % Viewer path
-            obj.viewer_path = '"C:\Program Files\QuPath\QuPath.exe"'
+            obj.viewer_path = '"C:\Program Files\QuPath\QuPath.exe"';
             
             % Viewer title
-            obj.viewer_title = '"QuPath"'
+            obj.viewer_title = '"QuPath"';
             
             obj.start
             obj.ahk_do('hide_subwindows.ahk');
             
-            obj.find_viewarea
-
             obj.open
-            obj.find_minimap
             
-            obj.click_at(round(obj.screen_size(1)/2), round(obj.screen_size(2)/2))
-            for i = 1:4
-                obj.zoom_in;
+            % get viewarea to get minimap
+            if ~fastforward
+                obj.find_viewarea
+                obj.find_minimap
+            else
+                obj.viewarea_pos = [2,83,1919,1159];
+                obj.minimap_pos = [1760,93,1909,230];
             end
             
-            obj.goto_roi
+            obj.click_at(round(obj.screen_size(1)/2), round(obj.screen_size(2)/2))
+            
+            % zoom to normal view
+            obj.ahk_do('zoom_normal.ahk');
+            
+            % go through the ROIs
+            n_roi = size(obj.wsi_roi,1);
+            
+            for i = 1:n_roi
+                
+                % define filenames
+                fn_target = sprintf('%s\\%03d\\%s',obj.current_dir,i,'ndp.png');
+                fn_trial0 = sprintf('%s\\%03d\\%s',obj.current_dir,i,'qupath0.png');
+                fn_trial = sprintf('%s\\%03d\\%s',obj.current_dir,i,'qupath.png');
+                fn_reg = sprintf('%s\\%03d\\%s',obj.current_dir,i,'reg.mat');
+
+                % goto ROI
+                obj.goto_roi(obj.wsi_roi(i,1),obj.wsi_roi(i,2));
+                
+                % hide minimap
+                obj.ahk_do('toggle_minimap.ahk');
+                
+                % screenshot
+                obj.printscr(fn_trial0);
+                
+                % try registration
+                if ~fastforward
+                    regT = register_images (fn_target, fn_trial0);
+                    save(fn_reg,'regT')
+                else
+                    load(fn_reg,'regT')
+                end
+                
+                if ~fastforward
+                x_pan = round(regT(3,1))
+                y_pan = round(regT(3,2))
+                else
+                x_pan = 1
+                y_pan = 1
+                end
+                
+                obj.chord_gen('C',0.3)
+                
+                % panning
+                obj.drag_step_by_step(x_pan,y_pan);
+                
+                if 0
+                % panning
+                for j = 1:abs(x_pan)
+                    obj.drag_right1(sign(x_pan));
+                end
+                for j = 1:abs(y_pan)
+                    obj.drag_down1(sign(y_pan));
+                end
+                end
+
+                % screenshot
+                obj.printscr(fn_trial);
+
+                % show minimap
+                obj.ahk_do('toggle_minimap_short.ahk');
+                
+            end
+            
+            % exit
+            obj.close
+            
         end
         
         function start (obj)
@@ -96,7 +166,6 @@ classdef QuPath < Viewer
 %            colorbar
              
             obj.viewarea_pos = [x1 y1 x2 y2];
-            obj.screen_size = [size(im1,2) size(im1,1)];
 
             return
             

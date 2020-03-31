@@ -10,6 +10,4 @@ imtrial = imread(fn_trial);
 reg = registerImages(imtrial,imtarget);
 regT = reg.Transformation.T;
 
-save('reg','reg')
-
 end

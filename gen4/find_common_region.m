@@ -18,8 +18,9 @@ function box = find_common_region (fn1,fn2)
             % 2D
             dE2 = reshape(dE,size(im1,1),size(im1,2));
             
-            if 0
+            if 1
             % visualize
+            clf
             imagesc(dE2)
             colormap hsv
             colorbar
@@ -27,24 +28,25 @@ function box = find_common_region (fn1,fn2)
             end
             
             % analyze it
-            v = mean(dE2,1);
-            h = mean(dE2,2);
+            col = mean(dE2,1);
+            row = mean(dE2,2);
             
             if 0
             % visualize
             subplot(2,1,1)
-            plot(v)
+            plot(col)
             subplot(2,1,2)
-            plot(h)
+            plot(row)
             end
             
             % use 20 dE as the threshold
-            th = 20;
+            th = 15; % for sedeen
+            th = 25; % for qupath
 
-            y1 = min(find(v<th));
-            y2 = max(find(v<th));
-            x1 = min(find(h<th));
-            x2 = max(find(h<th));
+            x1 = min(find(col<th));
+            x2 = max(find(col<th));
+            y1 = min(find(row<th));
+            y2 = max(find(row<th));
             
             box = [x1 y1 x2 y2];
             
