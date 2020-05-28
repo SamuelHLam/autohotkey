@@ -46,16 +46,37 @@ classdef QuPath < Viewer
             % go through the ROIs
             n_roi = size(obj.wsi_roi,1);
             
+            %for i = 1
             for i = 1:n_roi
                 
                 % define filenames
                 fn_target = sprintf('%s\\%03d\\%s',obj.current_dir,i,'ndp.png');
+                fn_target2 = sprintf('%s\\%03d\\%s',obj.current_dir,i,'ndp2.png');
                 fn_trial0 = sprintf('%s\\%03d\\%s',obj.current_dir,i,'qupath0.png');
                 fn_trial = sprintf('%s\\%03d\\%s',obj.current_dir,i,'qupath.png');
-                fn_reg = sprintf('%s\\%03d\\%s',obj.current_dir,i,'reg.mat');
+                fn_trial2 = sprintf('%s\\%03d\\%s',obj.current_dir,i,'qupath2.png');
+                fn_reg = sprintf('%s\\%03d\\%s',obj.current_dir,i,'qupath.mat');
 
                 % goto ROI
                 obj.goto_roi(obj.wsi_roi(i,1),obj.wsi_roi(i,2));
+
+                if 0
+                % check minimap
+                % because the accuracy is very low when the image is large
+                fn_roi = sprintf('%s\\%03d\\%s',obj.current_dir,i,'qupath_roi.png');
+                obj.printscr(fn_roi);
+                im = imread(fn_roi);
+                x1 = obj.minimap_pos(1);
+                y1 = obj.minimap_pos(2);
+                x2 = obj.minimap_pos(3);
+                y2 = obj.minimap_pos(4);
+                
+                roix = round(x1 + obj.wsi_roi(i,1)*(x2-x1));
+                roiy = round(y1 + obj.wsi_roi(i,2)*(y2-y1));
+                [roix roiy]
+                im = obj.mark_location(im,roiy,roix);
+                imwrite(im,fn_roi);
+                end
                 
                 % hide minimap
                 obj.ahk_do('toggle_minimap.ahk');
@@ -65,46 +86,59 @@ classdef QuPath < Viewer
                 
                 % try registration
                 if ~fastforward
+                    tic
                     regT = register_images (fn_target, fn_trial0);
-                    save(fn_reg,'regT')
+                    time_registration = toc
                 else
                     load(fn_reg,'regT')
                 end
                 
                 if ~fastforward
-                x_pan = round(regT(3,1))
-                y_pan = round(regT(3,2))
+                    x_pan = round(regT(3,1))
+                    y_pan = round(regT(3,2))
                 else
-                x_pan = 1
-                y_pan = 1
+                    x_pan = 1
+                    y_pan = 1
                 end
                 
-                obj.chord_gen('C',0.3)
+                % obj.chord_gen('C',0.3)
                 
-                % panning
-                obj.drag_step_by_step(x_pan,y_pan);
+                %                 % panning
+                %                 tic
+                %                 obj.drag_step_by_step(x_pan,y_pan);
+                %                 time_panning = toc
+                %
+                %                 if 0
+                %                 % panning
+                %                 for j = 1:abs(x_pan)
+                %                     obj.drag_right1(sign(x_pan));
+                %                 end
+                %                 for j = 1:abs(y_pan)
+                %                     obj.drag_down1(sign(y_pan));
+                %                 end
+                %                 end
+                %
+                %                 save(fn_reg,'regT','time_registration','time_panning')
+                %
+                %
+                %                 % screenshot
+                %                 obj.printscr(fn_trial);
                 
-                if 0
-                % panning
-                for j = 1:abs(x_pan)
-                    obj.drag_right1(sign(x_pan));
-                end
-                for j = 1:abs(y_pan)
-                    obj.drag_down1(sign(y_pan));
-                end
-                end
-
-                % screenshot
-                obj.printscr(fn_trial);
-
+                obj.pan_by_trim (fn_target, fn_trial0, fn_target2, fn_trial2, x_pan, y_pan)
+                
                 % show minimap
-                obj.ahk_do('toggle_minimap_short.ahk');
+%                obj.ahk_do('toggle_minimap_short.ahk');
+                obj.ahk_do('toggle_minimap.ahk');
                 
             end
             
             % exit
             obj.close
             
+            % make some noise
+            obj.chord_gen('C',1)     
+            
+            return
         end
         
         function start (obj)

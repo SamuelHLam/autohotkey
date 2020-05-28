@@ -1,4 +1,5 @@
 ; passing parameters - https://www.autohotkey.com/docs/Scripts.htm#cmd
+; 4/5/2020: changed to SendInput
 
 ; open the WSI
 Send, ^{PrintScreen}
@@ -16,20 +17,20 @@ if WinExist("Untitled - Paint")
 
 
 ; paste
-Send, ^v
+SendInput, ^v
 
 ; save as
-Send, !f
-Send, a
+SendInput, !f
+SendInput, a
 
 ; need to wait here; otherwise filename got cut
 WinWait, Save As
-Send, %1%
-Send, !s
+SendInput, %1%
+SendInput, !s
 
 ; exit
-Send, !f
-Send, x
+SendInput, !f
+SendInput, x
 
 WinWaitClose
 return

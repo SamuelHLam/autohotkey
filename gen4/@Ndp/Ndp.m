@@ -11,6 +11,8 @@ classdef Ndp < Viewer
         
         function obj = Ndp
             
+            tic
+            
             % get the class directory for the AHK scripts
             thispath = mfilename('fullpath');
             [mpath mname mext] = fileparts(thispath);
@@ -47,18 +49,38 @@ classdef Ndp < Viewer
             n_roi = size(obj.wsi_roi,1);
             
 %            for i = 1:n_roi
-            for i = 5
+            for i = 1
                
+                mkdir(sprintf('%s\\%03d',obj.current_dir,i));
+                fn_out = sprintf('%s\\%03d\\%s',obj.current_dir,i,'ndp.png');
+
                 % goto ROI
                 obj.goto_roi(obj.wsi_roi(i,1),obj.wsi_roi(i,2));
+
+                if 0
+                % check minimap
+                fn_roi = sprintf('%s\\%03d\\%s',obj.current_dir,i,'ndp_roi.png');
+                obj.printscr(fn_roi);
+                im = imread(fn_roi);
+                x1 = obj.minimap_pos(1);
+                y1 = obj.minimap_pos(2);
+                x2 = obj.minimap_pos(3);
+                y2 = obj.minimap_pos(4);
+                
+                roix = round(x1 + obj.wsi_roi(i,1)*(x2-x1));
+                roiy = round(y1 + obj.wsi_roi(i,2)*(y2-y1));
+                [roix roiy]
+                im = obj.mark_location(im,roiy,roix);
+                % debug ROI
+                imwrite(im,fn_roi);
+                end
                 
                 % hide minimap
                 obj.ahk_do('toggle_minimap.ahk');
                 
                 % screenshot
-                mkdir(sprintf('%s\\%03d',obj.current_dir,i));
-                fn_out = sprintf('%s\\%03d\\%s',obj.current_dir,i,'ndp.png');
                 im0 = obj.printscr(fn_out);
+    
                 
                 % show minimap
                 obj.ahk_do('toggle_minimap.ahk');
@@ -73,6 +95,12 @@ classdef Ndp < Viewer
             
             % exit viewer
             obj.close
+            
+            % report time
+            elapsedTime = toc
+            
+            % make some noise
+            obj.chord_gen('C',1)
             
             return
         end
@@ -93,8 +121,8 @@ classdef Ndp < Viewer
         end
         
         function find_minimap (obj)
-            printscr1_fn = sprintf('%s\\%s',obj.class_dir,'myprintscr1.png');
-            printscr2_fn = sprintf('%s\\%s',obj.class_dir,'myprintscr2.png');
+            printscr1_fn = sprintf('%s\\%s',obj.class_dir,'minimap_on.png');
+            printscr2_fn = sprintf('%s\\%s',obj.class_dir,'minimap_off.png');
             
             im1 = obj.printscr(printscr1_fn);
             obj.ahk_do('toggle_minimap.ahk');
@@ -104,6 +132,13 @@ classdef Ndp < Viewer
             
             [x1 y1 x2 y2] = obj.mycomp (im1, im2);
             obj.minimap_pos = [x1 y1 x2 y2];
+            
+            % mark on images for debugging
+            im1 = obj.mark_roi(im1,obj.minimap_pos);
+            im2 = obj.mark_roi(im2,obj.minimap_pos);
+            
+            imwrite(im1,printscr1_fn);
+            imwrite(im2,printscr2_fn);
         end
         
         function [x1 y1 x2 y2] = mycomp (obj,imm1,imm2)

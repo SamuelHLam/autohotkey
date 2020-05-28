@@ -1,4 +1,10 @@
+% Sedeen
+
+% Sedeen memorizes states
+% start with minimap on
+
 % 3-23-2020
+% 4-5-2020
 % WCC
 
 classdef Sedeen < Viewer
@@ -16,60 +22,109 @@ classdef Sedeen < Viewer
             obj.class_dir = mpath;
             
             % Viewer path
-            obj.viewer_path = '"C:\Program Files\Sedeen Viewer\sedeen.exe"'
+            obj.viewer_path = '"C:\Program Files\Sedeen Viewer\sedeen.exe"';
             
             % Viewer title
-            obj.viewer_title = '"Sedeen"'
+            obj.viewer_title = '"Sedeen"';
             
+            % Start the Viewer
             obj.start
-%             
-%             obj.find_viewarea
-% 
+
+            % Open the WSI
             obj.open
             
-            % Sedeen memorizes states
-            % start from with minimap            
-            % obj.ahk_do('hide_subwindows.ahk');
-
-            % zoom to normal view
+            % Zoom to normal (20x) view
             obj.ahk_do('zoom_normal.ahk');
             
+            % Find the minimap
             obj.find_minimap
              
+            % Click on the center
             obj.click_at(round(obj.screen_size(1)/2), round(obj.screen_size(2)/2))
            
             
-            % go through the ROIs
+            % go through the ROIs defined in Viewer.m
             n_roi = size(obj.wsi_roi,1);
             
-            for i = 1:n_roi
+           for i = 1
+%            for i = 1:n_roi
+                
+                sprintf('Working on ROI #%d',i)
                 
                 % define filenames
                 fn_target = sprintf('%s\\%03d\\%s',obj.current_dir,i,'ndp.png');
                 fn_trial = sprintf('%s\\%03d\\%s',obj.current_dir,i,'sedeen.png');
-                fn_reg = sprintf('%s\\%03d\\%s',obj.current_dir,i,'reg.mat');
+                fn_reg = sprintf('%s\\%03d\\%s',obj.current_dir,i,'sedeen.mat');
 
-                % goto ROI
+                % go to the ROI
                 obj.goto_roi(obj.wsi_roi(i,1),obj.wsi_roi(i,2));
                 
-                % hide minimap
+                if 0
+                % check minimap
+                % because the accuracy is very low when the image is large
+                fn_roi = sprintf('%s\\%03d\\%s',obj.current_dir,i,'sedeen_roi.png');
+                obj.printscr(fn_roi);
+                im = imread(fn_roi);
+                x1 = obj.minimap_pos(1);
+                y1 = obj.minimap_pos(2);
+                x2 = obj.minimap_pos(3);
+                y2 = obj.minimap_pos(4);
+                
+                roix = round(x1 + obj.wsi_roi(i,1)*(x2-x1));
+                roiy = round(y1 + obj.wsi_roi(i,2)*(y2-y1));
+                [roix roiy]
+                im = obj.mark_location(im,roiy,roix);
+                imwrite(im,fn_roi);
+                end
+                
+                % hide minimap to take the screenshot
                 obj.ahk_do('toggle_minimap.ahk');
+
                 
-                % screenshot
+                % screenshot to be registered
                 obj.printscr(fn_trial);
+
+                % move cursor to center to save time to travel during panning
+                obj.click_at(round(obj.screen_size(1)/2), round(obj.screen_size(2)/2))
+            
+                keep_looping = 1;
+                while keep_looping == 1
+                    
+                    % try registration
+                    tic
+                    regT = register_images (fn_target, fn_trial);
+                    time_registration = toc
+                    
+                    % get registration result
+                    x_pan = round(regT(3,1));
+                    y_pan = round(regT(3,2));
+                    [x_pan y_pan]
+                    
+                    if x_pan == 0 && y_pan==0
+                        keep_looping = 0;
+                    else
+                        
+                        % do panning
+                        tic
+                        if 1
+                            obj.pan_xy(x_pan,y_pan);
+                        else
+                            obj.drag_right(x_pan);
+                            obj.drag_down(y_pan);
+                        end
+                        time_panning = toc
+                        
+                        % screenshot
+                        obj.printscr(fn_trial);
+                    end
+                end
                 
-                % try registration
-                regT = register_images (fn_target, fn_trial);
-                x_pan = round(regT(3,1))
-                y_pan = round(regT(3,2))
-                save(fn_reg,'regT')
+                % report accuracy
+                reg_accu = obj.roi_corrcoef(fn_target,fn_trial);
+                [reg_accu]
                 
-                % panning
-                obj.drag_right(x_pan);
-                obj.drag_down(y_pan);
-                
-                % screenshot
-                obj.printscr(fn_trial);
+                % save data
+                save(fn_reg,'regT','time_registration','time_panning')
                 
                 % show minimap
                 obj.ahk_do('toggle_minimap.ahk');
@@ -78,6 +133,11 @@ classdef Sedeen < Viewer
             
             % exit viewer
             obj.close
+            
+            % make some noise
+            obj.chord_gen('C',1)
+            
+            return
             
         end
         
@@ -98,21 +158,24 @@ classdef Sedeen < Viewer
         
         function find_minimap (obj)
             
-            if 1
-                printscr1_fn = sprintf('%s\\%s',obj.class_dir,'myprintscr1.png');
-                printscr2_fn = sprintf('%s\\%s',obj.class_dir,'myprintscr2.png');
-                
-                im1 = obj.printscr(printscr1_fn);
-                obj.ahk_do('toggle_minimap.ahk');
-                
-                im2 = obj.printscr(printscr2_fn);
-                obj.ahk_do('toggle_minimap.ahk');
-                
-                [x1 y1 x2 y2] = obj.mycomp (im1, im2);
-                obj.minimap_pos = [x1 y1 x2 y2];
-            else
-                obj.minimap_pos = [1630 71 1915 336];
-            end
+            printscr1_fn = sprintf('%s\\%s',obj.class_dir,'minimap_on.png');
+            printscr2_fn = sprintf('%s\\%s',obj.class_dir,'minimap_off.png');
+            
+            im1 = obj.printscr(printscr1_fn);
+            obj.ahk_do('toggle_minimap.ahk');
+            
+            im2 = obj.printscr(printscr2_fn);
+            obj.ahk_do('toggle_minimap.ahk');
+            
+            [x1 y1 x2 y2] = obj.mycomp (im1, im2);
+            obj.minimap_pos = [x1 y1 x2 y2];
+            
+            % mark on images for debugging
+            im1 = obj.mark_roi(im1,obj.minimap_pos);
+            im2 = obj.mark_roi(im2,obj.minimap_pos);
+            
+            imwrite(im1,printscr1_fn);
+            imwrite(im2,printscr2_fn);
             
         end
 

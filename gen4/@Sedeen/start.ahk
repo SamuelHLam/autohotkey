@@ -12,10 +12,10 @@ Run, %2%
 
 ; update window
 ; wait until activated
-WinWaitActive, Software Update
-
+; disappeared after April!
+; WinWaitActive, Software Update
 ; close window
-Send, !{F4}
+;Send, !{F4}
 
 
 ; wait until activated

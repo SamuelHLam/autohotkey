@@ -10,7 +10,7 @@ WinWait, %1%
 
 ; minimap
 ; need delay to work!!
-delay := 500
+delay := 50
 
 Send, {Esc}
 Sleep, 1000

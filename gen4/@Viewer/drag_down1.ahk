@@ -7,7 +7,7 @@ if WinExist(%1%)
 }
 
 ; Drag down
-MouseClickDrag, L, 150, 150, 150, %2%, 100
+MouseClickDrag, L, 500, 500, 500, %2%, 100
 
 ;wait
 Sleep, 500

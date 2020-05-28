@@ -40,24 +40,47 @@ classdef Viewer < handle
                     obj.wsi_roi(i,:) = [(200*(i-5)+48835)/69582 (200*(i-5)+34632)/64463];
                 end
             end
-            
+
             if 1
+                obj.wsi_filename = 'CMU-3.ndpi';
+                obj.wsi_folder = 'C:\Users\wcc\Desktop\test_wsi\';
+                obj.wsi_magnification = 20;
+                %obj.wsi_roi = [(13469/51200) (32079/38144)];
+                
+                % get ROIs
+                load([obj.wsi_folder 'CMU-3_roi.mat'],'xy')
+                obj.wsi_roi = xy;
+            end
+            
+            if 0
+                obj.wsi_filename = 'CMU-2.ndpi';
+                obj.wsi_folder = 'C:\Users\wcc\Desktop\test_wsi\';
+                obj.wsi_magnification = 20;
+                %obj.wsi_roi = [(13469/51200) (32079/38144)];
+                
+                % get ROIs
+                load([obj.wsi_folder 'CMU-2_roi.mat'],'xy')
+                obj.wsi_roi = xy;
+            end
+            
+            if 0
                 obj.wsi_filename = 'CMU-1.ndpi';
                 obj.wsi_folder = 'C:\Users\wcc\Desktop\test_wsi\';
                 obj.wsi_magnification = 20;
                 %obj.wsi_roi = [(13469/51200) (32079/38144)];
-                obj.wsi_roi = zeros(10,2);
-                for i = 1:10
-                    obj.wsi_roi(i,:) = [(200*(i-5)+16311)/51200 (200*(i-5)+28362)/38144];
-                end
+                
+                % get ROIs
+                load([obj.wsi_folder 'CMU-1_roi.mat'],'xy')
+                obj.wsi_roi = xy;
             end
+
             
             obj.wsi_path = sprintf('\" %s%s\"', obj.wsi_folder, obj.wsi_filename);
             
             % AHK
             obj.ahk_path = '"C:\Program Files\AutoHotkey\AutoHotkey.exe" ';
             
-            if 0
+            if 1
                 % get display size
                 printscr1_fn = sprintf('%s\\%s',obj.viewerclass_dir,'myprintscr0.png');
                 im1 = obj.printscr(printscr1_fn);
@@ -112,13 +135,11 @@ classdef Viewer < handle
         
         function drag_right (obj,x)
             
-            % 150 is used in AHK
+            % 500 is used in AHK
             
-            displacement = 150+x;
-            if displacement <= 0
-                ['drag_right: Out of range']
-                return
-            end
+            displacement = 500+x;
+            [displacement]
+            assert(displacement > 0, 'drag_right: x out of range');
             
             param = sprintf('%d',displacement);
             
@@ -128,13 +149,10 @@ classdef Viewer < handle
         
         function drag_right1 (obj,x)
             
-            % 150 is used in AHK
+            % 500 is used in AHK
             
-            displacement = 150+x;
-            if displacement <= 0
-                ['drag_right: Out of range']
-                return
-            end
+            displacement = 500+x;
+            assert(displacement > 0, 'drag_right1: x out of range');
             
             param = sprintf('%d',displacement);
             
@@ -144,13 +162,10 @@ classdef Viewer < handle
         
         function drag_down (obj,x)
             
-            % 150 is used in AHK
+            % 500 is used in AHK
             
-            displacement = 150+x;
-            if displacement <= 0
-                ['drag_down: Out of range']
-                return
-            end
+            displacement = 500+x;
+            assert(displacement > 0, 'drag_down: out of range');
             
             param = sprintf('%d',displacement);
             
@@ -161,13 +176,10 @@ classdef Viewer < handle
         
         function drag_down1 (obj,x)
             
-            % 150 is used in AHK
+            % 500 is used in AHK
             
-            displacement = 150+x;
-            if displacement <= 0
-                ['drag_down: Out of range']
-                return
-            end
+            displacement = 500+x;
+            assert(displacement > 0, 'drag_down: out of range');
             
             param = sprintf('%d',displacement);
             
@@ -177,19 +189,12 @@ classdef Viewer < handle
         
         function drag_right_down (obj,x,y)
             
-            % 150 is used in AHK
+            % 500 is used in AHK
             
-            displacement_x = 150+x;
-            if displacement_x <= 0
-                ['drag_down: Out of range : x']
-                return
-            end
-            
-            displacement_y = 150+y;
-            if displacement_y <= 0
-                ['drag_down: Out of range : y']
-                return
-            end
+            displacement_x = 500+x;
+            displacement_y = 500+y;
+            assert(displacement_x > 0, 'drag_down: x out of range');
+            assert(displacement_y > 0, 'drag_down: y out of range');
             
             param_x = sprintf('%d',displacement_x);
             param_y = sprintf('%d',displacement_y);
@@ -198,13 +203,80 @@ classdef Viewer < handle
             system([obj.ahk_path ' ' script_path ' ' obj.viewer_title ' ' param_x ' ' param_y]);
         end
 
+        function pan_by_trim (obj, fn_target, fn_trial0, fn_target2, fn_trial2, panx, pany)
+            % 4-5-2020
+            % panning by trimming
+            
+            % input filenames
+            im1 = imread(fn_target);
+            im2 = imread(fn_trial0);
+            
+            % get the box for im1
+            x1 = 1 + panx;
+            y1 = 1 + pany;
+            x2 = size(im1,2) + panx;
+            y2 = size(im1,1) + pany;
+            
+            % adjust
+            x1 = max(x1,1);
+            y1 = max(y1,1);
+            x2 = min(x2,size(im1,2));
+            y2 = min(y2,size(im1,1));
+            
+            imout1 = im1(y1:y2,x1:x2,:);
+            
+            % get the box for im2
+            x1 = 1 - panx;
+            y1 = 1 - pany;
+            x2 = size(im2,2) - panx;
+            y2 = size(im2,1) - pany;
+            
+            % adjust
+            x1 = max(x1,1);
+            y1 = max(y1,1);
+            x2 = min(x2,size(im2,2));
+            y2 = min(y2,size(im2,1));
+            
+            imout2 = im2(y1:y2,x1:x2,:);
+            
+            % write the files
+            imwrite(imout1,fn_target2)
+            imwrite(imout2,fn_trial2)
+        end
+        
+    
+        % mouse drag from the center of the screen
+        function pan_xy (obj, displacement_x, displacement_y)
+            
+            % limit the mouse drag range to 500,500 rather than the screen size
+            % because the boundaries, menu, other subwindows need to be considered
+            assert(abs(displacement_x)<obj.screen_size(1)/2,'pan: x out of range')
+            assert(abs(displacement_y)<obj.screen_size(2)/2,'pan: y out of range')
+            
+            % passing the displacement relative to the current cursor position
+            param_x = sprintf('%d',displacement_x);
+            param_y = sprintf('%d',displacement_y);
+            
+            % passing the screen center position
+            screen_x = sprintf('%d',round(obj.screen_size(1)/2));
+            screen_y = sprintf('%d',round(obj.screen_size(2)/2));
+            
+            script_path = sprintf('"%s\\%s"',obj.viewerclass_dir,'pan_xy.ahk');
+            system([obj.ahk_path ' ' script_path ' ' obj.viewer_title ' ' param_x ' ' param_y ' ' screen_x ' ' screen_y]);        
+        
+        end
+                
         function pan (obj, displacement_x, displacement_y)
+            
+            assert(abs(displacement_x)<500,'pan: x out of range')
+            assert(abs(displacement_y)<500,'pan: y out of range')
             
             param_x = sprintf('%+d',500+displacement_x);
             param_y = sprintf('%+d',500+displacement_y);
             
             script_path = sprintf('"%s\\%s"',obj.viewerclass_dir,'pan.ahk');
             system([obj.ahk_path ' ' script_path ' ' obj.viewer_title ' ' param_x ' ' param_y]);
+            
         end
                 
         function drag_step_by_step (obj, x, y)
@@ -232,6 +304,49 @@ classdef Viewer < handle
             
         end
         
+        function im2 = mark_roi (obj, im1, roibox)
+            x1 = roibox(1);
+            y1 = roibox(2);
+            x2 = roibox(3);
+            y2 = roibox(4);
+
+            im2 = im1;
+
+            % 4 corners
+            im2 = obj.mark_location(im2,y1,x1);
+            im2 = obj.mark_location(im2,y1,x2);
+            im2 = obj.mark_location(im2,y2,x1);
+            im2 = obj.mark_location(im2,y2,x2);
+        end
+
+        
+        function im2 = mark_location (obj, im1, row, col)
+            im2 = im1;
+            for i = -5:+5
+                im2(row+i,col,1:3) = [0 0 255]; % blue
+                im2(row,col+i,1:3) = [0 0 255]; % blue
+            end
+        end
+        
+        function ret = roi_corrcoef (obj, fn_target, fn_trial)
+            
+            imtarget = imread(fn_target);
+            imtrial = imread(fn_trial);
+            
+            im1 = rgb2gray(imtarget);
+            im2 = rgb2gray(imtrial);
+            
+            size = 250;
+            x = round(obj.screen_size(1)/2) - size;
+            y = round(obj.screen_size(2)/2) - size;
+            
+            im1 = im1(y-size:y+size,x-size:x+size);
+            im2 = im2(y-size:y+size,x-size:x+size);
+            
+            ret = corr2(im1,im2);
+            
+        end
+
         function mybeep (obj)
             load handel.mat;
             nBits = 16;
