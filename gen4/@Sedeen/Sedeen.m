@@ -6,16 +6,22 @@
 % 3-23-2020
 % 4-5-2020
 % WCC
+% 5-31-2020: revisit
 
 classdef Sedeen < Viewer
     
     properties
+        SKIP_UPDATE = 1
     end
     
     methods
         
         function obj = Sedeen
             
+            disp('Sedeen Class: Start')
+            disp('Sedeen Class: Sedeen memorizes')
+            disp('Sedeen Class: Sedeen: must enable minimap')
+
             % get the class directory for the AHK scripts
             thispath = mfilename('fullpath');
             [mpath mname mext] = fileparts(thispath);
@@ -46,8 +52,7 @@ classdef Sedeen < Viewer
             % go through the ROIs defined in Viewer.m
             n_roi = size(obj.wsi_roi,1);
             
-           for i = 1
-%            for i = 1:n_roi
+            for i = 1:n_roi
                 
                 sprintf('Working on ROI #%d',i)
                 
@@ -142,7 +147,11 @@ classdef Sedeen < Viewer
         end
         
         function start (obj)
-            script_path = sprintf('"%s\\%s"',obj.class_dir,'start.ahk');
+            if obj.SKIP_UPDATE == 1
+                script_path = sprintf('"%s\\%s"',obj.class_dir,'start_update.ahk');
+            else
+                script_path = sprintf('"%s\\%s"',obj.class_dir,'start.ahk');
+            end
             system([obj.ahk_path ' ' script_path ' ' obj.viewer_title ' ' obj.viewer_path]);
         end
         

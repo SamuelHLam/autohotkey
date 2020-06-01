@@ -1,6 +1,7 @@
 % 3-23-2020
 % WCC
 % 3-24-2020: unstable because of timing
+% 5-31-2020: revisit
 
 classdef Ndp < Viewer
     
@@ -10,6 +11,12 @@ classdef Ndp < Viewer
     methods
         
         function obj = Ndp
+            
+            % prerequisite 
+            disp('Ndp Class: Start')
+
+            disp('Ndp Class: NDP View memorizes')
+            disp('Ndp Class: NDP View: must disable minimap')
             
             tic
             
@@ -48,8 +55,7 @@ classdef Ndp < Viewer
             % go through the ROIs
             n_roi = size(obj.wsi_roi,1);
             
-%            for i = 1:n_roi
-            for i = 1
+            for i = 1:n_roi
                
                 mkdir(sprintf('%s\\%03d',obj.current_dir,i));
                 fn_out = sprintf('%s\\%03d\\%s',obj.current_dir,i,'ndp.png');

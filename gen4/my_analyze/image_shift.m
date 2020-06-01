@@ -1,3 +1,7 @@
+% shift the image in 9 directions by one pixel
+% to find the best registration
+% based on correlation coefficient of the grayscale images
+% 5-31-2020 revisit
 
 function opt = image_shift (fn1, fn2)
 

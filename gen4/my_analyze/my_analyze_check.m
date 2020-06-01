@@ -1,5 +1,4 @@
 % compare all ROIs
-% revisit 5-31-2020: what is this??
 
 obj = Viewer;
 

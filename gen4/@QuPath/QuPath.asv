@@ -102,8 +102,8 @@ classdef QuPath < Viewer
                 
                 % obj.chord_gen('C',0.3)
                 
-                % panning
-                tic
+                %                 % panning
+                %                 tic
                 %                 obj.drag_step_by_step(x_pan,y_pan);
                 %                 time_panning = toc
                 %
@@ -117,13 +117,13 @@ classdef QuPath < Viewer
                 %                 end
                 %                 end
                 %
+                %                 save(fn_reg,'regT','time_registration','time_panning')
+                %
+                %
                 %                 % screenshot
                 %                 obj.printscr(fn_trial);
                 
                 obj.pan_by_trim (fn_target, fn_trial0, fn_target2, fn_trial2, x_pan, y_pan)
-
-                time_panning = toc
-                save(fn_reg,'regT','time_registration','time_panning')
                 
                 % show minimap
                 %                obj.ahk_do('toggle_minimap_short.ahk');

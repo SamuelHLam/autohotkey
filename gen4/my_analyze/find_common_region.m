@@ -1,3 +1,5 @@
+% given two screenshots from two viewers, remove the menu outside the image
+
 function box = find_common_region (fn1,fn2)
             
             % color images

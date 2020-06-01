@@ -1,3 +1,7 @@
+%
+% Superclass of viewers
+% set input files
+%
 classdef Viewer < handle
     
     properties
@@ -21,6 +25,8 @@ classdef Viewer < handle
         
         function obj = Viewer
             
+            obj.my_disp('Viewer Class: Start');
+            
             % current directory
             obj.current_dir = cd;
             
@@ -29,7 +35,10 @@ classdef Viewer < handle
             [mpath mname mext] = fileparts(thispath);
             obj.viewerclass_dir = mpath;
             
+            
             % WSI file
+            obj.my_disp('Viewer Class: Assign WSI paths');
+            
             if 0
                 obj.wsi_filename = 'T11-11969 40x Manual - 2019-09-19 16.27.08.ndpi';
                 obj.wsi_folder = 'C:\Users\wcc\Desktop\test_wsi\';
@@ -40,7 +49,7 @@ classdef Viewer < handle
                     obj.wsi_roi(i,:) = [(200*(i-5)+48835)/69582 (200*(i-5)+34632)/64463];
                 end
             end
-
+            
             if 1
                 obj.wsi_filename = 'CMU-3.ndpi';
                 obj.wsi_folder = 'C:\Users\wcc\Desktop\test_wsi\';
@@ -48,8 +57,13 @@ classdef Viewer < handle
                 %obj.wsi_roi = [(13469/51200) (32079/38144)];
                 
                 % get ROIs
+                obj.my_disp('Viewer Class: Load ROI data');
                 load([obj.wsi_folder 'CMU-3_roi.mat'],'xy')
                 obj.wsi_roi = xy;
+                
+                % WCC
+                %obj.wsi_roi = xy(1:3,:);
+
             end
             
             if 0
@@ -73,22 +87,27 @@ classdef Viewer < handle
                 load([obj.wsi_folder 'CMU-1_roi.mat'],'xy')
                 obj.wsi_roi = xy;
             end
-
+            
             
             obj.wsi_path = sprintf('\" %s%s\"', obj.wsi_folder, obj.wsi_filename);
             
             % AHK
+            obj.my_disp('Viewer Class: Assign AHK path');
             obj.ahk_path = '"C:\Program Files\AutoHotkey\AutoHotkey.exe" ';
             
             if 1
+                obj.my_disp('Viewer Class: Obtain display dimension, pixel counts');
+                
                 % get display size
                 printscr1_fn = sprintf('%s\\%s',obj.viewerclass_dir,'myprintscr0.png');
                 im1 = obj.printscr(printscr1_fn);
                 obj.screen_size = [size(im1,2) size(im1,1)];
+                [size(im1,2) size(im1,1)]
             else
                 % HP Z24x
                 obj.screen_size = [1920 1200];
             end
+            
         end
         
         function im = printscr (obj, fn)
@@ -202,7 +221,7 @@ classdef Viewer < handle
             script_path = sprintf('"%s\\%s"',obj.viewerclass_dir,'drag_right_down.ahk');
             system([obj.ahk_path ' ' script_path ' ' obj.viewer_title ' ' param_x ' ' param_y]);
         end
-
+        
         function pan_by_trim (obj, fn_target, fn_trial0, fn_target2, fn_trial2, panx, pany)
             % 4-5-2020
             % panning by trimming
@@ -244,7 +263,7 @@ classdef Viewer < handle
             imwrite(imout2,fn_trial2)
         end
         
-    
+        
         % mouse drag from the center of the screen
         function pan_xy (obj, displacement_x, displacement_y)
             
@@ -262,10 +281,10 @@ classdef Viewer < handle
             screen_y = sprintf('%d',round(obj.screen_size(2)/2));
             
             script_path = sprintf('"%s\\%s"',obj.viewerclass_dir,'pan_xy.ahk');
-            system([obj.ahk_path ' ' script_path ' ' obj.viewer_title ' ' param_x ' ' param_y ' ' screen_x ' ' screen_y]);        
-        
+            system([obj.ahk_path ' ' script_path ' ' obj.viewer_title ' ' param_x ' ' param_y ' ' screen_x ' ' screen_y]);
+            
         end
-                
+        
         function pan (obj, displacement_x, displacement_y)
             
             assert(abs(displacement_x)<500,'pan: x out of range')
@@ -278,7 +297,7 @@ classdef Viewer < handle
             system([obj.ahk_path ' ' script_path ' ' obj.viewer_title ' ' param_x ' ' param_y]);
             
         end
-                
+        
         function drag_step_by_step (obj, x, y)
             
             abs_x = abs(x);
@@ -309,16 +328,16 @@ classdef Viewer < handle
             y1 = roibox(2);
             x2 = roibox(3);
             y2 = roibox(4);
-
+            
             im2 = im1;
-
+            
             % 4 corners
             im2 = obj.mark_location(im2,y1,x1);
             im2 = obj.mark_location(im2,y1,x2);
             im2 = obj.mark_location(im2,y2,x1);
             im2 = obj.mark_location(im2,y2,x2);
         end
-
+        
         
         function im2 = mark_location (obj, im1, row, col)
             im2 = im1;
@@ -346,7 +365,7 @@ classdef Viewer < handle
             ret = corr2(im1,im2);
             
         end
-
+        
         function mybeep (obj)
             load handel.mat;
             nBits = 16;
@@ -354,10 +373,10 @@ classdef Viewer < handle
         end
         
         function chord_gen (obj, chordname, duration)
-        % generate 3-note chord
-        % 3-26-2020
-        % WCC and Trinity
-        
+            % generate 3-note chord
+            % 3-26-2020
+            % WCC and Trinity
+            
             sample_rate = 8192;
             
             % parse the chordname to get the base pitch
@@ -430,7 +449,11 @@ classdef Viewer < handle
                 y = sin(2*pi*t*freq);
                 % plot(t,y,'-')
             end
-            
+        end
+        
+        
+        function my_disp (obj, msg)
+            disp(msg)
         end
     end
 end

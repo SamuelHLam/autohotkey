@@ -1,5 +1,6 @@
 % 3-25-2020
 % compare images from two viewers
+% 5-31-2020 revisit
 
 function compare_roi (fn1, fn2)
 

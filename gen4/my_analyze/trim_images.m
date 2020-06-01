@@ -1,6 +1,7 @@
 % 3-25-2020
 % trim two images based on their common region
 % two images from printscr -- including the application menu
+% 5-31-2020: revisit
 
 function trim_images (fn1, fn2, fnout1, fnout2)
 
