@@ -62,7 +62,9 @@ classdef Viewer < handle
                 obj.wsi_roi = xy;
                 
                 % WCC
-                %obj.wsi_roi = xy(1:3,:);
+                DEMO_N = 1
+                obj.my_disp('Viewer Class: Demo mode: 1 ROI only');
+                obj.wsi_roi = xy(1:DEMO_N,:);
 
             end
             

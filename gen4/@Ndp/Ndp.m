@@ -16,7 +16,8 @@ classdef Ndp < Viewer
             disp('Ndp Class: Start')
 
             disp('Ndp Class: NDP View memorizes')
-            disp('Ndp Class: NDP View: must disable minimap')
+            disp('Ndp Class: NDP View: must enable minimap')
+            disp('Ndp Class: NDP View: no other windows')
             
             tic
             
