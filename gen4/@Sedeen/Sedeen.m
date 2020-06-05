@@ -103,9 +103,9 @@ classdef Sedeen < Viewer
                     % get registration result
                     x_pan = round(regT(3,1));
                     y_pan = round(regT(3,2));
-                    [x_pan y_pan]
+                    x_pan_y_pan = [x_pan y_pan]
                     
-                    if x_pan == 0 && y_pan==0
+                    if x_pan == 0 && y_pan == 0
                         keep_looping = 0;
                     else
                         
@@ -125,8 +125,7 @@ classdef Sedeen < Viewer
                 end
                 
                 % report accuracy
-                reg_accu = obj.roi_corrcoef(fn_target,fn_trial);
-                [reg_accu]
+                reg_accu = obj.roi_corrcoef(fn_target,fn_trial)
                 
                 % save data
                 save(fn_reg,'regT','time_registration','time_panning')

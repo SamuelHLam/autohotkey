@@ -19,6 +19,7 @@ classdef Viewer < handle
         minimap_pos
         viewarea_pos
         screen_size
+        ROISIZEHALF = 200
     end
     
     methods
@@ -357,7 +358,7 @@ classdef Viewer < handle
             im1 = rgb2gray(imtarget);
             im2 = rgb2gray(imtrial);
             
-            size = 250;
+            size = obj.ROISIZEHALF;
             x = round(obj.screen_size(1)/2) - size;
             y = round(obj.screen_size(2)/2) - size;
             
