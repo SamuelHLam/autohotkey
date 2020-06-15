@@ -6,6 +6,7 @@
 classdef QuPath < Viewer
     
     properties
+        PANBYTRIM = 1
         FASTFORWARD = 0
     end
     
@@ -93,35 +94,42 @@ classdef QuPath < Viewer
                 end
                 
                 if ~obj.FASTFORWARD
-                    x_pan = round(regT(3,1))
-                    y_pan = round(regT(3,2))
+                    x_pan = round(regT(3,1));
+                    y_pan = round(regT(3,2));
                 else
-                    x_pan = 1
-                    y_pan = 1
+                    x_pan = 1;
+                    y_pan = 1;
                 end
                 
                 % obj.chord_gen('C',0.3)
                 
                 % panning
                 tic
-                %                 obj.drag_step_by_step(x_pan,y_pan);
-                %                 time_panning = toc
-                %
-                %                 if 0
-                %                 % panning
-                %                 for j = 1:abs(x_pan)
-                %                     obj.drag_right1(sign(x_pan));
-                %                 end
-                %                 for j = 1:abs(y_pan)
-                %                     obj.drag_down1(sign(y_pan));
-                %                 end
-                %                 end
-                %
-                %                 % screenshot
-                %                 obj.printscr(fn_trial);
-                
-                obj.pan_by_trim (fn_target, fn_trial0, fn_target2, fn_trial2, x_pan, y_pan)
 
+                obj.do_panning(fn_target, fn_trial0, fn_target2, fn_trial2, x_pan, y_pan, fn_trial);
+                
+                %{
+                if obj.PANBYTRIM == 1
+                    obj.pan_by_trim (fn_target, fn_trial0, fn_target2, fn_trial2, x_pan, y_pan)
+                else
+                    obj.drag_step_by_step(x_pan,y_pan);
+                    
+                    if 0
+                        % panning
+                        for j = 1:abs(x_pan)
+                            obj.drag_right1(sign(x_pan));
+                        end
+                        for j = 1:abs(y_pan)
+                            obj.drag_down1(sign(y_pan));
+                        end
+                    end
+                    
+                    % screenshot
+                    obj.printscr(fn_trial);
+                    
+                end
+            %}
+                
                 time_panning = toc
                 save(fn_reg,'regT','time_registration','time_panning')
                 
@@ -138,6 +146,27 @@ classdef QuPath < Viewer
             obj.chord_gen('C',1)
             
             return
+        end
+
+        function do_panning (obj,fn_target, fn_trial0, fn_target2, fn_trial2, x_pan, y_pan, fn_trial)
+                    
+            obj.pan_by_trim (fn_target, fn_trial0, fn_target2, fn_trial2, x_pan, y_pan)
+
+%                     obj.drag_step_by_step(x_pan,y_pan);
+%                     
+%                     if 0
+%                         % panning
+%                         for j = 1:abs(x_pan)
+%                             obj.drag_right1(sign(x_pan));
+%                         end
+%                         for j = 1:abs(y_pan)
+%                             obj.drag_down1(sign(y_pan));
+%                         end
+%                     end
+%                     
+%                     % screenshot
+%                     obj.printscr(fn_trial);
+                    
         end
         
         function start (obj)

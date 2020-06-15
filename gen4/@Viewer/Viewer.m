@@ -27,7 +27,9 @@ classdef Viewer < handle
     methods
         
         function obj = Viewer
+            % constructor
             
+            % get the user name for setting local variables
             obj.username = getenv('username')
             
             if strcmp(obj.username,'wcc')
@@ -64,10 +66,10 @@ classdef Viewer < handle
                     obj.wsi_roi(i,:) = [(200*(i-5)+48835)/69582 (200*(i-5)+34632)/64463];
                 end
             %}
-            
+
+            % WSI input: the CMU samples
             testcasename = 'CMU-3';
             obj.wsi_filename = [testcasename '.ndpi'];
-
             obj.wsi_magnification = 20;
             
             % get ROIs
@@ -77,7 +79,7 @@ classdef Viewer < handle
             
             % WCC
             DEMO_N = 1
-            obj.my_disp('Viewer Class: Demo mode: 1 ROI only');
+            obj.my_disp(sprintf('Viewer Class: Demo mode: %d ROI(s) only',DEMO_N));
             obj.wsi_roi = xy(1:DEMO_N,:);
           
            
@@ -144,59 +146,59 @@ classdef Viewer < handle
             system([obj.ahk_path ' ' script_path ' ' obj.viewer_title]);
         end
         
-        function drag_right (obj,x)
-            
-            % 500 is used in AHK
-            
-            displacement = 500+x;
-            [displacement]
-            assert(displacement > 0, 'drag_right: x out of range');
-            
-            param = sprintf('%d',displacement);
-            
-            script_path = sprintf('"%s\\%s"',obj.viewerclass_dir,'drag_right.ahk');
-            system([obj.ahk_path ' ' script_path ' ' obj.viewer_title ' ' param]);
-        end
+%         function drag_right (obj,x)
+%             
+%             % 500 is used in AHK
+%             
+%             displacement = 500+x;
+%             [displacement]
+%             assert(displacement > 0, 'drag_right: x out of range');
+%             
+%             param = sprintf('%d',displacement);
+%             
+%             script_path = sprintf('"%s\\%s"',obj.viewerclass_dir,'drag_right.ahk');
+%             system([obj.ahk_path ' ' script_path ' ' obj.viewer_title ' ' param]);
+%         end
         
-        function drag_right1 (obj,x)
-            
-            % 500 is used in AHK
-            
-            displacement = 500+x;
-            assert(displacement > 0, 'drag_right1: x out of range');
-            
-            param = sprintf('%d',displacement);
-            
-            script_path = sprintf('"%s\\%s"',obj.viewerclass_dir,'drag_right1.ahk');
-            system([obj.ahk_path ' ' script_path ' ' obj.viewer_title ' ' param]);
-        end
+%         function drag_right1 (obj,x)
+%             
+%             % 500 is used in AHK
+%             
+%             displacement = 500+x;
+%             assert(displacement > 0, 'drag_right1: x out of range');
+%             
+%             param = sprintf('%d',displacement);
+%             
+%             script_path = sprintf('"%s\\%s"',obj.viewerclass_dir,'drag_right1.ahk');
+%             system([obj.ahk_path ' ' script_path ' ' obj.viewer_title ' ' param]);
+%         end
         
-        function drag_down (obj,x)
-            
-            % 500 is used in AHK
-            
-            displacement = 500+x;
-            assert(displacement > 0, 'drag_down: out of range');
-            
-            param = sprintf('%d',displacement);
-            
-            script_path = sprintf('"%s\\%s"',obj.viewerclass_dir,'drag_down.ahk');
-            system([obj.ahk_path ' ' script_path ' ' obj.viewer_title ' ' param]);
-        end
+%         function drag_down (obj,x)
+%             
+%             % 500 is used in AHK
+%             
+%             displacement = 500+x;
+%             assert(displacement > 0, 'drag_down: out of range');
+%             
+%             param = sprintf('%d',displacement);
+%             
+%             script_path = sprintf('"%s\\%s"',obj.viewerclass_dir,'drag_down.ahk');
+%             system([obj.ahk_path ' ' script_path ' ' obj.viewer_title ' ' param]);
+%         end
         
         
-        function drag_down1 (obj,x)
-            
-            % 500 is used in AHK
-            
-            displacement = 500+x;
-            assert(displacement > 0, 'drag_down: out of range');
-            
-            param = sprintf('%d',displacement);
-            
-            script_path = sprintf('"%s\\%s"',obj.viewerclass_dir,'drag_down1.ahk');
-            system([obj.ahk_path ' ' script_path ' ' obj.viewer_title ' ' param]);
-        end
+%         function drag_down1 (obj,x)
+%             
+%             % 500 is used in AHK
+%             
+%             displacement = 500+x;
+%             assert(displacement > 0, 'drag_down: out of range');
+%             
+%             param = sprintf('%d',displacement);
+%             
+%             script_path = sprintf('"%s\\%s"',obj.viewerclass_dir,'drag_down1.ahk');
+%             system([obj.ahk_path ' ' script_path ' ' obj.viewer_title ' ' param]);
+%         end
         
         function drag_right_down (obj,x,y)
             
@@ -458,8 +460,9 @@ classdef Viewer < handle
             end
         end
         
-        
         function my_disp (obj, msg)
+            % A wrapped text output function so that it can be turned on/off
+            % easily for debugging
             disp(msg)
         end
     end
