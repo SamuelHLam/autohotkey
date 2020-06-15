@@ -20,12 +20,24 @@ classdef Viewer < handle
         minimap_pos
         viewarea_pos
         screen_size
+        username
         ROISIZEHALF = 200
     end
     
     methods
         
         function obj = Viewer
+            
+            obj.username = getenv('username')
+            
+            if strcmp(obj.username,'wcc')
+                % Wei-Chung's environment settings here
+                obj.wsi_folder = 'C:\Users\wcc\Desktop\test_wsi\';
+                obj.roi_folder = 'C:\Users\wcc\Documents\GitHub\autohotkey\gen4\roi_100\';
+            else
+                % Samuel's environment settings here
+                
+            end
             
             obj.my_disp('Viewer Class: Start');
             
@@ -53,25 +65,21 @@ classdef Viewer < handle
                 end
             %}
             
-            if 1
-                testcasename = 'CMU-3';
-                obj.wsi_filename = [testcasename '.ndpi'];
-                obj.wsi_folder = 'C:\Users\wcc\Desktop\test_wsi\';
-                obj.roi_folder = 'C:\Users\wcc\Documents\GitHub\autohotkey\gen4\roi_100\';
-                obj.wsi_magnification = 20;
-                
-                % get ROIs
-                obj.my_disp('Viewer Class: Load ROI data');
-                load([obj.roi_folder testcasename '_roi.mat'],'xy')
-                obj.wsi_roi = xy;
-                
-                % WCC
-                DEMO_N = 1
-                obj.my_disp('Viewer Class: Demo mode: 1 ROI only');
-                obj.wsi_roi = xy(1:DEMO_N,:);
+            testcasename = 'CMU-3';
+            obj.wsi_filename = [testcasename '.ndpi'];
 
-            end
+            obj.wsi_magnification = 20;
             
+            % get ROIs
+            obj.my_disp('Viewer Class: Load ROI data');
+            load([obj.roi_folder testcasename '_roi.mat'],'xy')
+            obj.wsi_roi = xy;
+            
+            % WCC
+            DEMO_N = 1
+            obj.my_disp('Viewer Class: Demo mode: 1 ROI only');
+            obj.wsi_roi = xy(1:DEMO_N,:);
+          
            
             obj.wsi_path = sprintf('\" %s%s\"', obj.wsi_folder, obj.wsi_filename);
             
