@@ -332,6 +332,8 @@ classdef Viewer < handle
             x2 = roibox(3);
             y2 = roibox(4);
             
+            DEBUG_mark_roi_x1_y1_x2_y2 = [x1 y1 x2 y2]
+            
             im2 = im1;
             
             % 4 corners
@@ -343,6 +345,7 @@ classdef Viewer < handle
         
         
         function im2 = mark_location (obj, im1, row, col)
+            % draw a blue cross at location (row,col)
             im2 = im1;
             for i = -5:+5
                 im2(row+i,col,1:3) = [0 0 255]; % blue
