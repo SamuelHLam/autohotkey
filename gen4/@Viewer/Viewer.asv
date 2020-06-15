@@ -10,7 +10,6 @@ classdef Viewer < handle
         viewerclass_dir
         wsi_filename
         wsi_folder
-        roi_folder
         wsi_path
         wsi_roi
         wsi_magnification
@@ -41,8 +40,7 @@ classdef Viewer < handle
             % WSI file
             obj.my_disp('Viewer Class: Assign WSI paths');
             
-            %{
-            % camelyon slide
+            if 0
                 obj.wsi_filename = 'T11-11969 40x Manual - 2019-09-19 16.27.08.ndpi';
                 obj.wsi_folder = 'C:\Users\wcc\Desktop\test_wsi\';
                 obj.wsi_magnification = 40;
@@ -51,18 +49,17 @@ classdef Viewer < handle
                 for i = 1:10
                     obj.wsi_roi(i,:) = [(200*(i-5)+48835)/69582 (200*(i-5)+34632)/64463];
                 end
-            %}
+            end
             
             if 1
-                testcasename = 'CMU-3';
-                obj.wsi_filename = [testcasename '.ndpi'];
+                obj.wsi_filename = 'CMU-3.ndpi';
                 obj.wsi_folder = 'C:\Users\wcc\Desktop\test_wsi\';
-                obj.roi_folder = 'C:\Users\wcc\Documents\GitHub\autohotkey\gen4\roi_100\';
                 obj.wsi_magnification = 20;
+                %obj.wsi_roi = [(13469/51200) (32079/38144)];
                 
                 % get ROIs
                 obj.my_disp('Viewer Class: Load ROI data');
-                load([obj.roi_folder testcasename '_roi.mat'],'xy')
+                load([obj.wsi_folder 'CMU-3_roi.mat'],'xy')
                 obj.wsi_roi = xy;
                 
                 % WCC
@@ -72,7 +69,29 @@ classdef Viewer < handle
 
             end
             
-           
+            if 0
+                obj.wsi_filename = 'CMU-2.ndpi';
+                obj.wsi_folder = 'C:\Users\wcc\Desktop\test_wsi\';
+                obj.wsi_magnification = 20;
+                %obj.wsi_roi = [(13469/51200) (32079/38144)];
+                
+                % get ROIs
+                load([obj.wsi_folder 'CMU-2_roi.mat'],'xy')
+                obj.wsi_roi = xy;
+            end
+            
+            if 0
+                obj.wsi_filename = 'CMU-1.ndpi';
+                obj.wsi_folder = 'C:\Users\wcc\Desktop\test_wsi\';
+                obj.wsi_magnification = 20;
+                %obj.wsi_roi = [(13469/51200) (32079/38144)];
+                
+                % get ROIs
+                load([obj.wsi_folder 'CMU-1_roi.mat'],'xy')
+                obj.wsi_roi = xy;
+            end
+            
+            
             obj.wsi_path = sprintf('\" %s%s\"', obj.wsi_folder, obj.wsi_filename);
             
             % AHK
