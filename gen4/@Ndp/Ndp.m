@@ -158,7 +158,7 @@ classdef Ndp < Viewer
             % toggled
             if 1
                 im1 = imm1;
-                im2 = im1;
+                im2 = imm2;
                 
                 a1 = round(size(im1,2)/2);
                 b1 = round(size(im1,1)/2);

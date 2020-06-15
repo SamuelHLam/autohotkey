@@ -351,22 +351,30 @@ classdef Viewer < handle
         end
         
         function ret = roi_corrcoef (obj, fn_target, fn_trial)
+            % calculate correlation coefficients between two images
+            % for evaluating the registration accuracy
             
+            % load images
             imtarget = imread(fn_target);
             imtrial = imread(fn_trial);
             
+            % convert color images to grayscale images
             im1 = rgb2gray(imtarget);
             im2 = rgb2gray(imtrial);
             
-            size = obj.ROISIZEHALF;
-            x = round(obj.screen_size(1)/2) - size;
-            y = round(obj.screen_size(2)/2) - size;
+            % get the center of the screen
+            x = round(obj.screen_size(1)/2);
+            y = round(obj.screen_size(2)/2);
             
+            % crop a box 
+            size = obj.ROISIZEHALF;
             im1 = im1(y-size:y+size,x-size:x+size);
             im2 = im2(y-size:y+size,x-size:x+size);
             
+            % main
             ret = corr2(im1,im2);
-            
+
+            return
         end
         
         function mybeep (obj)

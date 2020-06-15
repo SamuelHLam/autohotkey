@@ -228,19 +228,7 @@ classdef Sedeen < Viewer
             im1 = imm1;
             im2 = imm2;
 
-            if 0
-            im1 = imm1;
-            im2 = im1;
-            
-            a1 = obj.viewarea_pos(1); 
-            b1 = obj.viewarea_pos(2); 
-            a2 = obj.viewarea_pos(3); 
-            b2 = obj.viewarea_pos(4); 
-            
-            im1(b1:b2,a1:a2,:) = imm1(b1:b2,a1:a2,:);
-            im2(b1:b2,a1:a2,:) = imm2(b1:b2,a1:a2,:);
-            end
-            
+          
             % color images
             %im1 = imread('myprintscr1.png');
             %im2 = imread('myprintscr2.png');
