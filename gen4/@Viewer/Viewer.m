@@ -21,7 +21,8 @@ classdef Viewer < handle
         viewarea_pos
         screen_size
         username
-        ROISIZEHALF = 200
+        ROISIZEHALF = 500
+        SEDEEN_SKIP_UPDATE = 1        
     end
     
     methods
@@ -36,9 +37,12 @@ classdef Viewer < handle
                 % Wei-Chung's environment settings here
                 obj.wsi_folder = 'C:\Users\wcc\Desktop\test_wsi\';
                 obj.roi_folder = 'C:\Users\wcc\Documents\GitHub\autohotkey\gen4\roi_100\';
+                obj.SEDEEN_SKIP_UPDATE = 1;        
             else
                 % Samuel's environment settings here
-                
+                obj.wsi_folder = 'C:\Users\Sam\Desktop\test_wsi\';
+                obj.roi_folder = 'C:\Users\Sam\Documents\GitHub\autohotkey\gen4\roi_100\';
+                obj.SEDEEN_SKIP_UPDATE = 0;
             end
             
             obj.my_disp('Viewer Class: Start');

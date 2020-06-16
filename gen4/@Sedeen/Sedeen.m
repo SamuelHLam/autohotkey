@@ -10,10 +10,6 @@
 
 classdef Sedeen < Viewer
     
-    properties
-        SKIP_UPDATE = 1
-    end
-    
     methods
         
         function obj = Sedeen
@@ -146,7 +142,7 @@ classdef Sedeen < Viewer
         end
         
         function start (obj)
-            if obj.SKIP_UPDATE == 1
+            if obj.SEDEEN_SKIP_UPDATE == 1
                 script_path = sprintf('"%s\\%s"',obj.class_dir,'start_update.ahk');
             else
                 script_path = sprintf('"%s\\%s"',obj.class_dir,'start.ahk');
