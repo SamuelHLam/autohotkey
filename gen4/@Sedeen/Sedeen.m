@@ -17,6 +17,7 @@ classdef Sedeen < Viewer
             disp('Sedeen Class: Start')
             disp('Sedeen Class: Sedeen memorizes')
             disp('Sedeen Class: Sedeen: must enable minimap')
+            disp('Sedeen Class: Sedeen: must disable Application Toolbars')
 
             % get the class directory for the AHK scripts
             thispath = mfilename('fullpath');
@@ -262,8 +263,8 @@ classdef Sedeen < Viewer
             x2 = max(col);
             
             % visualize
-%            imagesc(dE2)
-%            colorbar
+           imagesc(dE2)
+           colorbar
 
             return
             
