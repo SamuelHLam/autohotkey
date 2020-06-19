@@ -13,7 +13,7 @@ classdef QuPath < Viewer
     methods
         
         function obj = QuPath
-            
+
             % get the class directory for the AHK scripts
             thispath = mfilename('fullpath');
             [mpath mname mext] = fileparts(thispath);

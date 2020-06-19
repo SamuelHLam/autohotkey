@@ -23,11 +23,13 @@ classdef Viewer < handle
         username
         ROISIZEHALF = 500
         SEDEEN_SKIP_UPDATE = 1        
+        DEMO_N = 10
     end
     
     methods
         
         function obj = Viewer
+            
             % constructor
             
             % get the user name for setting local variables
@@ -82,10 +84,11 @@ classdef Viewer < handle
             obj.wsi_roi = xy;
             
             % WCC
-            DEMO_N = 1
-            obj.my_disp(sprintf('Viewer Class: Demo mode: %d ROI(s) only',DEMO_N));
-            obj.wsi_roi = xy(1:DEMO_N,:);
-          
+            % shorten the run for testing purposes
+            if 1
+                obj.my_disp(sprintf('Viewer Class: Demo mode: %d ROI(s) only',obj.DEMO_N));
+                obj.wsi_roi = xy(1:obj.DEMO_N,:);
+            end
            
             obj.wsi_path = sprintf('\" %s%s\"', obj.wsi_folder, obj.wsi_filename);
             

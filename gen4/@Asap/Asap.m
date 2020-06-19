@@ -11,7 +11,7 @@ classdef Asap < Viewer
     methods
         
         function obj = Asap
-            
+
             obj.fastforward = 1;
             
             % setup the path

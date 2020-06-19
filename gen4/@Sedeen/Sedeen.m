@@ -263,8 +263,8 @@ classdef Sedeen < Viewer
             x2 = max(col);
             
             % visualize
-           imagesc(dE2)
-           colorbar
+%            imagesc(dE2)
+%            colorbar
 
             return
             

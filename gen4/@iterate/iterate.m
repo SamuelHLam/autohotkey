@@ -22,7 +22,7 @@ classdef iterate
             % data_folder = 'C:\Users\wcc\Documents\GitHub\autohotkey\gen4'
 %            data_folder = 'C:\Users\wcc\Documents\GitHub\autohotkey\gen4\data\100-cmu-3'
             data_folder = 'C:\Users\wcc\Documents\GitHub\autohotkey\gen4'
-            n_roi_vector = 1:100
+            n_roi_vector = 1:10
             ydim = 500
             xdim = 500
             
