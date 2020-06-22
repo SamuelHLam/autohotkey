@@ -111,7 +111,11 @@ classdef twocomp
                 imm1 = imread(fname1);
                 imm2 = imread(fname2);
                 
-                n = 500;
+%                 imfinfo(fname1)
+%                 imfinfo(fname2)
+                
+                n = 450;
+                % TODO: choose a meaningful ROI manually
                 im1 = imm1(1:n,1:n,:);
                 im2 = imm2(1:n,1:n,:);
                 
