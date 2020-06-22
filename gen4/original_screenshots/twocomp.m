@@ -115,8 +115,12 @@ classdef twocomp
                 im1 = imm1(1:n,1:n,:);
                 im2 = imm2(1:n,1:n,:);
                 
-                montage({im1,im2});
-                saveas(gcf,foutname12);
+                im3 = im1;
+                im3(1:n,[1:n]+n,:) = im2;
+                imwrite(im3,foutname12);
+                
+                % montage({im1,im2});
+                % saveas(gcf,foutname12);
                 
             end
         end
