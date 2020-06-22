@@ -102,10 +102,11 @@ classdef twocomp
             
             for i = 1:obj.n_folder
                 fd = obj.folder_name{i};
+                fnout = sprintf('montage_%02d.png',i);
                 
                 fname1 = sprintf('%s\\%s',fd,fn1);
                 fname2 = sprintf('%s\\%s',fd,fn2);
-                foutname12 = sprintf('%s\\%s',fd,'t12.png');
+                foutname12 = sprintf('%s\\%s',fd,fnout);
                 
                 imm1 = imread(fname1);
                 imm2 = imread(fname2);
