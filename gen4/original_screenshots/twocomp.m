@@ -129,6 +129,19 @@ classdef twocomp
             end
         end
         
+        function roi_iterate (obj)
+            xy = [];
+            for i = 1:obj.n_folder
+                fd = obj.folder_name{i};
+                fnout = sprintf('dataset_roi');
+                
+                fn = sprintf('%s\\t1.png',fd);
+                temp = choose_roi(fn, 1);
+                xy = [xy;temp]; 
+            end
+            save(fnout, 'xy');
+        end
+        
     end
 end
 

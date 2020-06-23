@@ -2,5 +2,6 @@
 HObI20*
 RA*
 
-# Except this file
+# Except these files
 !.gitignore
+!dataset_roi
