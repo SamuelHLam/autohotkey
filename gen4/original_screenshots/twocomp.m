@@ -14,7 +14,7 @@ classdef twocomp
             allfile = dir;
             obj.n_folder = 0;
             for i = 1:size(allfile,1)
-                if allfile(i).isdir & allfile(i).name(1)~='.'
+                if allfile(i).isdir && allfile(i).name(1)~='.'
                     obj.n_folder = obj.n_folder + 1;
                     obj.folder_name{obj.n_folder} = allfile(i).name;
                 end
@@ -99,6 +99,7 @@ classdef twocomp
             %   Detailed explanation goes here
             fn1 = 't1.png';
             fn2 = 't2.png';
+            roi_xy = load('dataset_roi.mat','xy');
             
             for i = 1:obj.n_folder
                 fd = obj.folder_name{i};
@@ -114,17 +115,40 @@ classdef twocomp
 %                 imfinfo(fname1)
 %                 imfinfo(fname2)
                 
-                n = 450;
-                % TODO: choose a meaningful ROI manually
-                im1 = imm1(1:n,1:n,:);
-                im2 = imm2(1:n,1:n,:);
+                % image size will be 2n by 2n pixels
+                n = 225;
+                roi_center_x = roi_xy.xy(i,1);
+                roi_center_y = roi_xy.xy(i,2);
+                roi_left = roi_center_x - n;
+                roi_right = roi_center_x + n;
+                roi_top = roi_center_y - n;
+                roi_bottom = roi_center_y + n;
+                
+                % make sure roi remains within image boundaries
+                if roi_left < 1
+                    roi_right = roi_right - roi_left + 1;
+                    roi_left = 1;
+                end
+                if roi_top < 1
+                    roi_bottom = roi_bottom - roi_top + 1;
+                    roi_top = 1;
+                end
+                if roi_right > size(imm1,1)
+                    roi_left = roi_left - roi_right + size(imm1,1);
+                    roi_right = size(imm1,1);
+                end
+                if roi_bottom > size(imm1,2)
+                    roi_top = roi_top - roi_bottom + size(imm1,2);
+                    roi_bottom = size(imm1,2);
+                end
+                
+                % adjust by 1 to ensure 450x450 image
+                im1 = imm1(roi_left:roi_right - 1,roi_top:roi_bottom - 1,:);
+                im2 = imm2(roi_left:roi_right - 1,roi_top:roi_bottom - 1,:);
                 
                 im3 = im1;
-                im3(1:n,[1:n]+n,:) = im2;
+                im3(1:2*n,[1:2*n]+2*n,:) = im2;
                 imwrite(im3,foutname12);
-                
-                % montage({im1,im2});
-                % saveas(gcf,foutname12);
                 
             end
         end
