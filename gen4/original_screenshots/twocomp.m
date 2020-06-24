@@ -5,6 +5,7 @@ classdef twocomp
     properties
         folder_name = {}
         n_folder = 0
+        browser = 'chrome'
     end
     
     methods
@@ -63,8 +64,8 @@ classdef twocomp
         function method1 (obj)
             %METHOD1 Summary of this method goes here
             %   Detailed explanation goes here
-            fn1 = '40x-ims-1-chrome.png';
-            fn2 = '40x-insight-chrome.png';
+            fn1 = sprintf('40x-ims-1-%s.png',obj.browser);
+            fn2 = sprintf('40x-insight-%s.png',obj.browser);
 
             for i = 1:obj.n_folder
                 %for i = obj.n_folder:obj.n_folder
@@ -73,8 +74,8 @@ classdef twocomp
                 fname2 = sprintf('%s\\%s',fd,fn2);
                 fnout = sprintf('dE_%02d.jpg',i);
                 
-                foutname1 = sprintf('%s\\%s',fd,'t1.png');
-                foutname2 = sprintf('%s\\%s',fd,'t2.png');
+                foutname1 = sprintf('%s\\%s_t1.png',fd,obj.browser);
+                foutname2 = sprintf('%s\\%s_t2.png',fd,obj.browser);
                 de2out = sprintf('%s\\%s',fd,fnout);
                 
                 %    im1 = imread(fname1);
@@ -99,13 +100,13 @@ classdef twocomp
         function two_show (obj)
             %METHOD1 Summary of this method goes here
             %   Detailed explanation goes here
-            fn1 = 't1.png';
-            fn2 = 't2.png';
+            fn1 = sprintf('%s_t1.png',obj.browser);
+            fn2 = sprintf('%s_t2.png',obj.browser);
             roi_xy = load('dataset_roi.mat','xy');
             
             for i = 1:obj.n_folder
                 fd = obj.folder_name{i};
-                fnout = sprintf('montage_%02d.png',i);
+                fnout = sprintf('%s_%02d.png',obj.browser,i);
                 
                 fname1 = sprintf('%s\\%s',fd,fn1);
                 fname2 = sprintf('%s\\%s',fd,fn2);
