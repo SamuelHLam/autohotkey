@@ -28,6 +28,7 @@ axis off
 
 colormap parula
 colorbar
+caxis([0 15])
 saveas(gcf,de2out)
 
 return

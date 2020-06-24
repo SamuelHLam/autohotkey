@@ -207,8 +207,7 @@ classdef twocomp
         
         function animation (obj, fn1, fn2, i)
             
-            fd = obj.folder_name{i}
-            fnout = sprintf('t12_%02d.gif',i);
+            fnout = sprintf('t12_%02d.png',i);
             fn3 = sprintf('%s\\%s',fd,fnout);
             
             % Capture the plot as an image
