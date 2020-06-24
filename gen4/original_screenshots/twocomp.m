@@ -71,7 +71,7 @@ classdef twocomp
                 fd = obj.folder_name{i};
                 fname1 = sprintf('%s\\%s',fd,fn1);
                 fname2 = sprintf('%s\\%s',fd,fn2);
-                fnout = sprintf('dE_%02d.png',i);
+                fnout = sprintf('dE_%02d.jpg',i);
                 
                 foutname1 = sprintf('%s\\%s',fd,'t1.png');
                 foutname2 = sprintf('%s\\%s',fd,'t2.png');
