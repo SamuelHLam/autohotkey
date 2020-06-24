@@ -8,6 +8,7 @@ classdef twocomp
     end
     
     methods
+        
         function obj = twocomp
             %UNTITLED Construct an instance of this class
             %   Detailed explanation goes here
@@ -19,8 +20,7 @@ classdef twocomp
                     obj.folder_name{obj.n_folder} = allfile(i).name;
                 end
             end
-            
-            
+                       
             return
         end
         
@@ -57,22 +57,25 @@ classdef twocomp
             imwrite(imout1,fout1)
             imwrite(imout2,fout2)
             
+            return
         end
         
-        function method1(obj)
+        function method1 (obj)
             %METHOD1 Summary of this method goes here
             %   Detailed explanation goes here
             fn1 = '40x-ims-1-chrome.png';
             fn2 = '40x-insight-chrome.png';
+
             for i = 1:obj.n_folder
                 %for i = obj.n_folder:obj.n_folder
                 fd = obj.folder_name{i};
                 fname1 = sprintf('%s\\%s',fd,fn1);
                 fname2 = sprintf('%s\\%s',fd,fn2);
+                fnout = sprintf('dE_%02d.png',i);
                 
                 foutname1 = sprintf('%s\\%s',fd,'t1.png');
                 foutname2 = sprintf('%s\\%s',fd,'t2.png');
-                de2out = sprintf('%s\\%s',fd,'dE.png');
+                de2out = sprintf('%s\\%s',fd,fnout);
                 
                 %    im1 = imread(fname1);
                 %    im2 = imread(fname2);
@@ -89,7 +92,7 @@ classdef twocomp
                 
                 compare_roi(foutname1,foutname2);
                 
-                %[dE2 dE] = image2dE2 (foutname1,foutname2,de2out);
+                [dE2 dE] = image2dE2 (foutname1,foutname2,de2out);
             end
         end
         
