@@ -5,3 +5,4 @@ RA*
 # Except these files
 !.gitignore
 !dataset_roi
+!*.gif
