@@ -5,7 +5,10 @@ classdef twocomp
     properties
         folder_name = {}
         n_folder = 0
-        browser = 'chrome'
+        viewer1 = 'insight'
+        viewer2 = 'insight'
+        browser1 = 'chrome'
+        browser2 = 'edge'    
     end
     
     methods
@@ -61,21 +64,20 @@ classdef twocomp
             return
         end
         
-        function method1 (obj)
-            %METHOD1 Summary of this method goes here
-            %   Detailed explanation goes here
-            fn1 = sprintf('40x-ims-1-%s.png',obj.browser);
-            fn2 = sprintf('40x-insight-%s.png',obj.browser);
+        function register_all (obj)
+            % two viewers and browsers registered
+            fn1 = sprintf('40x-%s-%s.png',obj.viewer1,obj.browser1);
+            fn2 = sprintf('40x-%s-%s.png',obj.viewer2,obj.browser2);
 
             for i = 1:obj.n_folder
                 %for i = obj.n_folder:obj.n_folder
                 fd = obj.folder_name{i};
                 fname1 = sprintf('%s\\%s',fd,fn1);
                 fname2 = sprintf('%s\\%s',fd,fn2);
-                fnout = sprintf('dE_%02d.jpg',i);
+                fnout = sprintf('%s-%s_%s-%s_dE_%02d.jpg',obj.viewer1,obj.browser1,obj.viewer2,obj.browser2,i);
                 
-                foutname1 = sprintf('%s\\%s_t1.png',fd,obj.browser);
-                foutname2 = sprintf('%s\\%s_t2.png',fd,obj.browser);
+                foutname1 = sprintf('%s\\%s-%s_t1.png',fd,obj.viewer1,obj.browser1);
+                foutname2 = sprintf('%s\\%s-%s_t2.png',fd,obj.viewer2,obj.browser2);
                 de2out = sprintf('%s\\%s',fd,fnout);
                 
                 %    im1 = imread(fname1);
@@ -84,7 +86,7 @@ classdef twocomp
                 %    imshowpair(im1,im2)
                 %    pause
                 
-                t = register_images(fname2,fname1)
+                t = register_images(fname2,fname1);
                 sprintf('%s: %.4f %.4f %.4f %.4f',fd,t(1,1),t(2,2),t(3,1),t(3,2))
                 
                 panx = round(t(3,1))
@@ -98,15 +100,14 @@ classdef twocomp
         end
         
         function two_show (obj)
-            %METHOD1 Summary of this method goes here
-            %   Detailed explanation goes here
-            fn1 = sprintf('%s_t1.png',obj.browser);
-            fn2 = sprintf('%s_t2.png',obj.browser);
+            % generates png showing t1 and t2 side-by-side
+            fn1 = sprintf('%s-%s_t1.png',obj.viewer1,obj.browser1);
+            fn2 = sprintf('%s-%s_t2.png',obj.viewer2,obj.browser2);
             roi_xy = load('dataset_roi.mat','xy');
             
             for i = 1:obj.n_folder
                 fd = obj.folder_name{i};
-                fnout = sprintf('%s_%02d.png',obj.browser,i);
+                fnout = sprintf('%s-%s_%s-%s_%02d.png',obj.viewer1,obj.browser1,obj.viewer2,obj.browser2,i);
                 
                 fname1 = sprintf('%s\\%s',fd,fn1);
                 fname2 = sprintf('%s\\%s',fd,fn2);
@@ -162,7 +163,7 @@ classdef twocomp
                 fd = obj.folder_name{i};
                 fnout = sprintf('dataset_roi');
                 
-                fn = sprintf('%s\\t1.png',fd);
+                fn = sprintf('%s\\%s-%s_t1.png',fd,obj.viewer1,obj.browser1);
                 temp = choose_roi(fn, 1);
                 xy = [xy;temp];
             end
@@ -195,13 +196,12 @@ classdef twocomp
         
         
         function animation_all (obj)
-            %METHOD1 Summary of this method goes here
-            %   Detailed explanation goes here
-            fn1 = 't1.png';
-            fn2 = 't2.png';
+            % creates .gif switching between subject and predicate
+            fn1 = sprintf('%s-%s_t1.png',obj.viewer1,obj.browser1);
+            fn2 = sprintf('%s-%s_t2.png',obj.viewer2,obj.browser2);
             
             for i = 1:obj.n_folder
-                fd = obj.folder_name{i}
+                fd = obj.folder_name{i};
                 fname1 = sprintf('%s\\%s',fd,fn1);
                 fname2 = sprintf('%s\\%s',fd,fn2);
 
@@ -211,8 +211,8 @@ classdef twocomp
         
         function animation (obj, fn1, fn2, i)
             
-            fd = obj.folder_name{i}
-            fnout = sprintf('t12_%02d.gif',i);
+            fd = obj.folder_name{i};
+            fnout = sprintf('%s-%s_%s-%s_%02d.gif',obj.viewer1,obj.browser1,obj.viewer2,obj.browser2,i);
             fn3 = sprintf('%s\\%s',fd,fnout);
             
             % Capture the plot as an image
