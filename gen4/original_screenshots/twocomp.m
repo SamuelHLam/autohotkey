@@ -69,8 +69,9 @@ classdef twocomp
             fn1 = sprintf('40x-%s-%s.png',obj.viewer1,obj.browser1);
             fn2 = sprintf('40x-%s-%s.png',obj.viewer2,obj.browser2);
 
-            for i = 1:obj.n_folder
-                %for i = obj.n_folder:obj.n_folder
+            %for i = 1:obj.n_folder
+                for i = 4
+                    
                 fd = obj.folder_name{i};
                 fname1 = sprintf('%s\\%s',fd,fn1);
                 fname2 = sprintf('%s\\%s',fd,fn2);
@@ -80,12 +81,15 @@ classdef twocomp
                 foutname2 = sprintf('%s\\%s-%s_t2.png',fd,obj.viewer2,obj.browser2);
                 de2out = sprintf('%s\\%s',fd,fnout);
                 
-                %    im1 = imread(fname1);
-                %    im2 = imread(fname2);
+                if 0
+                    % visualize
+                   im1 = imread(fname1);
+                   im2 = imread(fname2);
                 
-                %    imshowpair(im1,im2)
-                %    pause
-                
+                   imshowpair(im1,im2)
+                   pause
+                end
+                             
                 t = register_images(fname2,fname1);
                 sprintf('%s: %.4f %.4f %.4f %.4f',fd,t(1,1),t(2,2),t(3,1),t(3,2))
                 

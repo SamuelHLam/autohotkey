@@ -1,10 +1,15 @@
 % given two screenshots from two viewers, remove the menu outside the image
+% 6/25/2020: need to handle different sizes
 
 function box = find_common_region (fn1,fn2)
             
             % color images
             im1 = imread(fn1);
             im2 = imread(fn2);
+            
+            ifsizethesame = (size(im1) == size(im2)); % return 1x3
+            
+            assert(min(ifsizethesame)==1);
             
             % 2D to 1D
             imlin1 = reshape(im1,size(im1,1)*size(im1,2),3);
