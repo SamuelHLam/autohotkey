@@ -1,18 +1,31 @@
+% produce GIF for Cheng
+% using the original registration code
+%
+% WCC 
+% 6/26/2020
+
 classdef doallfolder < twocomp
-    %UNTITLED Summary of this class goes here
-    %   Detailed explanation goes here
+    %For original screenshots, to collect the image dimensions and 
+    %   to make GIF files made by the original registration code
     
     properties
-        xy_chrome
-        xy_edge
-        xy_firefox
+        % for image dimensions
+        % 1: magnification: 40x, 20x
+        % 2: device: predicate, subject
+        % 3: browser: chrome, edge, firefox
+        % 4: ROI: 1~22
+        % 5: size()
         data = zeros(2,2,3,22,3);
     end
     
     methods
         
+        %
+        % prepare the data for Excel; one for 40x, one for 20x
+        % 
         function tab = combine (obj)
             
+            % 40x
             mag = 1;
             bro = 1;
             tab1 = [squeeze(obj.data(mag,1,bro,:,[2 1])) squeeze(obj.data(mag,2,bro,:,[2 1]))];
@@ -24,6 +37,7 @@ classdef doallfolder < twocomp
             tab = [tab1 tab2 tab3];
             xlswrite('40x_size.xlsx',tab)
             
+            % 20x
             mag = 2;
             bro = 1;
             tab1 = [squeeze(obj.data(mag,1,bro,:,[2 1])) squeeze(obj.data(mag,2,bro,:,[2 1]))];
@@ -37,22 +51,6 @@ classdef doallfolder < twocomp
             
         end
         
-        function tab = test (obj)
-            obj.data(1,1,1,:,:) = obj.do_folder('40x','ims-1','chrome');
-            obj.data(1,1,2,:,:) = obj.do_folder('40x','ims-1','edge');
-            obj.data(1,1,3,:,:) = obj.do_folder('40x','ims-1','firefox');
-            obj.data(1,2,1,:,:) = obj.do_folder('40x','insight','chrome');
-            obj.data(1,2,2,:,:) = obj.do_folder('40x','insight','edge');
-            obj.data(1,2,3,:,:) = obj.do_folder('40x','insight','firefox');
-            obj.data(2,1,1,:,:) = obj.do_folder('20x','ims-1','chrome');
-            obj.data(2,1,2,:,:) = obj.do_folder('20x','ims-1','edge');
-            obj.data(2,1,3,:,:) = obj.do_folder('20x','ims-1','firefox');
-            obj.data(2,2,1,:,:) = obj.do_folder('20x','insight','chrome');
-            obj.data(2,2,2,:,:) = obj.do_folder('20x','insight','edge');
-            obj.data(2,2,3,:,:) = obj.do_folder('20x','insight','firefox');
-        end
-
-        
         function do_folder_reg_all (obj)
             obj.do_folder_reg('40x','chrome');
             obj.do_folder_reg('40x','edge');
@@ -62,46 +60,85 @@ classdef doallfolder < twocomp
             obj.do_folder_reg('20x','firefox');
         end
         
+        %
+        % register 22 ROIs for the given magnification and browser (e.g.,
+        % 40x, chrome)
+        %
         function do_folder_reg (obj,mag,browser)
             %(obj,mag,viewer,browser)
             %mag = '40x';
             %browser = 'chrome';
             
-            xy = zeros(obj.n_folder,3);
-            for i = 1:obj.n_folder
+            for i = 1:1
+%            for i = 1:obj.n_folder
+                
+                % file folders for "screenshots"
                 fd = obj.folder_name{i};
+                
+                % filename filters
                 fn1 = obj.construct_name(mag,'ims-1',browser);
                 fn2 = obj.construct_name(mag,'insight',browser);
+                
+                % filepaths
                 imname1 = sprintf('%s\\%s',fd,fn1);
                 imname2 = sprintf('%s\\%s',fd,fn2);
-%                 [im1_crop, im2_crop] = obj.alignImage(imname1, imname2);
                 
+                % the original registration code
+                % very time consuming
+                [im1_crop, im2_crop] = obj.alignImage(imname1, imname2);
+                
+                % save crop1 and crop2
                 imnameout1 = sprintf('%s\\%s',fd,sprintf('crop1_%02d.png',i));
                 imnameout2 = sprintf('%s\\%s',fd,sprintf('crop2_%02d.png',i));
 
+                imwrite(im1_crop,imnameout1);
+                imwrite(im2_crop,imnameout2);
+
+                % filename for GIF
                 fdout  = sprintf('%s_%s',mag,browser);
-                mkdir(fdout)
+                
+                if ~isfile(fdout)
+                    mkdir(fdout);
+                end
+                
                 imnamegif = sprintf('%s\\%s',fdout,sprintf('reg_%02d.gif',i));
-                
-%                 imwrite(im1_crop,imnameout1);
-%                 imwrite(im2_crop,imnameout2);
-                
+
+                % for figure title
                 title1 = sprintf('%s: %s',obj.folder_name{i},fn1);
                 title2 = sprintf('%s: %s',obj.folder_name{i},fn2);
 
+                % make the GIF
                 obj.make_gif(imnameout1,imnameout2,imnamegif, title1, title2);
             end
         end
+
+        function tab = get_imagesize_all (obj)
+            obj.data(1,1,1,:,:) = obj.get_imagesize('40x','ims-1','chrome');
+            obj.data(1,1,2,:,:) = obj.get_imagesize('40x','ims-1','edge');
+            obj.data(1,1,3,:,:) = obj.get_imagesize('40x','ims-1','firefox');
+            obj.data(1,2,1,:,:) = obj.get_imagesize('40x','insight','chrome');
+            obj.data(1,2,2,:,:) = obj.get_imagesize('40x','insight','edge');
+            obj.data(1,2,3,:,:) = obj.get_imagesize('40x','insight','firefox');
+            obj.data(2,1,1,:,:) = obj.get_imagesize('20x','ims-1','chrome');
+            obj.data(2,1,2,:,:) = obj.get_imagesize('20x','ims-1','edge');
+            obj.data(2,1,3,:,:) = obj.get_imagesize('20x','ims-1','firefox');
+            obj.data(2,2,1,:,:) = obj.get_imagesize('20x','insight','chrome');
+            obj.data(2,2,2,:,:) = obj.get_imagesize('20x','insight','edge');
+            obj.data(2,2,3,:,:) = obj.get_imagesize('20x','insight','firefox');
+        end
         
-        function xy = do_folder_imagesize (obj,mag,viewer,browser)
+        %
+        % get the file dimensions
+        %
+        function xyz = get_imagesize (obj,mag,viewer,browser)
             
-            xy = zeros(obj.n_folder,3);
+            xyz = zeros(obj.n_folder,3);
             for i = 1:obj.n_folder
                 fd = obj.folder_name{i};
                 fn = obj.construct_name(mag,viewer,browser);
                 pathname = sprintf('%s\\%s',fd,fn);
                 im = imread(pathname);
-                xy(i,:) = size(im);
+                xyz(i,:) = size(im);
             end
         end
         
@@ -109,6 +146,11 @@ classdef doallfolder < twocomp
             fn = sprintf('%s-%s-%s.png',mag,viewer,browser);
         end
         
+        %
+        % make an animated GIF fn3 by combining fn1 and fn2
+        %
+        % How to remove the white borders surrounding the image?
+        %
         function make_gif (obj, fn1, fn2, fn3, title1, title2)
             
             figure('units','normalized','outerposition',[0 0 1 1]);
@@ -141,6 +183,7 @@ classdef doallfolder < twocomp
             close all
         end
         
+        % copy and paste from original code
         function [im1_crop, im2_crop] = alignImage(obj, imname1, imname2)
             
             im1 = imread(imname1);
