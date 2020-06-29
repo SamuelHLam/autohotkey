@@ -69,8 +69,7 @@ classdef doallfolder < twocomp
             %mag = '40x';
             %browser = 'chrome';
             
-            for i = 1:1
-%            for i = 1:obj.n_folder
+            for i = 1:obj.n_folder
                 
                 % file folders for "screenshots"
                 fd = obj.folder_name{i};
