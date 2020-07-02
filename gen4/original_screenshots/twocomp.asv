@@ -193,32 +193,22 @@ classdef twocomp < handle
             % because the window size is 2*win+1
             for i=1+win:size(im1,2)-win
                 
-                % obtain one vertical line a time from im1
+                % obtain one vertical line a time
                 col1 = im1(:,i);
-
-                % obtain the windown from im2
-                col_comp_window = im2(:,[i-win:i+win]);
                 
-                % create a matrix by combining the two
-                col_matrix = [col1 col_comp_window];
-                r = corrcoef(double(col_matrix));
                 
-                % find the maximum
+                [col1 im2(:,[i-win:i+win])]
+                
+                r = corrcoef(double([col1 im2(:,[i-win:i+win])]));
                 [mx ind] = max(r(2:end,1));
-                
-                % store the relative location
                 data(i,1) = ind;
             end
             
-            
-            % condition the results
-            % by filling in the start and end
             data(1:win,1) = data(win+1,1);
             data(end-win:end,1) = data(end-win-1,1);
             
-            % show the curve
             plot(data)
-            saveas(gcf,'find_seam_plot.png')
+            
         end
         
         
