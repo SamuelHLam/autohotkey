@@ -1,3 +1,5 @@
+% compare two cropped images
+%
 classdef twocomp < handle
     %UNTITLED Summary of this class goes here
     %   Detailed explanation goes here
@@ -8,7 +10,7 @@ classdef twocomp < handle
         viewer1 = 'insight'
         viewer2 = 'insight'
         browser1 = 'chrome'
-        browser2 = 'edge'    
+        browser2 = 'edge'
     end
     
     methods
@@ -24,7 +26,7 @@ classdef twocomp < handle
                     obj.folder_name{obj.n_folder} = allfile(i).name;
                 end
             end
-                       
+            
             return
         end
         
@@ -68,10 +70,10 @@ classdef twocomp < handle
             % two viewers and browsers registered
             fn1 = sprintf('40x-%s-%s.png',obj.viewer1,obj.browser1);
             fn2 = sprintf('40x-%s-%s.png',obj.viewer2,obj.browser2);
-
+            
             %for i = 1:obj.n_folder
-                for i = 4
-                    
+            for i = 4
+                
                 fd = obj.folder_name{i};
                 fname1 = sprintf('%s\\%s',fd,fn1);
                 fname2 = sprintf('%s\\%s',fd,fn2);
@@ -83,13 +85,13 @@ classdef twocomp < handle
                 
                 if 0
                     % visualize
-                   im1 = imread(fname1);
-                   im2 = imread(fname2);
-                
-                   imshowpair(im1,im2)
-                   pause
+                    im1 = imread(fname1);
+                    im2 = imread(fname2);
+                    
+                    imshowpair(im1,im2)
+                    pause
                 end
-                             
+                
                 t = register_images(fname2,fname1);
                 sprintf('%s: %.4f %.4f %.4f %.4f',fd,t(1,1),t(2,2),t(3,1),t(3,2))
                 
@@ -174,6 +176,102 @@ classdef twocomp < handle
             save(fnout, 'xy');
         end
         
+        function find_seam_one_iterate (obj)
+            for i = 1:22
+                [x,y] = obj.find_seam_one(sprintf('crop\\crop2_%02d.png',i));
+            end
+        end
+        
+        function [seam_x, seam_y] = find_seam_one (obj, fn1)
+            %Find the seam in a single image
+            
+            % read the color image
+            imm1 = imread(fn1);
+            
+            % get dimensions 
+            n_col = size(imm1,2);
+            n_row = size(imm1,1);
+            
+            % convert to CIELAB
+            lab1 = rgb2lab(imm1);
+            
+            % find correlation coefficients for columns
+            r1 = corrcoef(double(lab1(:,:,1)));
+            r2 = corrcoef(double(lab1(:,:,2)));
+            r3 = corrcoef(double(lab1(:,:,3)));
+            
+            % rotate to find horizontal seams
+            lab2 = permute(lab1,[2 1 3]);
+
+            % find correlation coefficients for rows
+            v1 = corrcoef(double(lab2(:,:,1)));
+            v2 = corrcoef(double(lab2(:,:,2)));
+            v3 = corrcoef(double(lab2(:,:,3)));
+
+            % retrieve the correlation coefficient for each pair of
+            % adjacent columns
+            
+            data = zeros(n_col-1,3);
+            
+            % remove the top row and the right column
+            % and then retrieve the diagonal
+            data(:,1) = diag(r1(2:end,1:end-1));
+            data(:,2) = diag(r2(2:end,1:end-1));
+            data(:,3) = diag(r3(2:end,1:end-1));
+            data_prod = data(:,1).*data(:,2).*data(:,3);
+            
+            data2 = zeros(n_row-1,3);
+
+            % remove the top row and the right column
+            % and then retrieve the diagonal
+            data2(:,1) = diag(v1(2:end,1:end-1));
+            data2(:,2) = diag(v2(2:end,1:end-1));
+            data2(:,3) = diag(v3(2:end,1:end-1));
+            data2_prod = data2(:,1).*data2(:,2).*data2(:,3);
+            
+            [m seam_x] = min(data_prod);
+            [m seam_y] = min(data2_prod);
+                
+            % annotate
+            imm2 = imm1;
+            markercolor = [255 128 40]; % orange
+            markercolor = [0 0 255]; % orange
+            for j = -50:+50
+                imm2(seam_y,max(min(seam_x+j,n_col),1),1:3) = markercolor;
+                imm2(max(min(seam_y+j,n_row),1),seam_x,1:3) = markercolor;
+            end
+            
+            % save the annotated image
+            [filepath,name,ext] = fileparts(fn1);
+            imwrite(imm2,[name '_seam.png'])
+            
+            clf
+            subplot(4,4,[1:3 5:7 9:11])
+            image(imm2)
+            
+            subplot(4,4,[13:15])
+            hold on
+            plot(data(:,1)-0)
+            plot(data(:,2)-0.1)
+            plot(data(:,3)-0.2)
+            plot(data_prod-0.3)
+            axis([1 n_col 0.5 1.1])
+            axis off
+    
+            subplot(4,4,[4 8 12])
+            hold on
+            plot(data2(:,1)-0,n_row-1:-1:1)
+            plot(data2(:,2)-0.1,n_row-1:-1:1)
+            plot(data2(:,3)-0.2,n_row-1:-1:1)
+            plot(data2_prod-0.3,n_row-1:-1:1)
+            axis([0.5 1.1 1 n_row])
+            axis off
+
+            [filepath,name,ext] = fileparts(fn1);
+            saveas(gcf,[name '_corr.png']);
+            
+            return
+        end
         
         function data = find_seam (obj, fn1, fn2)
             imm1 = imread(fn1);
@@ -195,7 +293,7 @@ classdef twocomp < handle
                 
                 % obtain one vertical line a time from im1
                 col1 = im1(:,i);
-
+                
                 % obtain the windown from im2
                 col_comp_window = im2(:,[i-win:i+win]);
                 
@@ -231,7 +329,7 @@ classdef twocomp < handle
                 fd = obj.folder_name{i};
                 fname1 = sprintf('%s\\%s',fd,fn1);
                 fname2 = sprintf('%s\\%s',fd,fn2);
-
+                
                 obj.animation(fname1,fname2,i);
             end
         end
