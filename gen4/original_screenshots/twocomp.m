@@ -243,7 +243,7 @@ classdef twocomp < handle
             
             % save the annotated image
             [filepath,name,ext] = fileparts(fn1);
-            imwrite(imm2,[name '_seam.png'])
+            imwrite(imm2,['seam\\' name '_seam.png'])
             
             clf
             subplot(4,4,[1:3 5:7 9:11])
@@ -268,7 +268,7 @@ classdef twocomp < handle
             axis off
 
             [filepath,name,ext] = fileparts(fn1);
-            saveas(gcf,[name '_corr.png']);
+            saveas(gcf,['seam\\' name '_corr.png']);
             
             return
         end
