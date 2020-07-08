@@ -178,7 +178,7 @@ classdef twocomp < handle
         
         function find_seam_one_iterate (obj)
             for i = 1:22
-                [x,y] = obj.find_seam_one(sprintf('crop\\crop2_%02d.png',i));
+                [x,y] = obj.find_seam_box(sprintf('crop\\crop2_%02d.png',i));
             end
         end
         
@@ -269,6 +269,67 @@ classdef twocomp < handle
 
             [filepath,name,ext] = fileparts(fn1);
             saveas(gcf,['seam\\' name '_corr.png']);
+            
+            return
+        end
+        
+        function [seam_x, seam_y] = find_seam_box (obj, fn1)
+            %Find the seam in a single image
+            
+            % read the color image
+            imm1 = imread(fn1);
+            
+            % get dimensions 
+            n_col = size(imm1,2);
+            n_row = size(imm1,1);
+            
+            % convert to CIELAB
+            lab1 = rgb2lab(imm1);
+            
+            % find correlation coefficients for columns
+            r1 = corrcoef(double(lab1(:,:,1)));
+            r2 = corrcoef(double(lab1(:,:,2)));
+            r3 = corrcoef(double(lab1(:,:,3)));
+            
+            % rotate to find horizontal seams
+            lab2 = permute(lab1,[2 1 3]);
+
+            % find correlation coefficients for rows
+            v1 = corrcoef(double(lab2(:,:,1)));
+            v2 = corrcoef(double(lab2(:,:,2)));
+            v3 = corrcoef(double(lab2(:,:,3)));
+
+            % retrieve the correlation coefficient for each pair of
+            % adjacent columns
+            
+            data = zeros(n_col-1,3);
+            
+            % remove the top row and the right column
+            % and then retrieve the diagonal
+            data(:,1) = diag(r1(2:end,1:end-1));
+            data(:,2) = diag(r2(2:end,1:end-1));
+            data(:,3) = diag(r3(2:end,1:end-1));
+            data_prod = data(:,1).*data(:,2).*data(:,3);
+            
+            data2 = zeros(n_row-1,3);
+
+            % remove the top row and the right column
+            % and then retrieve the diagonal
+            data2(:,1) = diag(v1(2:end,1:end-1));
+            data2(:,2) = diag(v2(2:end,1:end-1));
+            data2(:,3) = diag(v3(2:end,1:end-1));
+            data2_prod = data2(:,1).*data2(:,2).*data2(:,3);
+            
+            [m seam_x] = min(data_prod);
+            [m seam_y] = min(data2_prod);
+            
+            clf
+            [filepath,name,ext] = fileparts(fn1);
+            boxplot(data_prod,'orientation','horizontal')
+            saveas(gcf,['seam\\' name '_x_boxplot.png']);
+            
+            boxplot(data2_prod)
+            saveas(gcf,['seam\\' name '_y_boxplot.png']);
             
             return
         end
