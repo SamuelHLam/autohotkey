@@ -64,6 +64,44 @@ classdef doallfolder < twocomp
         % register 22 ROIs for the given magnification and browser (e.g.,
         % 40x, chrome)
         %
+        function do_folder_reg_chrome_firebox (obj,mag)
+            %(obj,mag,viewer,browser)
+            %mag = '40x';
+            %browser = 'chrome';
+            
+            for i = 1:obj.n_folder
+                
+                % file folders for "screenshots"
+                fd = obj.folder_name{i};
+                
+                % filename filters
+                fn1 = obj.construct_name(mag,'insight','chrome');
+                fn2 = obj.construct_name(mag,'insight','firefox');
+                
+                % filepaths
+                imname1 = sprintf('%s\\%s',fd,fn1);
+                imname2 = sprintf('%s\\%s',fd,fn2);
+                
+                % the original registration code
+                % very time consuming
+                [im1_crop, im2_crop] = obj.alignImage(imname1, imname2);
+                
+                % save crop1 and crop2
+                imnameout1 = sprintf('%s\\%s',fd,sprintf('crop1_%02d.png',i));
+                imnameout2 = sprintf('%s\\%s',fd,sprintf('crop2_%02d.png',i));
+
+                imwrite(im1_crop,imnameout1);
+                imwrite(im2_crop,imnameout2);
+
+                return
+                
+            end
+        end
+        
+        %
+        % register 22 ROIs for the given magnification and browser (e.g.,
+        % 40x, chrome)
+        %
         function do_folder_reg (obj,mag,browser)
             %(obj,mag,viewer,browser)
             %mag = '40x';
@@ -110,7 +148,27 @@ classdef doallfolder < twocomp
                 obj.make_gif(imnameout1,imnameout2,imnamegif, title1, title2);
             end
         end
-
+        
+        function tab = get_imagesize_all_plot (obj)
+            clf
+            subplot(1,2,1)
+            bar(squeeze(obj.data(1,1,:,:,2))')
+            legend('Chrome','Edge','Firefox','Location','Southeast')
+            
+            xlabel('ROI #')
+            ylabel('ROI width (pixel)')
+            title(sprintf('%s ROI size -- width',obj.mag1))
+            
+            subplot(1,2,2)
+            bar(squeeze(obj.data(1,1,:,:,1))')
+            legend('Chrome','Edge','Firefox','Location','Southeast')
+            xlabel('ROI #')
+            ylabel('ROI height (pixel)')
+            title(sprintf('%s ROI size -- height',obj.mag1))
+            
+            saveas(gcf,'size.jpg')
+        end
+        
         function tab = get_imagesize_all (obj)
             obj.data(1,1,1,:,:) = obj.get_imagesize('40x','ims-1','chrome');
             obj.data(1,1,2,:,:) = obj.get_imagesize('40x','ims-1','edge');
@@ -142,7 +200,7 @@ classdef doallfolder < twocomp
         end
         
         function fn = construct_name(obj, mag, viewer, browser)
-            fn = sprintf('%s-%s-%s.png',mag,viewer,browser);
+            fn = sprintf('%s-%s-%s_reg.png',mag,viewer,browser);
         end
         
         %

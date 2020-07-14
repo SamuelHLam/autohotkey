@@ -1,8 +1,0 @@
-# Ignore everything in this directory
-HObI20*
-RA*
-
-# Except these files
-!.gitignore
-!dataset_roi
-!*.gif
