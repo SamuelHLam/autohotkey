@@ -146,14 +146,29 @@ classdef Ndp < Viewer
             imwrite(im1,printscr1_fn);
             imwrite(im2,printscr2_fn);
             
-            map1 = rgb2gray(im1(y1:y2, x1:x2, :));
-            map2 = rgb2gray(im2(y1:y2, x1:x2, :));
-            
-            % an image with more entropy implies the map is on
-            if (entropy(map1) > entropy(map2))
+            % code should work regardless of initial state of minimap
+            map_off = obj.map_state(im1, im2);
+
+            if (map_off)
                 % if map is not on, toggle it on
                 obj.ahk_do('toggle_minimap.ahk');
             end
+        end
+        
+        function map_off = map_state (obj, im1, im2)
+            coords = obj.minimap_pos;
+            x1 = coords(1);
+            y1 = coords(2);
+            x2 = coords(3);
+            y2 = coords(4);
+            map1 = rgb2gray(im1(y1:y2, x1:x2, :));
+            map2 = rgb2gray(im2(y1:y2, x1:x2, :));
+            
+            % An image with more entropy implies the map is on in that
+            % image. The map is toggled off before taking im2, so if the
+            % entropy of map1 is greater than that of map2, the map is
+            % currently off.
+            map_off = entropy(map1) > entropy(map2);
         end
         
         function [x1 y1 x2 y2] = mycomp (obj,imm1,imm2)
