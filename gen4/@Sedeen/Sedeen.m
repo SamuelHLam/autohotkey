@@ -170,7 +170,6 @@ classdef Sedeen < Viewer
             obj.ahk_do('toggle_minimap.ahk');
             
             im2 = obj.printscr(printscr2_fn);
-            obj.ahk_do('toggle_minimap.ahk');
             
             [x1 y1 x2 y2] = obj.mycomp (im1, im2);
             obj.minimap_pos = [x1 y1 x2 y2];
@@ -182,6 +181,14 @@ classdef Sedeen < Viewer
             imwrite(im1,printscr1_fn);
             imwrite(im2,printscr2_fn);
             
+            map1 = rgb2gray(im1(y1:y2, x1:x2, :));
+            map2 = rgb2gray(im2(y1:y2, x1:x2, :));
+            
+            % an image with more entropy implies the map is on
+            if (entropy(map1) > entropy(map2))
+                % if map is not on, toggle it on
+                obj.ahk_do('toggle_minimap.ahk');
+            end
         end
 
         function find_viewarea (obj)

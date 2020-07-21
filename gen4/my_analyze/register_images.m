@@ -7,7 +7,7 @@ function regT = register_images (fn_target, fn_trial)
 imtarget = imread(fn_target);
 imtrial = imread(fn_trial);
 
-reg = registerImages2(imtrial,imtarget);
+reg = registerImages(imtrial,imtarget);
 regT = reg.Transformation.T;
 
 end
