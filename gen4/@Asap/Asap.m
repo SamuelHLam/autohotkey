@@ -12,7 +12,7 @@ classdef Asap < Viewer
         
         function obj = Asap
 
-            obj.fastforward = 1;
+            obj.fastforward = 0;
             
             % setup the path
             obj.setup
@@ -88,7 +88,7 @@ classdef Asap < Viewer
                 
                 %                       for i = 1:n_roi
                 
-                for i = 5
+                for i = 1
                     
                     % define filenames
                     fn_target = sprintf('%s\\%03d\\%s',obj.current_dir,i,'ndp.png');
@@ -173,7 +173,8 @@ classdef Asap < Viewer
             
             % cursor must be outside the minimap!
             obj.click_at(round(obj.screen_size(1)/2), round(obj.screen_size(2)/2));
-            for i = 1:67
+%             for i = 1:67
+            for i = 1:86
                 obj.ahk_do('drag_down20.ahk');
             end
             
@@ -230,17 +231,31 @@ classdef Asap < Viewer
                 return
             end
             
-            printscr1_fn = sprintf('%s\\%s',obj.class_dir,'myprintscr1.png');
-            printscr2_fn = sprintf('%s\\%s',obj.class_dir,'myprintscr2.png');
+            printscr1_fn = sprintf('%s\\%s',obj.class_dir,'minimap_on.png');
+            printscr2_fn = sprintf('%s\\%s',obj.class_dir,'minimap_off.png');
             
             im1 = obj.printscr(printscr1_fn);
             obj.ahk_do('toggle_minimap.ahk');
             
             im2 = obj.printscr(printscr2_fn);
-            obj.ahk_do('toggle_minimap.ahk');
             
-            [x1 y1 x2 y2] = obj.mycomp (im1, im2)
+            [x1 y1 x2 y2] = obj.mycomp (im1, im2);
             obj.minimap_pos = [x1 y1 x2 y2];
+            
+            % mark on images for debugging
+            im1 = obj.mark_roi(im1,obj.minimap_pos);
+            im2 = obj.mark_roi(im2,obj.minimap_pos);
+            
+            imwrite(im1,printscr1_fn);
+            imwrite(im2,printscr2_fn);
+            
+            % code should work regardless of initial state of minimap
+            map_off = obj.map_state(im1, im2);
+
+            if (map_off)
+                % if map is not on, toggle it on
+                obj.ahk_do('toggle_minimap.ahk');
+            end
         end
         
         function find_viewarea (obj)

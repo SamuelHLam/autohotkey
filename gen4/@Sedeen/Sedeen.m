@@ -189,22 +189,6 @@ classdef Sedeen < Viewer
                 obj.ahk_do('toggle_minimap.ahk');
             end
         end
-        
-        function map_off = map_state (obj, im1, im2)
-            coords = obj.minimap_pos;
-            x1 = coords(1);
-            y1 = coords(2);
-            x2 = coords(3);
-            y2 = coords(4);
-            map1 = rgb2gray(im1(y1:y2, x1:x2, :));
-            map2 = rgb2gray(im2(y1:y2, x1:x2, :));
-            
-            % An image with more entropy implies the map is on in that
-            % image. The map is toggled off before taking im2, so if the
-            % entropy of map1 is greater than that of map2, the map is
-            % currently off.
-            map_off = entropy(map1) > entropy(map2);
-        end
 
         function find_viewarea (obj)
             printscr1_fn = sprintf('%s\\%s',obj.class_dir,'myprintscr1.png');
