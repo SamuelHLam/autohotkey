@@ -25,10 +25,7 @@ classdef iterate
             Dstd = std(obj.D,0,2)
             
             boxplot([Dmin Dmax Dmean Dmedian Dstd])
-            xticklabels({'Min','Max','Mean','Median','Std'})
-            ylabel('{\Delta}E')
-            
-            saveas(gcf,'boxplot.png');
+            xticklabels({'Min','Max','Mean','Median','Std\pi','2\pi','3\pi'})
         end
     end
     
@@ -41,8 +38,8 @@ classdef iterate
             data_folder = 'C:\Users\wcc\Documents\GitHub\autohotkey\gen4\data\100-cmu-3'
             %            data_folder = 'C:\Users\wcc\Documents\GitHub\autohotkey\gen4'
             
-            % override the data size here
-            n_roi_vector = 1:1
+            % limit the data size here
+            n_roi_vector = 1:10
             
             % define the ROI here
             ydim = 500

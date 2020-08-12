@@ -55,9 +55,9 @@ classdef Asap < Viewer
                 % Q: how many zoom levels does ASAP have?
                 % Method: zoom through all levels, save the images, and
                 % then manually inspect them
-                % A: 121 levels for Camelyon16 WSI
-                % A: 126 levels for CMU-1
-                % A: 15 levels to the top level for CMU-1
+                % A: 121 levels for Camelyon16 "T11 11969 40x"
+                % A: 126 levels for "CMU-1"
+                % A: 15 levels to the top level for "CMU-1"
                 j = 1;
                 obj.goto_roi(obj.wsi_roi(j,1),obj.wsi_roi(j,2));
                 for i = 1:200

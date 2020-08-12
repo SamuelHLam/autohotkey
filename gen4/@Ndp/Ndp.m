@@ -10,7 +10,7 @@ classdef Ndp < Viewer
     
     methods
         
-        function obj = Ndp
+        function obj = Ndp (n_case)
             
             % prerequisite 
             disp('Ndp Class: Start')

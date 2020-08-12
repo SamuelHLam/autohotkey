@@ -1,6 +1,5 @@
-%
-% Superclass of viewers
-% set input files
+%% Superclass of viewers -- NDP, Sedeen, QuPath, ASAP
+% Assign WSI input file here
 %
 classdef Viewer < handle
     
@@ -112,6 +111,7 @@ classdef Viewer < handle
         end
         
         function im = printscr (obj, fn)
+            % Capture the screen
             script_path = sprintf('"%s\\%s"',obj.viewerclass_dir,'printscr.ahk');
             system([obj.ahk_path ' ' script_path ' ' fn]);
             % why do I need delay here??
