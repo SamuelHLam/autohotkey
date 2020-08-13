@@ -9,6 +9,7 @@ classdef iterate_dE < iterate
     methods (Static)
         function test
             id = iterate_dE;
+            id.go
             id.stats
         end
     end
@@ -18,8 +19,7 @@ classdef iterate_dE < iterate
         function obj = iterate_dE
             % it's hard to initiate D with zeros() in the constructor because
             % the superclass constructor may be invoked late
-%            obj@iterate
-%            obj.D = zeros(length(obj.n_roi_vector),(obj.ydim*2)*(obj.xdim*2));
+            obj.D = zeros(length(obj.n_roi_vector),(obj.ydim*2)*(obj.xdim*2));
         end
         
         function do_process_two_im (obj, i, im1, im2)

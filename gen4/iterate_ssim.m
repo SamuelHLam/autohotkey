@@ -9,6 +9,7 @@ classdef iterate_ssim < iterate
     methods (Static)
         function test
             id = iterate_ssim;
+            id.go
             id.save_data
             id.show_data
         end
@@ -17,10 +18,7 @@ classdef iterate_ssim < iterate
     methods
         
         function obj = iterate_ssim
-            % it's hard to initiate D with zeros() in the constructor because
-            % the superclass constructor may be invoked late
-            %            obj@iterate
-            %            obj.D = zeros(length(obj.n_roi_vector),(obj.ydim*2)*(obj.xdim*2));
+            obj.data = zeros(length(obj.n_roi_vector),6);
         end
         
         function do_process_two_im (obj, i, im1, im2)

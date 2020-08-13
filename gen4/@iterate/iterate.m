@@ -12,10 +12,10 @@ classdef iterate < handle
     
     properties
         % input parameters
-        data_folder = 'C:\Users\wcc\Documents\GitHub\autohotkey\gen4\data\100-cmu-2'
+        data_folder = 'C:\Users\wcc\Documents\GitHub\autohotkey\gen4\data\100-cmu-3'
         
         % override the data size here
-        n_roi_vector = 1:10
+        n_roi_vector = 1:100
         
         % define the ROI here
         ydim = 500
@@ -27,7 +27,7 @@ classdef iterate < handle
     
     methods
         
-        function obj = iterate
+        function go (obj)
             
             % too long to type...
             xdim = obj.xdim;
