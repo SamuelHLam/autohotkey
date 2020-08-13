@@ -2,7 +2,8 @@
 % to compare the images
 % save cropped images
 % compare the dE, SSIM, and entropy
-% 8-21-2020: modify for Summer Student Presentation
+% 8-13-2020: clean up code
+% 8-12-2020: modify for Summer Student Presentation
 % 5-31-2020: revisit
 % 3-23-2020
 % WCC
@@ -12,23 +13,15 @@ classdef iterate
     properties
         % comparison results
         data
+        
+        % 
         D
     end
     
-    methods 
-        
-        function stats (obj)
-            Dmin = min(obj.D,[],2)
-            Dmax = max(obj.D,[],2)
-            Dmean = mean(obj.D,2)
-            Dmedian = median(obj.D,2)
-            Dstd = std(obj.D,0,2)
-            
-            boxplot([Dmin Dmax Dmean Dmedian Dstd])
-            xticklabels({'Min','Max','Mean','Median','Std'})
-            ylabel('{\Delta}E')
-            
-            saveas(gcf,'boxplot.png');
+    methods (Static)
+        function test
+            i = iterate;
+            i.stats;
         end
     end
     
@@ -37,12 +30,10 @@ classdef iterate
         function obj = iterate
             
             % input parameters
-            % data_folder = 'C:\Users\wcc\Documents\GitHub\autohotkey\gen4'
             data_folder = 'C:\Users\wcc\Documents\GitHub\autohotkey\gen4\data\100-cmu-3'
-            %            data_folder = 'C:\Users\wcc\Documents\GitHub\autohotkey\gen4'
             
             % override the data size here
-            n_roi_vector = 1:1
+            n_roi_vector = 1:100
             
             % define the ROI here
             ydim = 500
@@ -76,8 +67,7 @@ classdef iterate
                 im2 = org_im2(centery-ydim+1:centery+ydim,centerx-xdim+1:centerx+xdim,:);
                 
                 [dE2 dE] = image2dE2 (obj,im1,im2);
-                
-                
+                               
                 obj.D(i,:) = dE;
                 
                 %% need to debug
@@ -99,18 +89,18 @@ classdef iterate
                 if 0
                     % create new files for trimmed images
                     % save the trimmed images
-                    fn_target1 = sprintf('%s\\%03d\\%s',data_folder,i,'ndp1.png');
+                    fn_target1 = sprintf('%s\\%03d\\%s%s',data_folder,i,'ndp','1.png');
                     fn_trial1 = sprintf('%s\\%03d\\%s%s',data_folder,i,viewername,'1.png');
                     imwrite(im1, fn_target1);
                     imwrite(im2, fn_trial1);
                 end
                 
                 if 0
-                % main 1
-                
-                %                [dE2 dE] = obj.image2dE2 (im1,im2);
-                
-                [dE00 dE94 dEab] = c.image2dE(fn_target1,fn_trial1);
+                    % main 1
+                    
+                    % [dE2 dE] = obj.image2dE2 (im1,im2);
+                    
+                    [dE00 dE94 dEab] = c.image2dE(fn_target1,fn_trial1);
                 end
                 
                 if 0
@@ -130,7 +120,9 @@ classdef iterate
                 if 0
                     % main 4
                     imcorrcoef = corr2(imbw1,imbw2);
-                    
+                end
+                
+                if 0
                     obj.data(i,1:6) = [mean2(dE00) mean2(dE94) mean2(dEab) ssimval ent imcorrcoef];
                 end
                 
@@ -151,6 +143,21 @@ classdef iterate
             
             return
             
+        end
+
+        function stats (obj)
+        % generate statistics of 100 ROIs
+            Dmin = min(obj.D,[],2)
+            Dmax = max(obj.D,[],2)
+            Dmean = mean(obj.D,2)
+            Dmedian = median(obj.D,2)
+            Dstd = std(obj.D,0,2)
+            
+            boxplot([Dmin Dmax Dmean Dmedian Dstd])
+            xticklabels({'Min','Max','Mean','Median','Std'})
+            ylabel('{\Delta}E')
+            
+            saveas(gcf,'boxplot.png');
         end
         
         %
