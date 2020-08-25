@@ -1,12 +1,20 @@
 classdef iterate_dE < iterate
     %UNTITLED Summary of this class goes here
-    %   Detailed explanation goes here
+    %   8-24-2020: added CDF plots
     
     properties
         D
+        H = {}
     end
     
     methods (Static)
+
+        function cdf_plot
+            id = iterate_dE;
+            id.go;
+            id.plot_cdf;
+        end
+        
         function test
             id = iterate_dE;
             id.go
@@ -30,6 +38,27 @@ classdef iterate_dE < iterate
             
         end
         
+        function plot_cdf (obj)
+
+            for i = 1:100
+                clf
+                h = histogram(obj.D(i,:),[0:100],'Normalization','cdf');
+                obj.H{i} = h.Values;
+            end
+            
+            clf
+            hold on
+            for i = 1:100
+                plot(obj.H{i})
+            end
+            xlabel('{\Delta}E')
+            ylabel('Cumulative Density')
+            axis square
+            axis([0 100 0 1])
+            
+            saveas(gcf,'cdfplot.png');            
+        end
+        
         function stats (obj)
         % generate statistics of 100 ROIs
             Dmin = min(obj.D,[],2)
@@ -42,6 +71,7 @@ classdef iterate_dE < iterate
             xticklabels({'Min','Max','Mean','Median','Std'})
             ylabel('{\Delta}E')
             
+            axis([0.5 5.5 0 120])
             saveas(gcf,'boxplot.png');
         end
         
