@@ -185,8 +185,8 @@ classdef QuPath < Viewer
         end
         
         function find_minimap (obj)
-            printscr1_fn = sprintf('%s\\%s',obj.class_dir,'myprintscr1.png');
-            printscr2_fn = sprintf('%s\\%s',obj.class_dir,'myprintscr2.png');
+            printscr1_fn = sprintf('%s\\%s',obj.class_dir,'minimap_on.png');
+            printscr2_fn = sprintf('%s\\%s',obj.class_dir,'minimap_off.png');
             
             im1 = obj.printscr(printscr1_fn);
             obj.ahk_do('toggle_minimap.ahk');

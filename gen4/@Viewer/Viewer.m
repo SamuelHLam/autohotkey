@@ -22,7 +22,7 @@ classdef Viewer < handle
         username
         ROISIZEHALF = 500
         SEDEEN_SKIP_UPDATE = 1        
-        DEMO_N = 10
+        DEMO_N = 5
     end
     
     methods
@@ -73,7 +73,7 @@ classdef Viewer < handle
             %}
 
             % WSI input: the CMU samples
-            testcasename = 'CMU-3';
+            testcasename = 'camelyon_test';
             obj.wsi_filename = [testcasename '.ndpi'];
             obj.wsi_magnification = 20;
             

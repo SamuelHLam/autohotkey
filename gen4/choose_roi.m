@@ -23,11 +23,14 @@ figure('Units','inches','PaperPositionMode','auto');
 
 % show the image
 im = imread(fn);
+h = size(im, 1);
+w = size(im, 2);
 image(im)
 
 for i = 1:n
     [x,y,button] = ginput(1)
-    xy(i,1:2) = round([x y]);
+    % normalize to [0,1]
+    xy(i,1:2) = [x/h y/w];
 end
 
 end
