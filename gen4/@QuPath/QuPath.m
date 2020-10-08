@@ -1,18 +1,19 @@
 % 3-23-2020
 % WCC
 % QuPath does not memorize
+% 5-31-2020: revisit
 
 classdef QuPath < Viewer
     
     properties
+        PANBYTRIM = 1
+        FASTFORWARD = 0
     end
     
     methods
         
         function obj = QuPath
-            
-            fastforward = 0
-            
+
             % get the class directory for the AHK scripts
             thispath = mfilename('fullpath');
             [mpath mname mext] = fileparts(thispath);
@@ -30,7 +31,7 @@ classdef QuPath < Viewer
             obj.open
             
             % get viewarea to get minimap
-            if ~fastforward
+            if ~obj.FASTFORWARD
                 obj.find_viewarea
                 obj.find_minimap
             else
@@ -46,7 +47,6 @@ classdef QuPath < Viewer
             % go through the ROIs
             n_roi = size(obj.wsi_roi,1);
             
-            %for i = 1
             for i = 1:n_roi
                 
                 % define filenames
@@ -56,26 +56,26 @@ classdef QuPath < Viewer
                 fn_trial = sprintf('%s\\%03d\\%s',obj.current_dir,i,'qupath.png');
                 fn_trial2 = sprintf('%s\\%03d\\%s',obj.current_dir,i,'qupath2.png');
                 fn_reg = sprintf('%s\\%03d\\%s',obj.current_dir,i,'qupath.mat');
-
+                
                 % goto ROI
                 obj.goto_roi(obj.wsi_roi(i,1),obj.wsi_roi(i,2));
-
-                if 0
-                % check minimap
-                % because the accuracy is very low when the image is large
-                fn_roi = sprintf('%s\\%03d\\%s',obj.current_dir,i,'qupath_roi.png');
-                obj.printscr(fn_roi);
-                im = imread(fn_roi);
-                x1 = obj.minimap_pos(1);
-                y1 = obj.minimap_pos(2);
-                x2 = obj.minimap_pos(3);
-                y2 = obj.minimap_pos(4);
                 
-                roix = round(x1 + obj.wsi_roi(i,1)*(x2-x1));
-                roiy = round(y1 + obj.wsi_roi(i,2)*(y2-y1));
-                [roix roiy]
-                im = obj.mark_location(im,roiy,roix);
-                imwrite(im,fn_roi);
+                if 0
+                    % check minimap
+                    % because the accuracy is very low when the image is large
+                    fn_roi = sprintf('%s\\%03d\\%s',obj.current_dir,i,'qupath_roi.png');
+                    obj.printscr(fn_roi);
+                    im = imread(fn_roi);
+                    x1 = obj.minimap_pos(1);
+                    y1 = obj.minimap_pos(2);
+                    x2 = obj.minimap_pos(3);
+                    y2 = obj.minimap_pos(4);
+                    
+                    roix = round(x1 + obj.wsi_roi(i,1)*(x2-x1));
+                    roiy = round(y1 + obj.wsi_roi(i,2)*(y2-y1));
+                    [roix roiy]
+                    im = obj.mark_location(im,roiy,roix);
+                    imwrite(im,fn_roi);
                 end
                 
                 % hide minimap
@@ -85,7 +85,7 @@ classdef QuPath < Viewer
                 obj.printscr(fn_trial0);
                 
                 % try registration
-                if ~fastforward
+                if ~obj.FASTFORWARD
                     tic
                     regT = register_images (fn_target, fn_trial0);
                     time_registration = toc
@@ -93,41 +93,48 @@ classdef QuPath < Viewer
                     load(fn_reg,'regT')
                 end
                 
-                if ~fastforward
-                    x_pan = round(regT(3,1))
-                    y_pan = round(regT(3,2))
+                if ~obj.FASTFORWARD
+                    x_pan = round(regT(3,1));
+                    y_pan = round(regT(3,2));
                 else
-                    x_pan = 1
-                    y_pan = 1
+                    x_pan = 1;
+                    y_pan = 1;
                 end
                 
                 % obj.chord_gen('C',0.3)
                 
-                %                 % panning
-                %                 tic
-                %                 obj.drag_step_by_step(x_pan,y_pan);
-                %                 time_panning = toc
-                %
-                %                 if 0
-                %                 % panning
-                %                 for j = 1:abs(x_pan)
-                %                     obj.drag_right1(sign(x_pan));
-                %                 end
-                %                 for j = 1:abs(y_pan)
-                %                     obj.drag_down1(sign(y_pan));
-                %                 end
-                %                 end
-                %
-                %                 save(fn_reg,'regT','time_registration','time_panning')
-                %
-                %
-                %                 % screenshot
-                %                 obj.printscr(fn_trial);
+                % panning
+                tic
+
+                obj.do_panning(fn_target, fn_trial0, fn_target2, fn_trial2, x_pan, y_pan, fn_trial);
                 
-                obj.pan_by_trim (fn_target, fn_trial0, fn_target2, fn_trial2, x_pan, y_pan)
+                %{
+                if obj.PANBYTRIM == 1
+                    obj.pan_by_trim (fn_target, fn_trial0, fn_target2, fn_trial2, x_pan, y_pan)
+                else
+                    obj.drag_step_by_step(x_pan,y_pan);
+                    
+                    if 0
+                        % panning
+                        for j = 1:abs(x_pan)
+                            obj.drag_right1(sign(x_pan));
+                        end
+                        for j = 1:abs(y_pan)
+                            obj.drag_down1(sign(y_pan));
+                        end
+                    end
+                    
+                    % screenshot
+                    obj.printscr(fn_trial);
+                    
+                end
+            %}
+                
+                time_panning = toc
+                save(fn_reg,'regT','time_registration','time_panning')
                 
                 % show minimap
-%                obj.ahk_do('toggle_minimap_short.ahk');
+                %                obj.ahk_do('toggle_minimap_short.ahk');
                 obj.ahk_do('toggle_minimap.ahk');
                 
             end
@@ -136,9 +143,30 @@ classdef QuPath < Viewer
             obj.close
             
             % make some noise
-            obj.chord_gen('C',1)     
+            obj.chord_gen('C',1)
             
             return
+        end
+
+        function do_panning (obj,fn_target, fn_trial0, fn_target2, fn_trial2, x_pan, y_pan, fn_trial)
+                    
+            obj.pan_by_trim (fn_target, fn_trial0, fn_target2, fn_trial2, x_pan, y_pan)
+
+%                     obj.drag_step_by_step(x_pan,y_pan);
+%                     
+%                     if 0
+%                         % panning
+%                         for j = 1:abs(x_pan)
+%                             obj.drag_right1(sign(x_pan));
+%                         end
+%                         for j = 1:abs(y_pan)
+%                             obj.drag_down1(sign(y_pan));
+%                         end
+%                     end
+%                     
+%                     % screenshot
+%                     obj.printscr(fn_trial);
+                    
         end
         
         function start (obj)
@@ -157,8 +185,8 @@ classdef QuPath < Viewer
         end
         
         function find_minimap (obj)
-            printscr1_fn = sprintf('%s\\%s',obj.class_dir,'myprintscr1.png');
-            printscr2_fn = sprintf('%s\\%s',obj.class_dir,'myprintscr2.png');
+            printscr1_fn = sprintf('%s\\%s',obj.class_dir,'minimap_on.png');
+            printscr2_fn = sprintf('%s\\%s',obj.class_dir,'minimap_off.png');
             
             im1 = obj.printscr(printscr1_fn);
             obj.ahk_do('toggle_minimap.ahk');
@@ -169,12 +197,12 @@ classdef QuPath < Viewer
             [x1 y1 x2 y2] = obj.mycomp (im1, im2);
             obj.minimap_pos = [x1 y1 x2 y2];
         end
-
+        
         function find_viewarea (obj)
             printscr1_fn = sprintf('%s\\%s',obj.class_dir,'myprintscr1.png');
             
             im1 = obj.printscr(printscr1_fn);
-
+            
             im1lin = reshape(im1,size(im1,1)*size(im1,2),3);
             
             % thresholding
@@ -196,11 +224,11 @@ classdef QuPath < Viewer
             x2 = max(col)
             
             % visualize
-%            imagesc(imgray2)
-%            colorbar
-             
+            %            imagesc(imgray2)
+            %            colorbar
+            
             obj.viewarea_pos = [x1 y1 x2 y2];
-
+            
             return
             
         end
@@ -210,10 +238,10 @@ classdef QuPath < Viewer
             im1 = imm1;
             im2 = im1;
             
-            a1 = obj.viewarea_pos(1); 
-            b1 = obj.viewarea_pos(2); 
-            a2 = obj.viewarea_pos(3); 
-            b2 = obj.viewarea_pos(4); 
+            a1 = obj.viewarea_pos(1);
+            b1 = obj.viewarea_pos(2);
+            a2 = obj.viewarea_pos(3);
+            b2 = obj.viewarea_pos(4);
             
             im1(b1:b2,a1:a2,:) = imm1(b1:b2,a1:a2,:);
             im2(b1:b2,a1:a2,:) = imm2(b1:b2,a1:a2,:);
@@ -255,9 +283,9 @@ classdef QuPath < Viewer
             x2 = max(col);
             
             % visualize
-%            imagesc(dE2)
-%            colorbar
-
+            %            imagesc(dE2)
+            %            colorbar
+            
             return
             
         end

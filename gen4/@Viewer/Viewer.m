@@ -1,3 +1,6 @@
+%% Superclass of viewers -- NDP, Sedeen, QuPath, ASAP
+% Assign WSI input file here
+%
 classdef Viewer < handle
     
     properties
@@ -6,6 +9,7 @@ classdef Viewer < handle
         viewerclass_dir
         wsi_filename
         wsi_folder
+        roi_folder
         wsi_path
         wsi_roi
         wsi_magnification
@@ -15,11 +19,34 @@ classdef Viewer < handle
         minimap_pos
         viewarea_pos
         screen_size
+        username
+        ROISIZEHALF = 500
+        SEDEEN_SKIP_UPDATE = 1        
+        DEMO_N = 5
     end
     
     methods
         
         function obj = Viewer
+            
+            % constructor
+            
+            % get the user name for setting local variables
+            obj.username = getenv('username')
+            
+            if strcmp(obj.username,'wcc')
+                % Wei-Chung's environment settings here
+                obj.wsi_folder = 'C:\Users\wcc\Desktop\test_wsi\';
+                obj.roi_folder = 'C:\Users\wcc\Documents\GitHub\autohotkey\gen4\roi_100\';
+                obj.SEDEEN_SKIP_UPDATE = 1;        
+            else
+                % Samuel's environment settings here
+                obj.wsi_folder = 'C:\Users\Sam\Desktop\test_wsi\';
+                obj.roi_folder = 'C:\Users\Sam\Documents\GitHub\autohotkey\gen4\roi_100\';
+                obj.SEDEEN_SKIP_UPDATE = 0;
+            end
+            
+            obj.my_disp('Viewer Class: Start');
             
             % current directory
             obj.current_dir = cd;
@@ -29,8 +56,12 @@ classdef Viewer < handle
             [mpath mname mext] = fileparts(thispath);
             obj.viewerclass_dir = mpath;
             
+            
             % WSI file
-            if 0
+            obj.my_disp('Viewer Class: Assign WSI paths');
+            
+            %{
+            % camelyon slide
                 obj.wsi_filename = 'T11-11969 40x Manual - 2019-09-19 16.27.08.ndpi';
                 obj.wsi_folder = 'C:\Users\wcc\Desktop\test_wsi\';
                 obj.wsi_magnification = 40;
@@ -39,59 +70,48 @@ classdef Viewer < handle
                 for i = 1:10
                     obj.wsi_roi(i,:) = [(200*(i-5)+48835)/69582 (200*(i-5)+34632)/64463];
                 end
-            end
+            %}
 
+            % WSI input: the CMU samples
+            testcasename = 'camelyon_test';
+            obj.wsi_filename = [testcasename '.ndpi'];
+            obj.wsi_magnification = 20;
+            
+            % get ROIs
+            obj.my_disp('Viewer Class: Load ROI data');
+            load([obj.roi_folder testcasename '_roi.mat'],'xy')
+            obj.wsi_roi = xy;
+            
+            % WCC
+            % shorten the run for testing purposes
             if 1
-                obj.wsi_filename = 'CMU-3.ndpi';
-                obj.wsi_folder = 'C:\Users\wcc\Desktop\test_wsi\';
-                obj.wsi_magnification = 20;
-                %obj.wsi_roi = [(13469/51200) (32079/38144)];
-                
-                % get ROIs
-                load([obj.wsi_folder 'CMU-3_roi.mat'],'xy')
-                obj.wsi_roi = xy;
+                obj.my_disp(sprintf('Viewer Class: Demo mode: %d ROI(s) only',obj.DEMO_N));
+                obj.wsi_roi = xy(1:obj.DEMO_N,:);
             end
-            
-            if 0
-                obj.wsi_filename = 'CMU-2.ndpi';
-                obj.wsi_folder = 'C:\Users\wcc\Desktop\test_wsi\';
-                obj.wsi_magnification = 20;
-                %obj.wsi_roi = [(13469/51200) (32079/38144)];
-                
-                % get ROIs
-                load([obj.wsi_folder 'CMU-2_roi.mat'],'xy')
-                obj.wsi_roi = xy;
-            end
-            
-            if 0
-                obj.wsi_filename = 'CMU-1.ndpi';
-                obj.wsi_folder = 'C:\Users\wcc\Desktop\test_wsi\';
-                obj.wsi_magnification = 20;
-                %obj.wsi_roi = [(13469/51200) (32079/38144)];
-                
-                % get ROIs
-                load([obj.wsi_folder 'CMU-1_roi.mat'],'xy')
-                obj.wsi_roi = xy;
-            end
-
-            
+           
             obj.wsi_path = sprintf('\" %s%s\"', obj.wsi_folder, obj.wsi_filename);
             
             % AHK
+            obj.my_disp('Viewer Class: Assign AHK path');
             obj.ahk_path = '"C:\Program Files\AutoHotkey\AutoHotkey.exe" ';
             
             if 1
+                obj.my_disp('Viewer Class: Obtain display dimension, pixel counts');
+                
                 % get display size
                 printscr1_fn = sprintf('%s\\%s',obj.viewerclass_dir,'myprintscr0.png');
                 im1 = obj.printscr(printscr1_fn);
                 obj.screen_size = [size(im1,2) size(im1,1)];
+                [size(im1,2) size(im1,1)]
             else
                 % HP Z24x
                 obj.screen_size = [1920 1200];
             end
+            
         end
         
         function im = printscr (obj, fn)
+            % Capture the screen
             script_path = sprintf('"%s\\%s"',obj.viewerclass_dir,'printscr.ahk');
             system([obj.ahk_path ' ' script_path ' ' fn]);
             % why do I need delay here??
@@ -99,6 +119,22 @@ classdef Viewer < handle
             while ~isfile(fn)
             end
             im = imread(fn);
+        end
+        
+        function map_off = map_state (obj, im1, im2)
+            coords = obj.minimap_pos;
+            x1 = coords(1);
+            y1 = coords(2);
+            x2 = coords(3);
+            y2 = coords(4);
+            map1 = rgb2gray(im1(y1:y2, x1:x2, :));
+            map2 = rgb2gray(im2(y1:y2, x1:x2, :));
+            
+            % An image with more entropy implies the map is on in that
+            % image. The map is toggled off before taking im2, so if the
+            % entropy of map1 is greater than that of map2, the map is
+            % currently off.
+            map_off = entropy(map1) > entropy(map2);
         end
         
         function goto_roi (obj, x, y)
@@ -133,59 +169,59 @@ classdef Viewer < handle
             system([obj.ahk_path ' ' script_path ' ' obj.viewer_title]);
         end
         
-        function drag_right (obj,x)
-            
-            % 500 is used in AHK
-            
-            displacement = 500+x;
-            [displacement]
-            assert(displacement > 0, 'drag_right: x out of range');
-            
-            param = sprintf('%d',displacement);
-            
-            script_path = sprintf('"%s\\%s"',obj.viewerclass_dir,'drag_right.ahk');
-            system([obj.ahk_path ' ' script_path ' ' obj.viewer_title ' ' param]);
-        end
+%         function drag_right (obj,x)
+%             
+%             % 500 is used in AHK
+%             
+%             displacement = 500+x;
+%             [displacement]
+%             assert(displacement > 0, 'drag_right: x out of range');
+%             
+%             param = sprintf('%d',displacement);
+%             
+%             script_path = sprintf('"%s\\%s"',obj.viewerclass_dir,'drag_right.ahk');
+%             system([obj.ahk_path ' ' script_path ' ' obj.viewer_title ' ' param]);
+%         end
         
-        function drag_right1 (obj,x)
-            
-            % 500 is used in AHK
-            
-            displacement = 500+x;
-            assert(displacement > 0, 'drag_right1: x out of range');
-            
-            param = sprintf('%d',displacement);
-            
-            script_path = sprintf('"%s\\%s"',obj.viewerclass_dir,'drag_right1.ahk');
-            system([obj.ahk_path ' ' script_path ' ' obj.viewer_title ' ' param]);
-        end
+%         function drag_right1 (obj,x)
+%             
+%             % 500 is used in AHK
+%             
+%             displacement = 500+x;
+%             assert(displacement > 0, 'drag_right1: x out of range');
+%             
+%             param = sprintf('%d',displacement);
+%             
+%             script_path = sprintf('"%s\\%s"',obj.viewerclass_dir,'drag_right1.ahk');
+%             system([obj.ahk_path ' ' script_path ' ' obj.viewer_title ' ' param]);
+%         end
         
-        function drag_down (obj,x)
-            
-            % 500 is used in AHK
-            
-            displacement = 500+x;
-            assert(displacement > 0, 'drag_down: out of range');
-            
-            param = sprintf('%d',displacement);
-            
-            script_path = sprintf('"%s\\%s"',obj.viewerclass_dir,'drag_down.ahk');
-            system([obj.ahk_path ' ' script_path ' ' obj.viewer_title ' ' param]);
-        end
+%         function drag_down (obj,x)
+%             
+%             % 500 is used in AHK
+%             
+%             displacement = 500+x;
+%             assert(displacement > 0, 'drag_down: out of range');
+%             
+%             param = sprintf('%d',displacement);
+%             
+%             script_path = sprintf('"%s\\%s"',obj.viewerclass_dir,'drag_down.ahk');
+%             system([obj.ahk_path ' ' script_path ' ' obj.viewer_title ' ' param]);
+%         end
         
         
-        function drag_down1 (obj,x)
-            
-            % 500 is used in AHK
-            
-            displacement = 500+x;
-            assert(displacement > 0, 'drag_down: out of range');
-            
-            param = sprintf('%d',displacement);
-            
-            script_path = sprintf('"%s\\%s"',obj.viewerclass_dir,'drag_down1.ahk');
-            system([obj.ahk_path ' ' script_path ' ' obj.viewer_title ' ' param]);
-        end
+%         function drag_down1 (obj,x)
+%             
+%             % 500 is used in AHK
+%             
+%             displacement = 500+x;
+%             assert(displacement > 0, 'drag_down: out of range');
+%             
+%             param = sprintf('%d',displacement);
+%             
+%             script_path = sprintf('"%s\\%s"',obj.viewerclass_dir,'drag_down1.ahk');
+%             system([obj.ahk_path ' ' script_path ' ' obj.viewer_title ' ' param]);
+%         end
         
         function drag_right_down (obj,x,y)
             
@@ -202,7 +238,7 @@ classdef Viewer < handle
             script_path = sprintf('"%s\\%s"',obj.viewerclass_dir,'drag_right_down.ahk');
             system([obj.ahk_path ' ' script_path ' ' obj.viewer_title ' ' param_x ' ' param_y]);
         end
-
+        
         function pan_by_trim (obj, fn_target, fn_trial0, fn_target2, fn_trial2, panx, pany)
             % 4-5-2020
             % panning by trimming
@@ -244,12 +280,16 @@ classdef Viewer < handle
             imwrite(imout2,fn_trial2)
         end
         
-    
+        
         % mouse drag from the center of the screen
         function pan_xy (obj, displacement_x, displacement_y)
             
             % limit the mouse drag range to 500,500 rather than the screen size
             % because the boundaries, menu, other subwindows need to be considered
+            
+            %{
+                This is for assuring the correctness of the registration. The panning distance is determined by registering two images, which are limited to the screen size. If the panning distance is longer than 50% of the screen, usually it is a bad registration result.
+            %}
             assert(abs(displacement_x)<obj.screen_size(1)/2,'pan: x out of range')
             assert(abs(displacement_y)<obj.screen_size(2)/2,'pan: y out of range')
             
@@ -262,10 +302,10 @@ classdef Viewer < handle
             screen_y = sprintf('%d',round(obj.screen_size(2)/2));
             
             script_path = sprintf('"%s\\%s"',obj.viewerclass_dir,'pan_xy.ahk');
-            system([obj.ahk_path ' ' script_path ' ' obj.viewer_title ' ' param_x ' ' param_y ' ' screen_x ' ' screen_y]);        
-        
+            system([obj.ahk_path ' ' script_path ' ' obj.viewer_title ' ' param_x ' ' param_y ' ' screen_x ' ' screen_y]);
+            
         end
-                
+        
         function pan (obj, displacement_x, displacement_y)
             
             assert(abs(displacement_x)<500,'pan: x out of range')
@@ -278,7 +318,7 @@ classdef Viewer < handle
             system([obj.ahk_path ' ' script_path ' ' obj.viewer_title ' ' param_x ' ' param_y]);
             
         end
-                
+        
         function drag_step_by_step (obj, x, y)
             
             abs_x = abs(x);
@@ -309,18 +349,21 @@ classdef Viewer < handle
             y1 = roibox(2);
             x2 = roibox(3);
             y2 = roibox(4);
-
+            
+            DEBUG_mark_roi_x1_y1_x2_y2 = [x1 y1 x2 y2]
+            
             im2 = im1;
-
+            
             % 4 corners
             im2 = obj.mark_location(im2,y1,x1);
             im2 = obj.mark_location(im2,y1,x2);
             im2 = obj.mark_location(im2,y2,x1);
             im2 = obj.mark_location(im2,y2,x2);
         end
-
+        
         
         function im2 = mark_location (obj, im1, row, col)
+            % draw a blue cross at location (row,col)
             im2 = im1;
             for i = -5:+5
                 im2(row+i,col,1:3) = [0 0 255]; % blue
@@ -329,24 +372,32 @@ classdef Viewer < handle
         end
         
         function ret = roi_corrcoef (obj, fn_target, fn_trial)
+            % calculate correlation coefficients between two images
+            % for evaluating the registration accuracy
             
+            % load images
             imtarget = imread(fn_target);
             imtrial = imread(fn_trial);
             
+            % convert color images to grayscale images
             im1 = rgb2gray(imtarget);
             im2 = rgb2gray(imtrial);
             
-            size = 250;
-            x = round(obj.screen_size(1)/2) - size;
-            y = round(obj.screen_size(2)/2) - size;
+            % get the center of the screen
+            x = round(obj.screen_size(1)/2);
+            y = round(obj.screen_size(2)/2);
             
+            % crop a box 
+            size = obj.ROISIZEHALF;
             im1 = im1(y-size:y+size,x-size:x+size);
             im2 = im2(y-size:y+size,x-size:x+size);
             
+            % main
             ret = corr2(im1,im2);
-            
-        end
 
+            return
+        end
+        
         function mybeep (obj)
             load handel.mat;
             nBits = 16;
@@ -354,10 +405,10 @@ classdef Viewer < handle
         end
         
         function chord_gen (obj, chordname, duration)
-        % generate 3-note chord
-        % 3-26-2020
-        % WCC and Trinity
-        
+            % generate 3-note chord
+            % 3-26-2020
+            % WCC and Trinity
+            
             sample_rate = 8192;
             
             % parse the chordname to get the base pitch
@@ -430,7 +481,12 @@ classdef Viewer < handle
                 y = sin(2*pi*t*freq);
                 % plot(t,y,'-')
             end
-            
+        end
+        
+        function my_disp (obj, msg)
+            % A wrapped text output function so that it can be turned on/off
+            % easily for debugging
+            disp(msg)
         end
     end
 end

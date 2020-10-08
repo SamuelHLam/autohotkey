@@ -1,6 +1,7 @@
 % 3-23-2020
 % WCC
 % 3-24-2020: unstable because of timing
+% 5-31-2020: revisit
 
 classdef Ndp < Viewer
     
@@ -9,7 +10,14 @@ classdef Ndp < Viewer
     
     methods
         
-        function obj = Ndp
+        function obj = Ndp (n_case)
+            
+            % prerequisite 
+            disp('Ndp Class: Start')
+
+            disp('Ndp Class: NDP View memorizes')
+            disp('Ndp Class: NDP View: must enable minimap')
+            disp('Ndp Class: NDP View: no other windows')
             
             tic
             
@@ -48,8 +56,7 @@ classdef Ndp < Viewer
             % go through the ROIs
             n_roi = size(obj.wsi_roi,1);
             
-%            for i = 1:n_roi
-            for i = 1
+            for i = 1:n_roi
                
                 mkdir(sprintf('%s\\%03d',obj.current_dir,i));
                 fn_out = sprintf('%s\\%03d\\%s',obj.current_dir,i,'ndp.png');
@@ -128,7 +135,6 @@ classdef Ndp < Viewer
             obj.ahk_do('toggle_minimap.ahk');
             
             im2 = obj.printscr(printscr2_fn);
-            obj.ahk_do('toggle_minimap.ahk');
             
             [x1 y1 x2 y2] = obj.mycomp (im1, im2);
             obj.minimap_pos = [x1 y1 x2 y2];
@@ -139,36 +145,45 @@ classdef Ndp < Viewer
             
             imwrite(im1,printscr1_fn);
             imwrite(im2,printscr2_fn);
+            
+            % code should work regardless of initial state of minimap
+            map_off = obj.map_state(im1, im2);
+
+            if (map_off)
+                % if map is not on, toggle it on
+                obj.ahk_do('toggle_minimap.ahk');
+            end
         end
         
         function [x1 y1 x2 y2] = mycomp (obj,imm1,imm2)
             
-            im1 = imm1;
-            im2 = imm2;
-            
-            % check only the right half
+            % check only the lower right quarter
             % because the icons on the left margin change as the minimap is
             % toggled
             if 1
                 im1 = imm1;
+                
+                % not a bug!
+                % make a copy of im2 -- for the left half being the same
                 im2 = im1;
                 
+                % center
                 a1 = round(size(im1,2)/2);
                 b1 = round(size(im1,1)/2);
+                
+                % lower right corner
                 a2 = size(im1,2);
                 b2 = size(im1,1);
                 
+                % assign the pixels to be compared
                 im1(b1:b2,a1:a2,:) = imm1(b1:b2,a1:a2,:);
                 im2(b1:b2,a1:a2,:) = imm2(b1:b2,a1:a2,:);
+                
+            else
+                im1 = imm1;
+                im2 = imm2;
             end
-            
-            % color images
-            %im1 = imread('myprintscr1.png');
-            %im2 = imread('myprintscr2.png');
-            
-            %im1 = imread(fn1);
-            %im2 = imread(fn2);
-            
+                      
             % 2D to 1D
             imlin1 = reshape(im1,size(im1,1)*size(im1,2),3);
             imlin2 = reshape(im2,size(im2,1)*size(im2,2),3);
@@ -197,6 +212,8 @@ classdef Ndp < Viewer
             y2 = max(row);
             x1 = min(col);
             x2 = max(col);
+            
+            DEBUG_mycomp_x1_y1_x2_y2 = [x1 y1 x2 y2]
             
             % visualize
             %            imagesc(dE2)

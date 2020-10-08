@@ -6,16 +6,19 @@
 % 3-23-2020
 % 4-5-2020
 % WCC
+% 5-31-2020: revisit
 
 classdef Sedeen < Viewer
-    
-    properties
-    end
     
     methods
         
         function obj = Sedeen
             
+            disp('Sedeen Class: Start')
+            disp('Sedeen Class: Sedeen memorizes')
+            disp('Sedeen Class: Sedeen: must enable minimap')
+            disp('Sedeen Class: Sedeen: must disable Application Toolbars')
+
             % get the class directory for the AHK scripts
             thispath = mfilename('fullpath');
             [mpath mname mext] = fileparts(thispath);
@@ -46,8 +49,7 @@ classdef Sedeen < Viewer
             % go through the ROIs defined in Viewer.m
             n_roi = size(obj.wsi_roi,1);
             
-           for i = 1
-%            for i = 1:n_roi
+            for i = 1:n_roi
                 
                 sprintf('Working on ROI #%d',i)
                 
@@ -98,9 +100,9 @@ classdef Sedeen < Viewer
                     % get registration result
                     x_pan = round(regT(3,1));
                     y_pan = round(regT(3,2));
-                    [x_pan y_pan]
+                    x_pan_y_pan = [x_pan y_pan]
                     
-                    if x_pan == 0 && y_pan==0
+                    if x_pan == 0 && y_pan == 0
                         keep_looping = 0;
                     else
                         
@@ -120,8 +122,7 @@ classdef Sedeen < Viewer
                 end
                 
                 % report accuracy
-                reg_accu = obj.roi_corrcoef(fn_target,fn_trial);
-                [reg_accu]
+                reg_accu = obj.roi_corrcoef(fn_target,fn_trial)
                 
                 % save data
                 save(fn_reg,'regT','time_registration','time_panning')
@@ -142,7 +143,11 @@ classdef Sedeen < Viewer
         end
         
         function start (obj)
-            script_path = sprintf('"%s\\%s"',obj.class_dir,'start.ahk');
+            if obj.SEDEEN_SKIP_UPDATE == 1
+                script_path = sprintf('"%s\\%s"',obj.class_dir,'start_update.ahk');
+            else
+                script_path = sprintf('"%s\\%s"',obj.class_dir,'start.ahk');
+            end
             system([obj.ahk_path ' ' script_path ' ' obj.viewer_title ' ' obj.viewer_path]);
         end
         
@@ -165,7 +170,6 @@ classdef Sedeen < Viewer
             obj.ahk_do('toggle_minimap.ahk');
             
             im2 = obj.printscr(printscr2_fn);
-            obj.ahk_do('toggle_minimap.ahk');
             
             [x1 y1 x2 y2] = obj.mycomp (im1, im2);
             obj.minimap_pos = [x1 y1 x2 y2];
@@ -177,6 +181,13 @@ classdef Sedeen < Viewer
             imwrite(im1,printscr1_fn);
             imwrite(im2,printscr2_fn);
             
+            % code should work regardless of initial state of minimap
+            map_off = obj.map_state(im1, im2);
+
+            if (map_off)
+                % if map is not on, toggle it on
+                obj.ahk_do('toggle_minimap.ahk');
+            end
         end
 
         function find_viewarea (obj)
@@ -220,19 +231,7 @@ classdef Sedeen < Viewer
             im1 = imm1;
             im2 = imm2;
 
-            if 0
-            im1 = imm1;
-            im2 = im1;
-            
-            a1 = obj.viewarea_pos(1); 
-            b1 = obj.viewarea_pos(2); 
-            a2 = obj.viewarea_pos(3); 
-            b2 = obj.viewarea_pos(4); 
-            
-            im1(b1:b2,a1:a2,:) = imm1(b1:b2,a1:a2,:);
-            im2(b1:b2,a1:a2,:) = imm2(b1:b2,a1:a2,:);
-            end
-            
+          
             % color images
             %im1 = imread('myprintscr1.png');
             %im2 = imread('myprintscr2.png');

@@ -1,72 +1,69 @@
+% An iterator for going through all fils
+% to compare the images
+% save cropped images
+% compare the dE, SSIM, and entropy
+% 8-13-2020: clean up code
+% 8-12-2020: modify for Summer Student Presentation
+% 5-31-2020: revisit
 % 3-23-2020
 % WCC
-% 3-24-2020: unstable because of timing
 
-classdef iterate < Viewer
+classdef iterate < handle
     
     properties
-        data
+        % input parameters
+        data_folder = 'C:\Users\wcc\Documents\GitHub\autohotkey\gen4\data\100-cmu-3'
+        
+        % override the data size here
+        n_roi_vector = 1:100
+        
+        % define the ROI here
+        ydim = 500
+        xdim = 500
+        
+        % viewername
+        viewername = 'sedeen';
     end
     
     methods
         
-        function obj = iterate
+        function go (obj)
             
-            c = ColorConversionClass
+            % too long to type...
+            xdim = obj.xdim;
+            ydim = obj.ydim;
             
-            centerx = round(obj.screen_size(1)/2);
-            centery = round(obj.screen_size(2)/2);
-            
-            n_roi = size(obj.wsi_roi,1);
-            
-            viewername = 'qupath';
-%            viewername = 'sedeen';
-            
-            for i = 1:n_roi
+            for i = obj.n_roi_vector
+                
+                disp(sprintf('iterate Class: %d',i))
                 
                 % define filenames
-                fn_target = sprintf('%s\\%03d\\%s',obj.current_dir,i,'ndp.png');
-                fn_trial = sprintf('%s\\%03d\\%s%s',obj.current_dir,i,viewername,'.png');
-                fn_reg = sprintf('%s\\%03d\\%s%s',obj.current_dir,i,viewername,'.mat');
+                fn_target = sprintf('%s\\%03d\\%s',obj.data_folder,i,'ndp.png');
+                fn_trial = sprintf('%s\\%03d\\%s%s',obj.data_folder,i,obj.viewername,'.png');
+                fn_err = sprintf('%s\\%03d\\%s%s',obj.data_folder,i,obj.viewername,'.mat');
                 
-                im1 = imread(fn_target);
-                im2 = imread(fn_trial);
-                im1 = im1(centery-500:centery+500,centerx-500:centerx+500,:);
-                im2 = im2(centery-500:centery+500,centerx-500:centerx+500,:);
-
-                % create new files for trimmed images
-                fn_target1 = sprintf('%s\\%03d\\%s',obj.current_dir,i,'ndp1.png');
-                fn_trial1 = sprintf('%s\\%03d\\%s%s',obj.current_dir,i,viewername,'1.png');
-                imwrite(im1, fn_target1);
-                imwrite(im2, fn_trial1);
+                disp(sprintf('iterate Class: %s',fn_target))
                 
-%                [dE2 dE] = obj.image2dE2 (im1,im2);
+                % take a small area
+                org_im1 = imread(fn_target);
+                org_im2 = imread(fn_trial);
+                centerx = round(size(org_im1,2)/2);
+                centery = round(size(org_im1,1)/2);
                 
-                [dE00 dE94 dEab] = c.image2dE(fn_target1,fn_trial1);
+                im1 = org_im1(centery-ydim+1:centery+ydim,centerx-xdim+1:centerx+xdim,:);
+                im2 = org_im2(centery-ydim+1:centery+ydim,centerx-xdim+1:centerx+xdim,:);
                 
-                imbw1 = rgb2gray(im1);
-                imbw2 = rgb2gray(im2);
-                
-                ent = entropy(imbw1);
-                
-                %                [ssimval,ssimmap] = ssim(imbw1,imbw2);
-                ssimval = ssim(imbw1,imbw2);
-                
-                obj.data(i,1:5) = [mean2(dE00) mean2(dE94) mean2(dEab) ssimval ent];
-                
-                subplot(3,4,i)
-                imagesc(imbw1)
+                obj.do_process_two_im(i,im1,im2);
             end
             
-            
-            % make some noise
-            obj.chord_gen('C',1)
-            
-            clf
-            plot(obj.data(:,1),obj.data(:,3),'o')
-
             return
             
+        end
+        
+        function do_process_two_im (obj, i, im1, im2)
+            size(im1)
+            size(im2)
+            return
         end
         
         function [dE2 dE] = image2dE2 (obj,im1,im2)
